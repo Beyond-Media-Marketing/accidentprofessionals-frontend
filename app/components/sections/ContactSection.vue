@@ -42,21 +42,12 @@
 
           <div class="contact__field">
             <label for="cf-phone" class="contact__label">Phone number</label>
-            <div class="contact__phone-row">
-              <select v-model="form.countryCode" class="contact__phone-code" aria-label="Country code">
-                <option value="+1">US +1</option>
-                <option value="+44">UK +44</option>
-                <option value="+52">MX +52</option>
-              </select>
-              <input
-                id="cf-phone"
-                v-model="form.phone"
-                type="tel"
-                name="phone"
-                class="contact__input contact__input--phone"
-                placeholder="+1 (555) 000-0000"
-              />
-            </div>
+            <AppPhoneInput
+              v-model:phone="form.phone"
+              v-model:code="form.countryCode"
+              variant="contact"
+              input-id="cf-phone"
+            />
           </div>
 
           <div class="contact__field">
@@ -126,8 +117,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { ctaBannerData as defaultData } from '../../data/home'
+import { countries } from '../../data/countries'
 
 const props = defineProps({ data: { default: () => defaultData } })
 const data = props.data as typeof defaultData
@@ -142,11 +134,13 @@ const form = reactive({
   name: '',
   email: '',
   phone: '',
-  countryCode: '+1',
+  countryCode: 'US',
   caseType: '',
   message: '',
   agreed: false,
 })
+
+const dialCode = computed(() => countries.find(c => c.code === form.countryCode)?.dial ?? '+1')
 
 async function submit() {
   if (!form.agreed) return
@@ -162,7 +156,7 @@ async function submit() {
         access_key: config.public.web3FormsKey,
         name: form.name,
         email: form.email,
-        phone: `${form.countryCode} ${form.phone}`,
+        phone: `${dialCode.value} ${form.phone}`,
         case_type: form.caseType,
         message: form.message,
       }),

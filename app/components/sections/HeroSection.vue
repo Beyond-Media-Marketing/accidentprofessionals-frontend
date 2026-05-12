@@ -77,16 +77,12 @@
           <div class="hero__form-row">
             <div class="hero__field">
               <label for="hero-phone">Phone number</label>
-              <div class="hero__phone-input">
-                <span class="hero__phone-prefix">🇺🇸 US +1</span>
-                <input
-                  id="hero-phone"
-                  v-model="form.phone"
-                  type="tel"
-                  placeholder="+1 (555) 000-0000"
-                  autocomplete="tel"
-                />
-              </div>
+              <AppPhoneInput
+                v-model:phone="form.phone"
+                v-model:code="form.countryCode"
+                variant="hero"
+                input-id="hero-phone"
+              />
             </div>
             <div class="hero__field">
               <label for="hero-case">Case type</label>
@@ -222,7 +218,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { heroData as defaultData } from "../../data/home";
+import { countries } from "../../data/countries";
 
 const props = defineProps({ data: { default: () => defaultData } });
 const data = props.data as typeof defaultData;
@@ -236,11 +234,13 @@ const form = reactive({
   name: "",
   email: "",
   phone: "",
+  countryCode: "US",
   accidentType: defaultCaseType,
   description: "",
   agreed: false,
 });
 
+const dialCode = computed(() => countries.find(c => c.code === form.countryCode)?.dial ?? '+1');
 const submitting = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
@@ -261,7 +261,7 @@ async function submitForm() {
         subject: data.formSubject,
         name: form.name,
         email: form.email,
-        phone: form.phone,
+        phone: `${dialCode.value} ${form.phone}`,
         accident_type: form.accidentType,
         description: form.description,
       }),
@@ -530,16 +530,22 @@ async function submitForm() {
     }
   }
 
-  &__phone-prefix {
-    display: flex;
-    align-items: center;
-    padding: 10px 10px 10px 12px;
+  &__phone-code {
+    padding: 10px 6px 10px 10px;
     font-size: 13px;
     font-weight: 500;
     color: var(--color-dark);
     white-space: nowrap;
     border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0;
     flex-shrink: 0;
+    background: transparent;
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
   }
 
   // ── Select ─────────────────────────────────────────────────────────────────
