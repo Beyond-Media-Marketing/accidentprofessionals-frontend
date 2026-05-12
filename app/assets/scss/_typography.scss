@@ -1,0 +1,17 @@
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: clamp(2.2rem, 5vw, 4.375rem); }
+h2 { font-size: clamp(1.8rem, 4vw, 3.125rem); }
+h3 { font-size: clamp(1.1rem, 2vw, 1.5rem); }
+
+p { line-height: 1.65; }
+
+.text-accent  { color: var(--color-accent); }
+.text-muted   { color: var(--color-muted); }
+.text-cream   { color: var(--color-cream); }
+.text-on-dark { color: var(--color-text-on-dark); }

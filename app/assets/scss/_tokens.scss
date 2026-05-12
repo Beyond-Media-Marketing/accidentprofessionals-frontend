@@ -1,0 +1,30 @@
+:root {
+  --color-accent:        #f3af00;
+  --color-accent-light:  #f8edd4;
+  --color-accent-glow:   rgba(243, 175, 0, 0.2);
+  --color-dark:          #1e1e1e;
+  --color-dark-95:       rgba(30, 30, 30, 0.95);
+  --color-dark-90:       rgba(30, 30, 30, 0.90);
+  --color-cream:         #f8f6f4;
+  --color-muted:         #a8a197;
+  --color-border:        rgba(30, 30, 30, 0.05);
+  --color-border-light:  rgba(248, 246, 244, 0.2);
+  --color-white:         #ffffff;
+  --color-text:          #1e1e1e;
+  --color-text-on-dark:  #f8f6f4;
+
+  --font-primary:   'Fira Sans', sans-serif;
+  --font-secondary: 'DM Sans', sans-serif;
+
+  --radius-sm:  8px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+  --radius-xl:  32px;
+  --radius-pill: 9999px;
+
+  --shadow-card:   0 10px 20px rgba(0, 0, 0, 0.07);
+  --shadow-button: 0px 20px 12.5px rgba(0, 0, 0, 0.1), 0px 8px 5px rgba(0, 0, 0, 0.1);
+
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.4s ease;
+}
