@@ -35,8 +35,9 @@
 </template>
 
 <script setup lang="ts">
-import { stepsData } from '../../data/home'
-const data = stepsData
+import { stepsData as defaultData } from '../../data/home'
+const props = defineProps({ data: { default: () => defaultData } })
+const data = props.data as typeof defaultData
 const config = useRuntimeConfig()
 const sectionRef = ref<HTMLElement | null>(null)
 useRevealSection(sectionRef)

@@ -7,7 +7,7 @@
         <p class="team__sub">{{ data.subheading }}</p>
       </div>
 
-      <!-- Cards -->
+      <!-- Desktop: paginated 3-up grid -->
       <div class="team__grid">
         <article
           v-for="attorney in paginated"
@@ -17,12 +17,7 @@
           itemtype="https://schema.org/Person"
         >
           <div class="team__photo">
-            <img
-              :src="attorney.image"
-              :alt="attorney.name"
-              itemprop="image"
-              loading="lazy"
-            />
+            <img :src="attorney.image" :alt="attorney.name" itemprop="image" loading="lazy" />
             <div class="team__photo-stats">
               <div v-if="attorney.yearsExperience" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
@@ -34,7 +29,6 @@
               </div>
             </div>
           </div>
-
           <div class="team__info">
             <p class="team__name" itemprop="name">{{ attorney.name }}</p>
             <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
@@ -44,35 +38,62 @@
         </article>
       </div>
 
-      <!-- Pagination -->
+      <!-- Mobile: swipeable scroll-snap carousel (all attorneys) -->
+      <div class="team__track" ref="trackRef" @scroll.passive="onTrackScroll">
+        <article
+          v-for="attorney in attorneys"
+          :key="attorney.id"
+          class="team__card"
+          itemscope
+          itemtype="https://schema.org/Person"
+        >
+          <div class="team__photo">
+            <img :src="attorney.image" :alt="attorney.name" itemprop="image" loading="lazy" />
+            <div class="team__photo-stats">
+              <div v-if="attorney.yearsExperience" class="team__photo-stat">
+                <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
+                <span class="team__photo-stat-label">Experience</span>
+              </div>
+              <div class="team__photo-stat">
+                <span class="team__photo-stat-value">{{ attorney.location }}</span>
+                <span class="team__photo-stat-label">Location</span>
+              </div>
+            </div>
+          </div>
+          <div class="team__info">
+            <p class="team__name" itemprop="name">{{ attorney.name }}</p>
+            <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
+            <p class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
+            <p class="team__bio" itemprop="description">{{ attorney.bio }}</p>
+          </div>
+        </article>
+      </div>
+
+      <!-- Unified pagination -->
       <div class="team__pagination" role="navigation" aria-label="Attorney pages">
         <button
           class="team__page-arrow"
-          :disabled="page === 0"
-          @click="page--"
-          aria-label="Previous page"
-        >
-          ←
-        </button>
+          :disabled="activeDot === 0"
+          @click="prev"
+          aria-label="Previous"
+        >←</button>
 
         <button
-          v-for="n in totalPages"
+          v-for="n in dotCount"
           :key="n"
           class="team__page-dot"
-          :class="{ 'is-active': page === n - 1 }"
-          @click="page = n - 1"
-          :aria-label="`Page ${n}`"
-          :aria-current="page === n - 1 ? 'page' : undefined"
+          :class="{ 'is-active': activeDot === n - 1 }"
+          @click="goTo(n - 1)"
+          :aria-label="`Go to ${n}`"
+          :aria-current="activeDot === n - 1 ? 'page' : undefined"
         />
 
         <button
           class="team__page-arrow"
-          :disabled="page === totalPages - 1"
-          @click="page++"
-          aria-label="Next page"
-        >
-          →
-        </button>
+          :disabled="activeDot === dotCount - 1"
+          @click="next"
+          aria-label="Next"
+        >→</button>
       </div>
 
     </div>
@@ -80,21 +101,76 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useMediaQuery } from '@vueuse/core'
 import { teamData } from '../../data/home'
 import attorneys from '../../data/attorneys.json'
 
 const PER_PAGE = 3
-
 const data = teamData
 const sectionRef = ref<HTMLElement | null>(null)
+const trackRef = ref<HTMLElement | null>(null)
 useRevealSection(sectionRef)
 
+const isMobile = useMediaQuery('(max-width: 767px)')
+
+// Desktop pagination state
 const page = ref(0)
 const totalPages = computed(() => Math.ceil(attorneys.length / PER_PAGE))
 const paginated = computed(() =>
   attorneys.slice(page.value * PER_PAGE, (page.value + 1) * PER_PAGE)
 )
+
+// Mobile carousel state
+const mobileIndex = ref(0)
+
+function onTrackScroll() {
+  const el = trackRef.value
+  if (!el || !el.children.length) return
+  const trackLeft = el.getBoundingClientRect().left
+  let closest = 0
+  let minDist = Infinity
+  Array.from(el.children).forEach((child, i) => {
+    const dist = Math.abs(child.getBoundingClientRect().left - trackLeft)
+    if (dist < minDist) { minDist = dist; closest = i }
+  })
+  mobileIndex.value = closest
+}
+
+function scrollToCard(i: number) {
+  const el = trackRef.value
+  if (!el) return
+  const child = el.children[i] as HTMLElement
+  child?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' })
+}
+
+// Unified dot/arrow logic
+const activeDot = computed(() => isMobile.value ? mobileIndex.value : page.value)
+const dotCount = computed(() => isMobile.value ? attorneys.length : totalPages.value)
+
+function prev() {
+  if (isMobile.value) {
+    if (mobileIndex.value > 0) scrollToCard(mobileIndex.value - 1)
+  } else {
+    if (page.value > 0) page.value--
+  }
+}
+
+function next() {
+  if (isMobile.value) {
+    if (mobileIndex.value < attorneys.length - 1) scrollToCard(mobileIndex.value + 1)
+  } else {
+    if (page.value < totalPages.value - 1) page.value++
+  }
+}
+
+function goTo(n: number) {
+  if (isMobile.value) {
+    scrollToCard(n)
+  } else {
+    page.value = n
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -128,6 +204,7 @@ const paginated = computed(() =>
     margin-inline: auto;
   }
 
+  // Desktop grid — hide on mobile
   &__grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -138,7 +215,34 @@ const paginated = computed(() =>
     }
 
     @include mobile {
-      grid-template-columns: 1fr;
+      display: none;
+    }
+  }
+
+  // Mobile carousel — hide on desktop/tablet
+  &__track {
+    display: none;
+
+    @include mobile {
+      display: flex;
+      gap: 16px;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      // Break out of the container padding so first card aligns with content edge
+      margin-inline: -24px;
+      padding-inline: 24px;
+      scroll-padding-inline-start: 24px;
+
+      &::-webkit-scrollbar { display: none; }
+
+      .team__card {
+        flex-shrink: 0;
+        width: 82%;
+        scroll-snap-align: start;
+      }
     }
   }
 
@@ -234,7 +338,7 @@ const paginated = computed(() =>
     overflow: hidden;
   }
 
-  // ── Pagination ────────────────────────────────────────────────────────────
+  // ── Pagination ──────────────────────────────────────────────────────────────
   &__pagination {
     display: flex;
     align-items: center;

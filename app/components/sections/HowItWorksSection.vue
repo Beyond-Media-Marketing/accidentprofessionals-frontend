@@ -33,10 +33,11 @@
 </template>
 
 <script setup lang="ts">
-import { howItWorksData } from "~/data/home";
-const data = howItWorksData;
-const sectionRef = ref<HTMLElement | null>(null);
-useRevealSection(sectionRef);
+import { howItWorksData as defaultData } from '../../data/home'
+const props = defineProps({ data: { default: () => defaultData } })
+const data = props.data as typeof defaultData
+const sectionRef = ref<HTMLElement | null>(null)
+useRevealSection(sectionRef)
 </script>
 
 <style lang="scss" scoped>

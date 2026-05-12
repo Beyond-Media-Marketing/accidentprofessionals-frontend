@@ -1,6 +1,10 @@
 export const heroData = {
   badge: 'Available 24/7 · No Upfront Fees',
   h1: 'One Crash Changes Everything. Speak With an Auto Accident Attorney in Georgia Today.',
+  h1Part1: 'One Crash Changes',
+  h1Accent: 'Everything.',
+  h1Subtitle: 'Speak With an Auto Accident Attorney in Georgia Today.',
+  heroBody: `Whether it was a car crash on I-285, a truck collision on I-75, a rideshare accident downtown, or a motorcycle hit-and-run, a serious accident can turn your life upside down in seconds. The insurance company will start building their case immediately—you deserve someone in your corner just as fast.`,
   description: `Whether it was a car crash on I-285, a truck collision on I-75, a rideshare accident downtown, or a motorcycle hit-and-run, a serious accident can turn your life upside down in seconds. The insurance company will start building their case immediately—you deserve someone in your corner just as fast.\n\nAccident Professionals connects you with a vetted auto accident attorney in Georgia at no cost to you. No upfront fees. No gimmicks. Just real help when you need it most.`,
   phone: '(470)-407-2800',
   phoneHref: 'tel:+14704072800',
@@ -16,6 +20,20 @@ export const heroData = {
     'Evidence preservation is time-sensitive',
   ],
   clientCount: '1,200+ Clients Helped',
+  caseOptions: [
+    { value: 'car', label: 'Car Accident' },
+    { value: 'truck', label: 'Truck Accident' },
+    { value: 'motorcycle', label: 'Motorcycle Accident' },
+    { value: 'rideshare', label: 'Rideshare Accident' },
+    { value: 'other', label: 'Other' },
+  ],
+  routeCaseTypeMap: {
+    '/auto-accidents': 'car',
+    '/truck-accidents': 'truck',
+    '/motorcycle-accidents': 'motorcycle',
+    '/rideshare-accidents': 'rideshare',
+  } as Record<string, string>,
+  formSubject: 'New Consultation Request — Accident Professionals',
 }
 
 export const howItWorksData = {
@@ -224,6 +242,8 @@ export const faqData = {
 
 export const ctaBannerData = {
   heading: `Had an Accident? Let's Talk.`,
+  headingMain: `Had an Accident?`,
+  headingAccent: ` Let's Talk.`,
   subheading: 'No pressure. No jargon. Just an honest conversation about your options.',
   phone: '(470)-407-2800',
   phoneHref: 'tel:+14704072800',

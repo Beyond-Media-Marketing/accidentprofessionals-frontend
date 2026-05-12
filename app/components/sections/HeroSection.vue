@@ -26,20 +26,15 @@
         <AppBadge class="reveal">{{ data.badge }}</AppBadge>
 
         <h1 class="hero__h1 reveal reveal-delay-1">
-          One Crash Changes<br />
-          <span class="text-accent">Everything.</span>
+          {{ data.h1Part1 }}<br />
+          <span class="text-accent">{{ data.h1Accent }}</span>
         </h1>
 
         <p class="hero__subtitle reveal reveal-delay-1">
-          Speak With an Auto Accident Attorney in Georgia Today.
+          {{ data.h1Subtitle }}
         </p>
 
-        <p class="hero__body reveal reveal-delay-2">
-          Whether it was a car crash on I-285, a truck collision on I-75, or a
-          motorcycle accident, a serious crash can turn your life upside down in
-          seconds. The insurance company will start building their case
-          immediately—you deserve someone in your corner just as fast.
-        </p>
+        <p class="hero__body reveal reveal-delay-2">{{ data.heroBody }}</p>
 
         <div class="hero__stats reveal reveal-delay-3">
           <div v-for="stat in data.stats" :key="stat.label" class="hero__stat">
@@ -99,7 +94,7 @@
                 <select id="hero-case" v-model="form.accidentType">
                   <option value="" disabled selected>Select</option>
                   <option
-                    v-for="opt in accidentOptions"
+                    v-for="opt in data.caseOptions"
                     :key="opt.value"
                     :value="opt.value"
                   >
@@ -222,20 +217,14 @@
 </template>
 
 <script setup lang="ts">
-import { heroData } from "../../data/home";
+import { heroData as defaultData } from "../../data/home";
 
-const data = heroData;
+const props = defineProps({ data: { default: () => defaultData } });
+const data = props.data as typeof defaultData;
 const config = useRuntimeConfig();
 const route = useRoute();
 
-const routeCaseTypeMap: Record<string, string> = {
-  "/auto-accidents": "car",
-  "/truck-accidents": "truck",
-  "/motorcycle-accidents": "motorcycle",
-  "/rideshare-accidents": "rideshare",
-};
-
-const defaultCaseType = routeCaseTypeMap[route.path.replace(/\/$/, "")] ?? "";
+const defaultCaseType = data.routeCaseTypeMap[route.path.replace(/\/$/, "")] ?? "";
 
 const form = reactive({
   name: "",
@@ -250,14 +239,6 @@ const submitting = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
 
-const accidentOptions = [
-  { value: "car", label: "Car Accident" },
-  { value: "truck", label: "Truck Accident" },
-  { value: "motorcycle", label: "Motorcycle Accident" },
-  { value: "rideshare", label: "Rideshare Accident" },
-  { value: "other", label: "Other" },
-];
-
 async function submitForm() {
   if (!form.name || !form.email) {
     errorMessage.value = "Please fill in your name and email.";
@@ -271,7 +252,7 @@ async function submitForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         access_key: config.public.web3FormsKey,
-        subject: "New Consultation Request — Accident Professionals",
+        subject: data.formSubject,
         name: form.name,
         email: form.email,
         phone: form.phone,

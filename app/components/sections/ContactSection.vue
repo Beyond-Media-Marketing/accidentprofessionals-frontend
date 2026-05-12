@@ -5,8 +5,8 @@
       <!-- Left: Form -->
       <div class="contact__left reveal">
         <h2 id="contact-heading" class="contact__heading">
-          Had an Accident?
-          <span class="text-accent"> Let's Talk.</span>
+          {{ data.headingMain }}
+          <span class="text-accent">{{ data.headingAccent }}</span>
         </h2>
         <p class="contact__sub">{{ data.subheading }}</p>
 
@@ -127,9 +127,10 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
-import { ctaBannerData } from '../../data/home'
+import { ctaBannerData as defaultData } from '../../data/home'
 
-const data = ctaBannerData
+const props = defineProps({ data: { default: () => defaultData } })
+const data = props.data as typeof defaultData
 const config = useRuntimeConfig()
 const sectionRef = ref<HTMLElement | null>(null)
 
