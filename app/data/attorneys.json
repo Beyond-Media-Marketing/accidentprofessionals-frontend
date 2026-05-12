@@ -2,13 +2,13 @@
   {
     "id": "brian-moore",
     "name": "Brian Moore",
-    "title": "Personal Injury Attorney",
+    "title": "Injury Attorney",
     "firm": "404 Lawyer",
     "yearsExperience": null,
     "location": "Atlanta, GA",
     "address": "1055 Howell Mill Rd Fl 8, Atlanta, GA 30318",
     "image": "/attorneys/brian-moore.webp",
-    "bio": "Brian Moore, founder of 404 Lawyer, is a seasoned Personal Injury attorney who specializes in Motor Vehicle Accidents, Slip & Fall cases, Trucking Accidents, Rideshare Accidents, and Pedestrian Motor Vehicle Crashes. He believes big insurance companies pay significant amounts when you have the right lawyer by your side — and is dedicated to restoring the health and wealth of those who have been wronged."
+    "bio": "Personal Injury Attorney Dedicated to Securing Justice and Fair Compensation."
   },
   {
     "id": "benjamin-j-rollins",
@@ -19,7 +19,7 @@
     "location": "Atlanta, GA",
     "address": "1201 West Peachtree Street, Suite 2300, Atlanta, GA 30309",
     "image": "/attorneys/benjamin-j-rollins.webp",
-    "bio": "Benjamin J. Rollins is the Managing Attorney for Rollins Law Group, known for securing significant settlements for victims. He earned his law degree from Atlanta's John Marshall Law School, where he served as President of the Black Law Students Association, and his B.A. in Business from the University of Central Florida. He is admitted to practice in the Northern and Middle District Courts of Georgia."
+    "bio": "Benjamin J. Rollins, Managing Attorney at Rollins Law Group, is known for securing significant settlements for victims and holds law and business degrees from Atlanta's John Marshall Law School and the University of Central Florida."
   },
   {
     "id": "kurtis-badger",
@@ -30,7 +30,7 @@
     "location": "Atlanta, GA",
     "address": "6065 Roswell Road, Suite 450, Atlanta, GA 30328",
     "image": "/attorneys/kurtis-badger.webp",
-    "bio": "A graduate of the University of Virginia School of Law (top-ten nationally), Kurtis Badger began his career managing complex multimillion-dollar litigation at one of the world's largest law firms. Driven to serve those wronged, he transitioned to personal injury and founded Badger Law Group — a firm renowned for its empathetic, skilled team dedicated to securing justice and substantial recoveries for clients."
+    "bio": "Kurtis Badger, Esq., brings top-tier legal know-how and vast corporate litigation experience to passionately advocate for personal injury victims."
   },
   {
     "id": "desmond-a-humphrey",
@@ -41,13 +41,13 @@
     "location": "Atlanta, GA",
     "address": "3355 Lenox Rd NE, Suite 750, Atlanta, GA 30326",
     "image": "/attorneys/desmond-humphrey.webp",
-    "bio": "An award-winning attorney regularly featured as a legal analyst on Court TV, Desmond A. Humphrey has handled hundreds of personal injury cases with a modern and innovative approach. A licensed minister and community leader, he brings a unique blend of legal prowess and compassionate faith-driven representation to every client."
+    "bio":"Desmond A. Humphrey is an award-winning attorney, known for his innovative legal methods and deep commitment to his faith. A licensed minister and trusted community leader, he provides compassionate and effective legal representation."
   },
   {
     "id": "e-david-ballard-iii",
     "name": "E. David Ballard III",
-    "title": "Personal Injury Attorney & Owner",
-    "firm": "Humphrey & Ballard Law",
+    "title": "Personal Injury Attorney",
+    "firm": "-",
     "yearsExperience": null,
     "location": "Atlanta, GA",
     "address": "3355 Lenox Rd NE, Suite 750, Atlanta, GA 30326",
@@ -63,7 +63,7 @@
     "location": "Atlanta, GA",
     "address": "Atlanta, GA",
     "image": "/attorneys/john-winkenwerder.png",
-    "bio": "John \"Wink\" Winkenwerder, Esq., founder of Wink Law, is a Georgia Rising Star recognized by Super Lawyers and Atlanta Magazine for four consecutive years. He combines his competitive drive with insider knowledge of how insurance companies operate — having worked inside defense firms — to maximize recovery for injured clients throughout the Atlanta metro area and across Georgia."
+    "bio": "Wink Law is a personal injury and wrongful death firm representing individuals and families. We are tireless advocates for those who have been injured or lost their lives due to the negligence of others. Our mission is to maximize our clients’ recovery through expertise, creative solutions, and unwavering dedication, while also maximizing the client experience through clear guidance, consistent communication, and unparalleled efficiency."
   },
   {
     "id": "ivan-bracho-gonzalez",
@@ -71,9 +71,9 @@
     "title": "Attorney at Law",
     "firm": "BRAAM Partners",
     "yearsExperience": 13,
-    "location": "Atlanta, GA",
-    "address": "Atlanta, GA",
+    "location": "TX, FL",
+    "address": "TX, FL",
     "image": "/attorneys/ivan-brancho-gonzalez.png",
-    "bio": "Ivan Bracho Gonzalez brings 13+ years of experience in the legal and judicial systems of the U.S. and Latin America, with a specialization in international arbitration, dispute resolution, and litigation. A native of Venezuela and former appellate judge, he is fully bilingual (English/Spanish) and uniquely qualified to serve clients navigating cross-border legal matters and those more comfortable in Spanish."
+    "bio": "BRAAM Partners is a law firm founded for the purpose of providing personalized and specialized legal assistance to our clients. While we operate under the American professional standards, we also give our clients the full access, attention and trust expected from lawyers in Latin America."
   }
 ]
