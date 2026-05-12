@@ -132,7 +132,12 @@
           <!-- CTA button (full width) -->
           <button type="submit" class="hero__submit" :disabled="submitting">
             {{ submitting ? "Sending…" : "Get Free Consultation" }}
-            <img src="/services-page/auto-accidents/arrow-black.svg" alt="" width="18" height="18" />
+            <img
+              src="/services-page/auto-accidents/arrow-black.svg"
+              alt=""
+              width="18"
+              height="18"
+            />
           </button>
 
           <!-- Privacy checkbox -->
@@ -224,7 +229,8 @@ const data = props.data as typeof defaultData;
 const config = useRuntimeConfig();
 const route = useRoute();
 
-const defaultCaseType = data.routeCaseTypeMap[route.path.replace(/\/$/, "")] ?? "";
+const defaultCaseType =
+  data.routeCaseTypeMap[route.path.replace(/\/$/, "")] ?? "";
 
 const form = reactive({
   name: "",
@@ -370,7 +376,7 @@ async function submitForm() {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    padding-top: 100px;
+    padding-top: 20px;
 
     @include tablet-down {
       padding-top: 0;
