@@ -78,18 +78,36 @@ useRevealSection(sectionRef);
 
 const open = ref<Set<number>>(new Set([1, 2]));
 
+// Each row is a pair: [0,1] and [2,3]. Opening one always closes its partner.
 function toggle(i: number) {
+  const partner = i % 2 === 0 ? i + 1 : i - 1;
   const next = new Set(open.value);
-  next.has(i) ? next.delete(i) : next.add(i);
+  if (next.has(i)) {
+    next.delete(i);
+    next.add(partner);
+  } else {
+    next.add(i);
+    next.delete(partner);
+  }
   open.value = next;
+  // restart auto-cycle so it doesn't cut short a manual interaction
+  restartTimer();
 }
 
 let timer: ReturnType<typeof setInterval>;
-onMounted(() => {
+
+function startTimer() {
   timer = setInterval(() => {
     open.value = open.value.has(1) ? new Set([0, 3]) : new Set([1, 2]);
   }, 5000);
-});
+}
+
+function restartTimer() {
+  clearInterval(timer);
+  startTimer();
+}
+
+onMounted(startTimer);
 onUnmounted(() => clearInterval(timer));
 </script>
 

@@ -126,6 +126,11 @@ useRevealSection(sectionRef)
     opacity: 0.18;
     min-width: 80px;
     text-align: center;
+
+    @include mobile {
+      font-size: 56px;
+      min-width: 44px;
+    }
   }
 
   &__step-content {
