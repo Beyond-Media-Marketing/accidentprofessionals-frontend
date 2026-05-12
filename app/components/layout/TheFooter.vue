@@ -10,7 +10,7 @@
             aria-label="Accident Professionals"
           >
             <img
-              src="/brand/logo.png"
+              src="/brand/footer-logo.png"
               alt="Accident Professionals"
               width="178"
               height="37"
@@ -93,7 +93,6 @@ const year = new Date().getFullYear();
   &__logo img {
     height: 37px;
     width: auto;
-    filter: brightness(0) invert(1);
   }
 
   &__tagline {
