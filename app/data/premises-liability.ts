@@ -215,5 +215,5 @@ export const ctaBannerData = {
   subheading: `No pressure. No jargon. Just an honest conversation about whether you have a case.`,
   phone: '(470)-407-2800',
   phoneHref: 'tel:+14704072800',
-  cta: 'Get Your Free Consultation →',
+  cta: 'Get Your Free Consultation',
 }

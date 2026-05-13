@@ -284,7 +284,7 @@ function goTo(n: number) {
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
     background: rgba(150, 150, 150, 0.19);
-    flex: 1;
+    flex: 0 0 calc(50% - 4px);
   }
 
   &__photo-stat-value {

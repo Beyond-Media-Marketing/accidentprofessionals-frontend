@@ -213,5 +213,5 @@ export const ctaBannerData = {
   subheading: `No pressure. No jargon. And no—your employer doesn't have to know you called.`,
   phone: '(470)-407-2800',
   phoneHref: 'tel:+14704072800',
-  cta: 'Get Your Free Consultation →',
+  cta: 'Get Your Free Consultation',
 }
