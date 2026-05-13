@@ -76,7 +76,6 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       web3FormsKey: process.env.WEB3FORMS_KEY ?? '',
-      turnstileSiteKey: process.env.TURNSTILE_SITE_KEY ?? '',
       phone: '(470)-407-2800',
       phoneHref: 'tel:+14704072800',
     },

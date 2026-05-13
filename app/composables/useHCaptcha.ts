@@ -1,46 +1,47 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
+// Web3Forms free-tier hCaptcha sitekey — no custom account needed
+const WEB3FORMS_HCAPTCHA_SITEKEY = '50b2fe65-b00b-4b9e-ad62-3ba471098be2'
+
 declare global {
   interface Window {
-    turnstile: {
+    hcaptcha: {
       render: (el: string | HTMLElement, opts: Record<string, unknown>) => string
       reset: (widgetId: string) => void
       remove: (widgetId: string) => void
     }
-    onTurnstileLoad?: () => void
+    onHCaptchaLoad?: () => void
   }
 }
 
-export function useTurnstile(containerId: string) {
+export function useHCaptcha(containerId: string) {
   const token = ref('')
-  const config = useRuntimeConfig()
   let widgetId = ''
 
   function renderWidget() {
     const el = document.getElementById(containerId)
-    if (!el || !window.turnstile || !config.public.turnstileSiteKey) return
-    widgetId = window.turnstile.render(el, {
-      sitekey: config.public.turnstileSiteKey,
+    if (!el || !window.hcaptcha) return
+    widgetId = window.hcaptcha.render(el, {
+      sitekey: WEB3FORMS_HCAPTCHA_SITEKEY,
       callback: (t: string) => { token.value = t },
       'expired-callback': () => { token.value = '' },
       'error-callback': () => { token.value = '' },
-      theme: 'auto',
+      theme: 'light',
     })
   }
 
   function reset() {
     token.value = ''
-    if (widgetId && window.turnstile) window.turnstile.reset(widgetId)
+    if (widgetId && window.hcaptcha) window.hcaptcha.reset(widgetId)
   }
 
   onMounted(() => {
-    if (!config.public.turnstileSiteKey) return
-    if (window.turnstile) {
+    if (window.hcaptcha) {
       renderWidget()
     } else {
-      window.onTurnstileLoad = renderWidget
+      window.onHCaptchaLoad = renderWidget
       const script = document.createElement('script')
-      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad'
+      script.src = 'https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoad&render=explicit'
       script.async = true
       script.defer = true
       document.head.appendChild(script)
@@ -48,7 +49,7 @@ export function useTurnstile(containerId: string) {
   })
 
   onUnmounted(() => {
-    if (widgetId && window.turnstile) window.turnstile.remove(widgetId)
+    if (widgetId && window.hcaptcha) window.hcaptcha.remove(widgetId)
   })
 
   return { token, reset }

@@ -122,7 +122,7 @@
           </label>
 
           <!-- Turnstile widget -->
-          <div v-if="config.public.turnstileSiteKey" id="contact-turnstile" />
+          <div id="contact-hcaptcha" />
 
           <AppButton
             tag="button"
@@ -172,7 +172,7 @@ import { useRoute } from "vue-router";
 import { ctaBannerData as defaultData } from "../../data/auto-accidents";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
-import { useTurnstile } from "../../composables/useTurnstile";
+import { useHCaptcha } from "../../composables/useHCaptcha";
 
 const props = defineProps({ data: { default: () => defaultData } });
 const data = props.data as typeof defaultData;
@@ -198,11 +198,11 @@ const dialCode = computed(
   () => countries.find((c) => c.code === form.countryCode)?.dial ?? "+1"
 );
 const { push: gtmPush } = useDataLayer();
-const { token: turnstileToken, reset: resetTurnstile } = useTurnstile("contact-turnstile");
+const { token: hcaptchaToken, reset: resetHCaptcha } = useHCaptcha("contact-hcaptcha");
 
 const canSubmit = computed(() =>
   form.agreed && !loading.value &&
-  (!config.public.turnstileSiteKey || !!turnstileToken.value)
+  !!hcaptchaToken.value
 );
 
 async function submit() {
@@ -226,7 +226,7 @@ async function submit() {
         case_type: form.caseType,
         message: form.message,
         service_page: route.path,
-        ...(turnstileToken.value && { "cf-turnstile-response": turnstileToken.value }),
+        ...(hcaptchaToken.value && { "h-captcha-response": hcaptchaToken.value }),
       }),
     });
     const json = await res.json();
@@ -241,14 +241,14 @@ async function submit() {
       Object.assign(form, {
         name: "", email: "", phone: "", caseType: "", message: "", agreed: false,
       });
-      resetTurnstile();
+      resetHCaptcha();
     } else {
       formError.value = true;
-      resetTurnstile();
+      resetHCaptcha();
     }
   } catch {
     formError.value = true;
-    resetTurnstile();
+    resetHCaptcha();
   } finally {
     loading.value = false;
   }
@@ -260,7 +260,7 @@ onMounted(() => {
   if (!sectionRef.value) return;
   const obs = new IntersectionObserver(
     (entries) => {
-      if (entries[0].isIntersecting) {
+      if (entries[0]?.isIntersecting) {
         sectionVisible.value = true;
         obs.disconnect();
       }

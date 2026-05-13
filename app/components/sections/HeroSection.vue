@@ -131,9 +131,8 @@
             />
           </div>
 
-          <!-- CTA button (full width) -->
-          <!-- Turnstile widget (invisible when no sitekey configured) -->
-          <div v-if="config.public.turnstileSiteKey" id="hero-turnstile" />
+          <!-- hCaptcha widget — only renders when HCAPTCHA_SITE_KEY is set -->
+          <div id="hero-hcaptcha" />
 
           <button type="submit" class="hero__submit" :disabled="!canSubmit">
             {{ submitting ? "Sending…" : "Get Free Consultation" }}
@@ -231,7 +230,7 @@ import { computed } from "vue";
 import { heroData as defaultData } from "../../data/auto-accidents";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
-import { useTurnstile } from "../../composables/useTurnstile";
+import { useHCaptcha } from "../../composables/useHCaptcha";
 
 const props = defineProps({ data: { default: () => defaultData } });
 const data = props.data as typeof defaultData;
@@ -255,14 +254,14 @@ const dialCode = computed(
   () => countries.find((c) => c.code === form.countryCode)?.dial ?? "+1"
 );
 const { push: gtmPush } = useDataLayer();
-const { token: turnstileToken, reset: resetTurnstile } = useTurnstile("hero-turnstile");
+const { token: hcaptchaToken, reset: resetHCaptcha } = useHCaptcha("hero-hcaptcha");
 const submitting = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
 
 const canSubmit = computed(() =>
   form.agreed && !submitting.value &&
-  (!config.public.turnstileSiteKey || !!turnstileToken.value)
+  !!hcaptchaToken.value
 );
 
 async function submitForm() {
@@ -289,7 +288,7 @@ async function submitForm() {
         accident_type: form.accidentType,
         description: form.description,
         service_page: route.path,
-        ...(turnstileToken.value && { "cf-turnstile-response": turnstileToken.value }),
+        ...(hcaptchaToken.value && { "h-captcha-response": hcaptchaToken.value }),
       }),
     });
     const result = await res.json();
@@ -304,14 +303,14 @@ async function submitForm() {
       Object.assign(form, {
         name: "", email: "", phone: "", accidentType: "", description: "", agreed: false,
       });
-      resetTurnstile();
+      resetHCaptcha();
     } else {
       errorMessage.value = "Something went wrong. Please call us directly.";
-      resetTurnstile();
+      resetHCaptcha();
     }
   } catch {
     errorMessage.value = "Unable to submit. Please call us directly.";
-    resetTurnstile();
+    resetHCaptcha();
   } finally {
     submitting.value = false;
   }
