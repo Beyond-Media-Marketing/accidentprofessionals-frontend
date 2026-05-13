@@ -124,17 +124,23 @@ const paginated = computed(() =>
 // Mobile carousel state
 const mobileIndex = ref(0)
 
+let rafPending = false
 function onTrackScroll() {
-  const el = trackRef.value
-  if (!el || !el.children.length) return
-  const trackLeft = el.getBoundingClientRect().left
-  let closest = 0
-  let minDist = Infinity
-  Array.from(el.children).forEach((child, i) => {
-    const dist = Math.abs(child.getBoundingClientRect().left - trackLeft)
-    if (dist < minDist) { minDist = dist; closest = i }
+  if (rafPending) return
+  rafPending = true
+  requestAnimationFrame(() => {
+    rafPending = false
+    const el = trackRef.value
+    if (!el || !el.children.length) return
+    const trackLeft = el.getBoundingClientRect().left
+    let closest = 0
+    let minDist = Infinity
+    Array.from(el.children).forEach((child, i) => {
+      const dist = Math.abs(child.getBoundingClientRect().left - trackLeft)
+      if (dist < minDist) { minDist = dist; closest = i }
+    })
+    mobileIndex.value = closest
   })
-  mobileIndex.value = closest
 }
 
 function scrollToCard(i: number) {

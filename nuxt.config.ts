@@ -18,9 +18,13 @@ export default defineNuxtConfig({
       'Fira Sans': [400, 500, 600, 700],
       'DM Sans': [400, 500, 600],
     },
+    subsets: ['latin'],
     display: 'swap',
     preload: true,
+    download: true,
+    inject: true,
   },
+
 
   css: ['~/assets/scss/main.scss'],
 
@@ -31,6 +35,9 @@ export default defineNuxtConfig({
           additionalData: `@import "${resolve(__dirname, 'app/assets/scss/_mixins')}";`,
         },
       },
+    },
+    build: {
+      cssCodeSplit: false,
     },
   },
 
