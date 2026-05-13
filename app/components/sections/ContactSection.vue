@@ -1,7 +1,6 @@
 <template>
   <section class="contact" ref="sectionRef" aria-labelledby="contact-heading">
     <div class="contact__inner">
-
       <!-- Left: Form -->
       <div class="contact__left reveal">
         <h2 id="contact-heading" class="contact__heading">
@@ -11,11 +10,22 @@
         <p class="contact__sub">{{ data.subheading }}</p>
 
         <form class="contact__form" @submit.prevent="submit" novalidate>
-          <input type="hidden" name="access_key" :value="config.public.web3FormsKey" />
-          <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" />
+          <input
+            type="hidden"
+            name="access_key"
+            :value="config.public.web3FormsKey"
+          />
+          <input
+            type="checkbox"
+            name="botcheck"
+            style="display: none"
+            tabindex="-1"
+          />
 
           <div class="contact__field">
-            <label for="cf-name" class="contact__label">Full name <span class="contact__req">*</span></label>
+            <label for="cf-name" class="contact__label"
+              >Full name <span class="contact__req">*</span></label
+            >
             <input
               id="cf-name"
               v-model="form.name"
@@ -28,7 +38,9 @@
           </div>
 
           <div class="contact__field">
-            <label for="cf-email" class="contact__label">Email <span class="contact__req">*</span></label>
+            <label for="cf-email" class="contact__label"
+              >Email <span class="contact__req">*</span></label
+            >
             <input
               id="cf-email"
               v-model="form.email"
@@ -67,7 +79,16 @@
                 <option value="Other">Other</option>
               </select>
               <span class="contact__chevron" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </span>
@@ -86,74 +107,105 @@
           </div>
 
           <label class="contact__privacy">
-            <input type="checkbox" v-model="form.agreed" required class="contact__checkbox" />
-            <span>You agree to our friendly <a href="/privacy-policy" class="contact__privacy-link">privacy policy</a>.</span>
+            <input
+              type="checkbox"
+              v-model="form.agreed"
+              required
+              class="contact__checkbox"
+            />
+            <span
+              >You agree to our friendly
+              <a href="/privacy-policy" class="contact__privacy-link"
+                >privacy policy</a
+              >.</span
+            >
           </label>
 
-          <AppButton tag="button" type="submit" class="contact__submit" :disabled="loading">
-            {{ loading ? 'Sending…' : data.cta }}
-            <img v-if="!loading" src="/services-page/auto-accidents/arrow-black.svg" alt="" width="18" height="18" />
+          <AppButton
+            tag="button"
+            type="submit"
+            class="contact__submit"
+            :disabled="loading"
+          >
+            {{ loading ? "Sending…" : data.cta }}
+            <img
+              v-if="!loading"
+              src="/services-page/auto-accidents/arrow-black.svg"
+              alt=""
+              width="18"
+              height="18"
+            />
           </AppButton>
 
-          <p v-if="success" class="contact__success" role="status">Thank you! We'll be in touch shortly.</p>
-          <p v-if="formError" class="contact__error" role="alert">Something went wrong. Please try again.</p>
+          <p v-if="success" class="contact__success" role="status">
+            Thank you! We'll be in touch shortly.
+          </p>
+          <p v-if="formError" class="contact__error" role="alert">
+            Something went wrong. Please try again.
+          </p>
         </form>
 
-        <p class="contact__trust">Available 24/7 · No upfront fees · Multilingual support</p>
+        <p class="contact__trust">
+          Available 24/7 · No upfront fees · Multilingual support
+        </p>
       </div>
 
       <!-- Right: Image -->
       <div class="contact__right reveal reveal-delay-2">
         <img
-          src="/services-page/auto-accidents/image-end.png"
+          src="/services-page/auto-accidents/image-end.webp"
           alt="Attorney consultation"
           class="contact__image"
           loading="lazy"
         />
       </div>
-
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
-import { ctaBannerData as defaultData } from '../../data/home'
-import { countries } from '../../data/countries'
-import { useDataLayer } from '../../composables/useDataLayer'
+import { ref, reactive, computed, onMounted } from "vue";
+import { ctaBannerData as defaultData } from "../../data/home";
+import { countries } from "../../data/countries";
+import { useDataLayer } from "../../composables/useDataLayer";
 
-const props = defineProps({ data: { default: () => defaultData } })
-const data = props.data as typeof defaultData
-const config = useRuntimeConfig()
-const sectionRef = ref<HTMLElement | null>(null)
+const props = defineProps({ data: { default: () => defaultData } });
+const data = props.data as typeof defaultData;
+const config = useRuntimeConfig();
+const sectionRef = ref<HTMLElement | null>(null);
 
-const loading = ref(false)
-const success = ref(false)
-const formError = ref(false)
+const loading = ref(false);
+const success = ref(false);
+const formError = ref(false);
 
 const form = reactive({
-  name: '',
-  email: '',
-  phone: '',
-  countryCode: 'US',
-  caseType: '',
-  message: '',
+  name: "",
+  email: "",
+  phone: "",
+  countryCode: "US",
+  caseType: "",
+  message: "",
   agreed: false,
-})
+});
 
-const dialCode = computed(() => countries.find(c => c.code === form.countryCode)?.dial ?? '+1')
-const { push: gtmPush } = useDataLayer()
+const dialCode = computed(
+  () => countries.find((c) => c.code === form.countryCode)?.dial ?? "+1"
+);
+const { push: gtmPush } = useDataLayer();
 
 async function submit() {
-  if (!form.agreed) return
-  loading.value = true
-  success.value = false
-  formError.value = false
+  if (!form.agreed) return;
+  loading.value = true;
+  success.value = false;
+  formError.value = false;
 
   try {
-    const res = await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    const res = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify({
         access_key: config.public.web3FormsKey,
         name: form.name,
@@ -162,34 +214,48 @@ async function submit() {
         case_type: form.caseType,
         message: form.message,
       }),
-    })
-    const json = await res.json()
+    });
+    const json = await res.json();
     if (json.success) {
-      success.value = true
-      gtmPush({ event: 'form_submit', form_id: 'contact_form', case_type: form.caseType })
-      Object.assign(form, { name: '', email: '', phone: '', caseType: '', message: '', agreed: false })
+      success.value = true;
+      gtmPush({
+        event: "form_submit",
+        form_id: "contact_form",
+        case_type: form.caseType,
+      });
+      Object.assign(form, {
+        name: "",
+        email: "",
+        phone: "",
+        caseType: "",
+        message: "",
+        agreed: false,
+      });
     } else {
-      formError.value = true
+      formError.value = true;
     }
   } catch {
-    formError.value = true
+    formError.value = true;
   } finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
-const sectionVisible = ref(false)
+const sectionVisible = ref(false);
 
 onMounted(() => {
-  if (!sectionRef.value) return
-  const obs = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      sectionVisible.value = true
-      obs.disconnect()
-    }
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' })
-  obs.observe(sectionRef.value)
-})
+  if (!sectionRef.value) return;
+  const obs = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting) {
+        sectionVisible.value = true;
+        obs.disconnect();
+      }
+    },
+    { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+  );
+  obs.observe(sectionRef.value);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -270,7 +336,9 @@ onMounted(() => {
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
-    &::placeholder { color: #b0aca8; }
+    &::placeholder {
+      color: #b0aca8;
+    }
 
     &:focus {
       border-color: var(--color-accent);
@@ -293,7 +361,10 @@ onMounted(() => {
       border-radius: 0 8px 8px 0;
       flex: 1;
 
-      &:focus { box-shadow: none; border-color: #e2e0dd; }
+      &:focus {
+        box-shadow: none;
+        border-color: #e2e0dd;
+      }
     }
   }
 
@@ -362,7 +433,9 @@ onMounted(() => {
     text-decoration: underline;
     text-underline-offset: 2px;
 
-    &:hover { color: var(--color-accent); }
+    &:hover {
+      color: var(--color-accent);
+    }
   }
 
   &__submit {

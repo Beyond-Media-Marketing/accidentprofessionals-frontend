@@ -241,7 +241,9 @@ const form = reactive({
   agreed: false,
 });
 
-const dialCode = computed(() => countries.find(c => c.code === form.countryCode)?.dial ?? '+1');
+const dialCode = computed(
+  () => countries.find((c) => c.code === form.countryCode)?.dial ?? "+1"
+);
 const { push: gtmPush } = useDataLayer();
 const submitting = ref(false);
 const successMessage = ref("");
@@ -271,7 +273,11 @@ async function submitForm() {
     const result = await res.json();
     if (result.success) {
       successMessage.value = "Thank you! We'll be in touch shortly.";
-      gtmPush({ event: 'form_submit', form_id: 'hero_form', case_type: form.accidentType });
+      gtmPush({
+        event: "form_submit",
+        form_id: "hero_form",
+        case_type: form.accidentType,
+      });
       Object.assign(form, {
         name: "",
         email: "",
@@ -307,7 +313,7 @@ async function submitForm() {
   &__bg {
     position: absolute;
     inset: 0;
-    background-image: url("/services-page/auto-accidents/hero-bg.png");
+    background-image: url("/services-page/auto-accidents/hero-bg.webp");
     background-size: cover;
     background-position: center top;
   }
@@ -604,13 +610,33 @@ async function submitForm() {
     letter-spacing: -0.01em;
     box-shadow: var(--shadow-button);
     transition: transform var(--transition-base), opacity var(--transition-base);
+    position: relative;
+    overflow: visible;
+
+    // Pulse ring — composited (transform + opacity only, no box-shadow)
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      border: 2px solid var(--color-accent);
+      opacity: 0;
+      animation: pulse-ring 2.5s ease-out infinite;
+      pointer-events: none;
+    }
 
     &:hover:not(:disabled) {
       transform: translateY(-2px);
+      &::after {
+        animation: none;
+      }
     }
     &:disabled {
       opacity: 0.6;
       cursor: not-allowed;
+      &::after {
+        animation: none;
+      }
     }
   }
 

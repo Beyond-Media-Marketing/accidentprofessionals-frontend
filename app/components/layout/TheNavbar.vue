@@ -11,6 +11,8 @@
           alt="Accident Professionals"
           width="178"
           height="37"
+          fetchpriority="high"
+          loading="eager"
         />
       </NuxtLink>
 

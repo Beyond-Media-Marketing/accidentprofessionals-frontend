@@ -37,7 +37,7 @@ export const heroData = {
 export const howItWorksData = {
   heading: 'How We Help After a Workplace Injury in Georgia',
   subheading: `We're not a law firm—we're the bridge between you and one. When you call Accident Professionals, you're not navigating the workers' compensation system or the legal process alone. We connect you with a vetted local workplace accident attorney in Georgia, and stay alongside you to answer all your questions and provide guidance.`,
-  image: '/services-page/auto-accidents/image1.png',
+  image: '/services-page/auto-accidents/image1.webp',
   imageAlt: 'Accident Professionals attorney consultation',
   steps: [
     {

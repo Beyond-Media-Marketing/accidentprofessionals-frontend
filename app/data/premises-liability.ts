@@ -39,7 +39,7 @@ export const heroData = {
 export const howItWorksData = {
   heading: 'How We Help After a Property Injury in Georgia',
   subheading: `We're not a law firm—we're the bridge between you and one. When you call Accident Professionals, you're not navigating premises liability law alone. We connect you with a vetted local premises liability attorney in Georgia, and stay alongside you to answer all your questions and provide guidance throughout your case.`,
-  image: '/services-page/auto-accidents/image1.png',
+  image: '/services-page/auto-accidents/image1.webp',
   imageAlt: 'Accident Professionals attorney consultation',
   steps: [
     {

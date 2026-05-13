@@ -58,7 +58,7 @@ const data = props.data as typeof defaultData;
   &__bg {
     position: absolute;
     inset: 0;
-    background-image: url("/services-page/auto-accidents/black-bg.png");
+    background-image: url("/services-page/auto-accidents/black-bg.webp");
     background-size: cover;
     background-position: center;
   }

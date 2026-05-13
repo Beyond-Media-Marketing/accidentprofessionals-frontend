@@ -39,7 +39,7 @@ export const heroData = {
 export const howItWorksData = {
   heading: 'How We Help After a Vehicle Accident in Georgia',
   subheading: `We're not a law firm—we're the bridge between you and one. When you call Accident Professionals, you're not navigating the legal system alone. We connect you with a vetted local auto accident attorney in Georgia, and stay alongside you to answer all your questions and provide guidance.`,
-  image: '/services-page/auto-accidents/image1.png',
+  image: '/services-page/auto-accidents/image1.webp',
   imageAlt: 'Accident Professionals attorney consultation',
   steps: [
     {
@@ -139,7 +139,7 @@ export const teamData = {
   subheading: 'Meet our dedicated team of attorneys, committed to providing expert legal guidance and support tailored to your needs.',
   attorneys: [
     {
-      image: '/services-page/auto-accidents/image1.png',
+      image: '/services-page/auto-accidents/image1.webp',
       name: 'James R. Whitaker',
       role: 'Founding Partner',
       bio: 'Fights to maximize compensation for car accident victims across Georgia.',
@@ -149,7 +149,7 @@ export const teamData = {
       ],
     },
     {
-      image: '/services-page/auto-accidents/image1.png',
+      image: '/services-page/auto-accidents/image1.webp',
       name: 'Maria L. Santos',
       role: 'Senior Attorney',
       bio: 'Specializes in truck and commercial vehicle accident cases across Georgia.',
@@ -159,7 +159,7 @@ export const teamData = {
       ],
     },
     {
-      image: '/services-page/auto-accidents/image1.png',
+      image: '/services-page/auto-accidents/image1.webp',
       name: 'David K. Thompson',
       role: 'Trial Attorney',
       bio: 'Dedicated advocate for motorcycle and rideshare accident victims.',
