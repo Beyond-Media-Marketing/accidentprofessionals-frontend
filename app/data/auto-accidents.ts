@@ -11,16 +11,16 @@ export const heroData = {
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
   stats: [
-    { value: '99%', label: 'Success Rate' },
-    { value: '24/7', label: 'Availability' },
-    { value: '$5M+', label: 'Settled' },
+    { value: '85', label: 'Closed Cases Assisted' },
+    { value: '$2.39M+', label: 'in Total Recovery' },
+    { value: '$28K+', label: 'Average Settlement' },
   ],
   urgencyBullets: [
     'Insurance companies build their case immediately',
     'Early statements can hurt your claim',
     'Evidence preservation is time-sensitive',
   ],
-  clientCount: '1,200+ Clients Helped',
+  clientCount: '100+ Clients Helped',
   caseOptions: [
     { value: 'car', label: 'Car Accident' },
     { value: 'truck', label: 'Truck Accident' },
@@ -69,7 +69,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/auto-accidents/car-accidents.png',
       title: 'Car Accidents',
-      description: `Rear-end collisions, T-bones, and hit-and-runs happen every day on Georgia roads. We connect you with a <a href="/car-accidents">car accident lawyer in Georgia</a> who knows how to build your case and deal with insurance companies.`,
+      description: `Rear-end collisions, T-bones, and hit-and-runs happen every day on Georgia roads. We connect you with a car accident lawyer in Georgia who knows how to build your case and deal with insurance companies.`,
       link: '/car-accidents',
       linkText: 'Car Accidents Help',
       linkAnchor: 'car accident attorney Georgia',
@@ -77,7 +77,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/auto-accidents/truck-accidents.png',
       title: 'Truck Accidents',
-      description: `18-wheelers and commercial vehicles involve complex liability and higher stakes. We connect you with a <a href="/truck-accidents">truck accident attorney in Georgia</a> who understands how to handle these cases.`,
+      description: `18-wheelers and commercial vehicles involve complex liability and higher stakes. We connect you with a truck accident attorney in Georgia who understands how to handle these cases.`,
       link: '/truck-accidents',
       linkText: 'Truck Accidents Help',
       linkAnchor: 'truck accident attorney Georgia',
@@ -85,7 +85,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/auto-accidents/motorcycle-accidents.png',
       title: 'Motorcycle Accidents',
-      description: `Motorcyclists face serious risks and unfair bias after accidents. We connect you with a <a href="/motorcycle-accidents">motorcycle accident lawyer in Georgia</a> who knows how to fight for riders' rights.`,
+      description: `Motorcyclists face serious risks and unfair bias after accidents. We connect you with a motorcycle accident lawyer in Georgia who knows how to fight for riders' rights.`,
       link: '/motorcycle-accidents',
       linkText: 'Motorcycle Accidents Help',
       linkAnchor: 'motorcycle accident lawyer Georgia',
@@ -93,7 +93,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/auto-accidents/rideshare-accidents.svg',
       title: 'Rideshare Accidents',
-      description: `Uber and Lyft accidents involve layered insurance policies and multiple parties. We match you with a <a href="/rideshare-accidents">rideshare accident attorney in Georgia</a> who understands how these claims work.`,
+      description: `Uber and Lyft accidents involve layered insurance policies and multiple parties. We match you with a rideshare accident attorney in Georgia who understands how these claims work.`,
       link: '/rideshare-accidents',
       linkText: 'Rideshare Accidents Help',
       linkAnchor: 'rideshare accident attorney Georgia',
@@ -249,4 +249,5 @@ export const ctaBannerData = {
   phone: '(470)-407-2800',
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
+  formSubject: 'New Auto Accident Consultation Request — Accident Professionals',
 }

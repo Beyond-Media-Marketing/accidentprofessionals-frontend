@@ -11,16 +11,16 @@ export const heroData = {
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
   stats: [
-    { value: '99%', label: 'Success Rate' },
-    { value: '24/7', label: 'Availability' },
-    { value: '$5M+', label: 'Settled' },
+    { value: '85', label: 'Closed Cases Assisted' },
+    { value: '$2.39M+', label: 'in Total Recovery' },
+    { value: '$28K+', label: 'Average Settlement' },
   ],
   urgencyBullets: [
     `Employer's insurer builds their case immediately`,
     'Early statements can limit your benefits',
     'Filing deadlines are strict in Georgia',
   ],
-  clientCount: '1,200+ Clients Helped',
+  clientCount: '100+ Clients Helped',
   caseOptions: [
     { value: 'workers-comp', label: `Workers' Compensation` },
     { value: 'third-party', label: 'Third-Party Injury Claim' },
@@ -67,7 +67,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/workplace-accidents/workers-compensation-claims.png',
       title: `Workers' Compensation Claims`,
-      description: `Georgia requires most employers to carry workers' comp insurance. If you're injured on the job, you're generally entitled to benefits regardless of fault. We connect you with a <a href="/workers-compensation">workers' compensation attorney in Georgia</a> who knows how to protect your claim.`,
+      description: `Georgia requires most employers to carry workers' comp insurance. If you're injured on the job, you're generally entitled to benefits regardless of fault. We connect you with a workers' compensation attorney in Georgia who knows how to protect your claim.`,
       link: '/workers-compensation',
       linkText: `Workers' Comp Help`,
       linkAnchor: 'workers compensation attorney Georgia',
@@ -75,7 +75,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/workplace-accidents/third-party-personal-injury-claims.png',
       title: 'Third-Party Personal Injury Claims',
-      description: `If a contractor, equipment manufacturer, or property owner contributed to your injury, you may have a claim beyond workers' comp. We connect you with an <a href="/third-party-workplace-injury">on-the-job injury lawyer in Georgia</a> who can pursue full damages—including pain and suffering.`,
+      description: `If a contractor, equipment manufacturer, or property owner contributed to your injury, you may have a claim beyond workers' comp. We connect you with an on-the-job injury lawyer in Georgia who can pursue full damages—including pain and suffering.`,
       link: '/third-party-workplace-injury',
       linkText: 'Personal Injury Help',
       linkAnchor: 'third party workplace injury claim Georgia',
@@ -83,7 +83,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/workplace-accidents/construction-and-job-site-injuries.png',
       title: 'Construction & Job Site Injuries',
-      description: `Falls, scaffolding collapses, heavy machinery injuries, and electrical incidents are among the most serious workplace injuries in Georgia. We connect you with a <a href="/construction-accidents">construction accident attorney in Georgia</a> who understands site liability and contractor responsibility.`,
+      description: `Falls, scaffolding collapses, heavy machinery injuries, and electrical incidents are among the most serious workplace injuries in Georgia. We connect you with a construction accident attorney in Georgia who understands site liability and contractor responsibility.`,
       link: '/construction-accidents',
       linkText: 'Construction Injuries Help',
       linkAnchor: 'construction accident attorney Georgia',
@@ -91,7 +91,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/workplace-accidents/on-the-road-injuries.png',
       title: 'On-the-Road Work Injuries',
-      description: `Delivery drivers, field workers, and anyone injured in a vehicle accident while on the clock may qualify for both workers' compensation and a personal injury claim. We match you with a <a href="/on-road-work-injuries">workplace accident attorney in Georgia</a> who handles dual-claim cases.`,
+      description: `Delivery drivers, field workers, and anyone injured in a vehicle accident while on the clock may qualify for both workers' compensation and a personal injury claim. We match you with a workplace accident attorney in Georgia who handles dual-claim cases.`,
       link: '/on-road-work-injuries',
       linkText: 'On-the-Road Injuries Help',
       linkAnchor: 'on the job injury lawyer Georgia',
@@ -215,4 +215,5 @@ export const ctaBannerData = {
   phone: '(470)-407-2800',
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
+  formSubject: 'New Workplace Accident Consultation Request — Accident Professionals',
 }

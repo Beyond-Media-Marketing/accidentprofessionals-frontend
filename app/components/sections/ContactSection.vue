@@ -1,5 +1,5 @@
 <template>
-  <section class="contact" ref="sectionRef" aria-labelledby="contact-heading">
+  <section id="contact-section" class="contact" ref="sectionRef" aria-labelledby="contact-heading">
     <div class="contact__inner">
       <!-- Left: Form -->
       <div class="contact__left reveal">
@@ -220,6 +220,7 @@ async function submit() {
       },
       body: JSON.stringify({
         access_key: config.public.web3FormsKey,
+        subject: data.formSubject,
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,

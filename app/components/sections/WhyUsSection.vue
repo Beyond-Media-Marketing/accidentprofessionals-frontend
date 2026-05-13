@@ -16,9 +16,11 @@
       <div class="why__body">
         <div class="why__left reveal reveal-delay-1">
           <p class="why__lead">
-            <span class="text-accent">Accident Professionals con</span>nects you
-            with an auto accident attorney in Georgia before you say anything
-            that could be used against you. That changes everything.
+            <span class="text-accent">{{ leadTyped }}</span><span
+              class="why__cursor"
+              :class="{ 'why__cursor--done': leadTypingDone }"
+              aria-hidden="true"
+            >|</span>{{ leadUntyped }}
           </p>
           <p class="why__caption">{{ data.body3 }}</p>
         </div>
@@ -68,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted } from "vue";
 import { whyUsData as defaultData } from "../../data/auto-accidents";
 
 const props = defineProps({ data: { default: () => defaultData } });
@@ -90,7 +92,6 @@ function toggle(i: number) {
     next.delete(partner);
   }
   open.value = next;
-  // restart auto-cycle so it doesn't cut short a manual interaction
   restartTimer();
 }
 
@@ -107,8 +108,40 @@ function restartTimer() {
   startTimer();
 }
 
-onMounted(startTimer);
-onUnmounted(() => clearInterval(timer));
+// ── Typewriter (lead paragraph) ─────────────────────────────────────────────
+const typedCount = ref(0);
+const leadTyped = computed(() => data.body2.slice(0, typedCount.value));
+const leadUntyped = computed(() => data.body2.slice(typedCount.value));
+const leadTypingDone = computed(() => typedCount.value >= data.body2.length);
+
+let typingTimer: ReturnType<typeof setTimeout> | null = null;
+
+function typeNext() {
+  if (typedCount.value >= data.body2.length) return;
+  typedCount.value++;
+  typingTimer = setTimeout(typeNext, 20);
+}
+
+onMounted(() => {
+  startTimer();
+  const el = sectionRef.value;
+  if (!el) return;
+  const obs = new IntersectionObserver(
+    (entries) => {
+      if (entries[0]?.isIntersecting) {
+        setTimeout(typeNext, 300);
+        obs.disconnect();
+      }
+    },
+    { threshold: 0.2 }
+  );
+  obs.observe(el);
+});
+
+onUnmounted(() => {
+  clearInterval(timer);
+  if (typingTimer) clearTimeout(typingTimer);
+});
 </script>
 
 <style lang="scss" scoped>
@@ -159,6 +192,23 @@ $pad: 20px;
     color: rgba(255, 255, 255, 0.57);
     line-height: 1.75;
     letter-spacing: -0.025em;
+  }
+
+  &__cursor {
+    color: var(--color-accent);
+    font-weight: 300;
+    animation: cursor-blink 0.7s step-end infinite;
+
+    &--done {
+      animation: none;
+      opacity: 0;
+      transition: opacity 0.3s ease 0.4s;
+    }
+  }
+
+  @keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
   }
 
   &__body {

@@ -7,11 +7,9 @@
       </div>
 
       <div class="cases__grid">
-        <NuxtLink
+        <div
           v-for="(c, i) in data.cases"
           :key="i"
-          :to="c.link"
-          :aria-label="`Learn about ${c.title}`"
           class="cases__card reveal"
           :class="`reveal-delay-${i + 1}`"
         >
@@ -20,13 +18,13 @@
           </div>
           <div class="cases__card-body">
             <h3 class="cases__card-title">{{ c.title }}</h3>
-            <p class="cases__card-desc" v-html="c.description" />
+            <p class="cases__card-desc">{{ c.description }}</p>
           </div>
-        </NuxtLink>
+        </div>
       </div>
 
       <div class="cases__cta reveal">
-        <AppButton tag="a" :href="config.public.phoneHref">
+        <AppButton tag="button" @click="scrollToContact">
           {{ data.cta }}
           <img src="/services-page/auto-accidents/arrow-black.svg" alt="" width="18" height="18" />
         </AppButton>
@@ -37,9 +35,10 @@
 
 <script setup lang="ts">
 import { caseTypesData as defaultData } from '../../data/auto-accidents'
+import { useScrollToContact } from '../../composables/useScrollToContact'
 const props = defineProps({ data: { default: () => defaultData } })
 const data = props.data as typeof defaultData
-const config = useRuntimeConfig()
+const { scrollToContact } = useScrollToContact()
 const sectionRef = ref<HTMLElement | null>(null)
 useRevealSection(sectionRef)
 </script>
@@ -92,14 +91,6 @@ useRevealSection(sectionRef)
     display: flex;
     gap: 24px;
     align-items: flex-start;
-    transition: box-shadow var(--transition-base), transform var(--transition-base);
-
-    &:hover {
-      box-shadow: var(--shadow-card);
-      transform: translateY(-2px);
-
-      .cases__card-title { color: var(--color-accent); }
-    }
   }
 
   &__card-icon {
@@ -125,7 +116,6 @@ useRevealSection(sectionRef)
     font-weight: 600;
     color: var(--color-dark);
     line-height: 1.3;
-    transition: color var(--transition-base);
   }
 
   &__card-desc {
@@ -133,16 +123,6 @@ useRevealSection(sectionRef)
     color: var(--color-muted);
     line-height: 1.65;
     letter-spacing: -0.02em;
-
-    :deep(a) {
-      color: var(--color-accent);
-      font-weight: 600;
-      text-decoration: underline;
-      text-decoration-color: transparent;
-      transition: text-decoration-color var(--transition-base);
-
-      &:hover { text-decoration-color: var(--color-accent); }
-    }
   }
 
   &__cta {

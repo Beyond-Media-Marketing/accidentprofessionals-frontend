@@ -14,20 +14,33 @@
           :class="`reveal-delay-${i + 1}`"
         >
           <div class="steps__card-icon" aria-hidden="true">
-            <img :src="step.icon" :alt="step.title" width="70" height="70" loading="lazy" />
+            <img
+              :src="step.icon"
+              :alt="step.title"
+              width="70"
+              height="70"
+              loading="lazy"
+            />
           </div>
           <div class="steps__card-body">
             <h3>{{ step.title }}</h3>
             <p>{{ step.description }}</p>
           </div>
-          <span class="steps__card-number" aria-hidden="true">{{ step.number }}</span>
+          <span class="steps__card-number" aria-hidden="true">{{
+            step.number
+          }}</span>
         </article>
       </div>
 
       <div class="steps__cta reveal">
-        <AppButton tag="a" :href="config.public.phoneHref">
+        <AppButton tag="button" @click="scrollToContact">
           {{ data.cta }}
-          <img src="/services-page/auto-accidents/arrow-black.svg" alt="" width="18" height="18" />
+          <img
+            src="/services-page/auto-accidents/arrow-black.svg"
+            alt=""
+            width="18"
+            height="18"
+          />
         </AppButton>
       </div>
     </div>
@@ -35,12 +48,13 @@
 </template>
 
 <script setup lang="ts">
-import { stepsData as defaultData } from '../../data/auto-accidents'
-const props = defineProps({ data: { default: () => defaultData } })
-const data = props.data as typeof defaultData
-const config = useRuntimeConfig()
-const sectionRef = ref<HTMLElement | null>(null)
-useRevealSection(sectionRef)
+import { stepsData as defaultData } from "../../data/auto-accidents";
+import { useScrollToContact } from "../../composables/useScrollToContact";
+const props = defineProps({ data: { default: () => defaultData } });
+const data = props.data as typeof defaultData;
+const { scrollToContact } = useScrollToContact();
+const sectionRef = ref<HTMLElement | null>(null);
+useRevealSection(sectionRef);
 </script>
 
 <style lang="scss" scoped>
@@ -80,11 +94,21 @@ useRevealSection(sectionRef)
     gap: 24px;
     width: 100%;
 
-    > :nth-child(1) { grid-column: 1 / 3; }
-    > :nth-child(2) { grid-column: 3 / 5; }
-    > :nth-child(3) { grid-column: 5 / 7; }
-    > :nth-child(4) { grid-column: 2 / 4; }
-    > :nth-child(5) { grid-column: 4 / 6; }
+    > :nth-child(1) {
+      grid-column: 1 / 3;
+    }
+    > :nth-child(2) {
+      grid-column: 3 / 5;
+    }
+    > :nth-child(3) {
+      grid-column: 5 / 7;
+    }
+    > :nth-child(4) {
+      grid-column: 2 / 4;
+    }
+    > :nth-child(5) {
+      grid-column: 4 / 6;
+    }
 
     @include tablet {
       grid-template-columns: repeat(2, 1fr);
@@ -93,7 +117,9 @@ useRevealSection(sectionRef)
       > :nth-child(2),
       > :nth-child(3),
       > :nth-child(4),
-      > :nth-child(5) { grid-column: auto; }
+      > :nth-child(5) {
+        grid-column: auto;
+      }
     }
 
     @include mobile {
@@ -103,7 +129,9 @@ useRevealSection(sectionRef)
       > :nth-child(2),
       > :nth-child(3),
       > :nth-child(4),
-      > :nth-child(5) { grid-column: auto; }
+      > :nth-child(5) {
+        grid-column: auto;
+      }
     }
   }
 
@@ -153,11 +181,12 @@ useRevealSection(sectionRef)
 
   &__card-number {
     position: absolute;
-    top: -16px;
+    top: 0;
     right: 12px;
     font-size: 120px;
     font-weight: 700;
-    color: rgba(255, 255, 255, 0.61);
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(212, 148, 12, 0.2);
     line-height: 1;
     font-family: var(--font-primary);
     user-select: none;

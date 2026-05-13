@@ -1,6 +1,5 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
-// Web3Forms free-tier hCaptcha sitekey — no custom account needed
 const WEB3FORMS_HCAPTCHA_SITEKEY = '50b2fe65-b00b-4b9e-ad62-3ba471098be2'
 
 declare global {
@@ -12,6 +11,24 @@ declare global {
     }
     onHCaptchaLoad?: () => void
   }
+}
+
+// Pending render callbacks — safe for multiple widgets on the same page
+const pendingRenders: Array<() => void> = []
+let scriptLoading = false
+
+function ensureScript() {
+  if (scriptLoading || document.querySelector('script[src*="hcaptcha"]')) return
+  scriptLoading = true
+  window.onHCaptchaLoad = () => {
+    pendingRenders.forEach(fn => fn())
+    pendingRenders.length = 0
+  }
+  const script = document.createElement('script')
+  script.src = 'https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoad&render=explicit'
+  script.async = true
+  script.defer = true
+  document.head.appendChild(script)
 }
 
 export function useHCaptcha(containerId: string) {
@@ -39,12 +56,8 @@ export function useHCaptcha(containerId: string) {
     if (window.hcaptcha) {
       renderWidget()
     } else {
-      window.onHCaptchaLoad = renderWidget
-      const script = document.createElement('script')
-      script.src = 'https://js.hcaptcha.com/1/api.js?onload=onHCaptchaLoad&render=explicit'
-      script.async = true
-      script.defer = true
-      document.head.appendChild(script)
+      pendingRenders.push(renderWidget)
+      ensureScript()
     }
   })
 

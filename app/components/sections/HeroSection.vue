@@ -9,23 +9,6 @@
       "
     />
 
-    <!-- Floating side CTA -->
-    <div class="hero__side-cta" aria-hidden="true">
-      <span class="hero__side-text">CALL US NOW</span>
-      <a
-        :href="config.public.phoneHref"
-        class="hero__phone-btn"
-        aria-label="Call us now"
-      >
-        <img
-          src="/services-page/auto-accidents/phone-icon-circle.png"
-          alt=""
-          width="26"
-          height="26"
-        />
-      </a>
-    </div>
-
     <div class="hero__inner">
       <!-- ── LEFT: content ── -->
       <div class="hero__content">
@@ -93,7 +76,7 @@
             <div class="hero__field">
               <label for="hero-case">Case type</label>
               <div class="hero__select-wrap">
-                <select id="hero-case" v-model="form.accidentType">
+                <select id="hero-case" v-model="form.caseType">
                   <option value="" disabled selected>Select</option>
                   <option
                     v-for="opt in data.caseOptions"
@@ -125,7 +108,7 @@
             <label for="hero-desc">Description</label>
             <textarea
               id="hero-desc"
-              v-model="form.description"
+              v-model="form.message"
               placeholder="Write details about your accident here…."
               rows="3"
             />
@@ -245,8 +228,8 @@ const form = reactive({
   email: "",
   phone: "",
   countryCode: "US",
-  accidentType: defaultCaseType,
-  description: "",
+  caseType: defaultCaseType,
+  message: "",
   agreed: false,
 });
 
@@ -285,8 +268,8 @@ async function submitForm() {
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
-        accident_type: form.accidentType,
-        description: form.description,
+        case_type: form.caseType,
+        message: form.message,
         service_page: route.path,
         ...(hcaptchaToken.value && { "h-captcha-response": hcaptchaToken.value }),
       }),
@@ -297,11 +280,11 @@ async function submitForm() {
       gtmPush({
         event: "lead_submitted",
         form_id: "hero_form",
-        case_type: form.accidentType,
+        case_type: form.caseType,
         service_page: route.path,
       });
       Object.assign(form, {
-        name: "", email: "", phone: "", accidentType: "", description: "", agreed: false,
+        name: "", email: "", phone: "", caseType: "", message: "", agreed: false,
       });
       resetHCaptcha();
     } else {
@@ -335,48 +318,6 @@ async function submitForm() {
     inset: 0;
     background-size: cover;
     background-position: center top;
-  }
-
-  // ── Floating side CTA ──────────────────────────────────────────────────────
-  &__side-cta {
-    position: absolute;
-    right: 0;
-    bottom: 120px;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    padding-right: 7px;
-
-    @include tablet-down {
-      display: none;
-    }
-  }
-
-  &__side-text {
-    writing-mode: vertical-rl;
-    transform: rotate(360deg);
-    font-size: 18px;
-    font-weight: 600;
-    font-family: var(--font-primary);
-    color: var(--color-accent);
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-  }
-
-  &__phone-btn {
-    display: block;
-    transition: transform var(--transition-base);
-    &:hover {
-      transform: scale(1.08);
-    }
-    img {
-      width: 52px;
-      height: 52px;
-      object-fit: contain;
-      display: block;
-    }
   }
 
   // ── Layout ─────────────────────────────────────────────────────────────────
@@ -447,6 +388,7 @@ async function submitForm() {
   &__stat {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 4px;
   }
 

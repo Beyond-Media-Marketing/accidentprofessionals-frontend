@@ -31,9 +31,9 @@
             config.public.phone
           }}</a>
         </div>
-        <a :href="config.public.phoneHref" class="navbar__cta">
+        <button class="navbar__cta" @click="scrollToContact">
           Get Free Consultation
-        </a>
+        </button>
       </div>
 
       <button
@@ -86,9 +86,11 @@
 
 <script setup lang="ts">
 import { useDataLayer } from '../../composables/useDataLayer'
+import { useScrollToContact } from '../../composables/useScrollToContact'
 const config = useRuntimeConfig();
 const menuOpen = ref(false);
 const { push: gtmPush } = useDataLayer();
+const { scrollToContact } = useScrollToContact();
 </script>
 
 <style lang="scss" scoped>

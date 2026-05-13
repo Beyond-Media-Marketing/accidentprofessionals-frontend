@@ -11,16 +11,16 @@ export const heroData = {
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
   stats: [
-    { value: '99%', label: 'Success Rate' },
-    { value: '24/7', label: 'Availability' },
-    { value: '$5M+', label: 'Settled' },
+    { value: '85', label: 'Closed Cases Assisted' },
+    { value: '$2.39M+', label: 'in Total Recovery' },
+    { value: '$28K+', label: 'Average Settlement' },
   ],
   urgencyBullets: [
     'Property owners build their case immediately',
     'Incident reports can waive your rights',
     'Evidence disappears quickly',
   ],
-  clientCount: '1,200+ Clients Helped',
+  clientCount: '100+ Clients Helped',
   caseOptions: [
     { value: 'slip-fall', label: 'Slip & Fall' },
     { value: 'negligent-security', label: 'Negligent Security' },
@@ -69,7 +69,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/premises-liability/slip-and-fall.png',
       title: 'Slip & Fall',
-      description: `Wet floors, uneven surfaces, broken stairs, and poor lighting are among the most common causes of serious injuries in Georgia. We connect you with a <a href="/slip-and-fall">slip and fall attorney in Georgia</a> who knows how to prove negligence and fight insurance carriers.`,
+      description: `Wet floors, uneven surfaces, broken stairs, and poor lighting are among the most common causes of serious injuries in Georgia. We connect you with a slip and fall attorney in Georgia who knows how to prove negligence and fight insurance carriers.`,
       link: '/slip-and-fall',
       linkText: 'Slip & Fall Help',
       linkAnchor: 'slip and fall attorney Georgia',
@@ -77,7 +77,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/premises-liability/negligent-security.png',
       title: 'Negligent Security',
-      description: `Assaults, robberies, and crimes in parking lots, hotels, apartment buildings, or retail settings can give rise to a premises liability claim when a property owner failed to provide adequate security. We connect you with a <a href="/negligent-security">negligent security attorney in Georgia</a> who handles these cases.`,
+      description: `Assaults, robberies, and crimes in parking lots, hotels, apartment buildings, or retail settings can give rise to a premises liability claim when a property owner failed to provide adequate security. We connect you with a negligent security attorney in Georgia who handles these cases.`,
       link: '/negligent-security',
       linkText: 'Negligent Security Help',
       linkAnchor: 'negligent security attorney Georgia',
@@ -85,7 +85,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/premises-liability/dog-bites.png',
       title: 'Dog Bites',
-      description: `Property owners in Georgia may be liable for injuries caused by dogs on their premises. If you were bitten or attacked, you may have a claim. We connect you with a <a href="/dog-bites">dog bite attorney in Georgia</a> who understands Georgia's liability rules for animal attacks.`,
+      description: `Property owners in Georgia may be liable for injuries caused by dogs on their premises. If you were bitten or attacked, you may have a claim. We connect you with a dog bite attorney in Georgia who understands Georgia's liability rules for animal attacks.`,
       link: '/dog-bites',
       linkText: 'Dog Bite Help',
       linkAnchor: 'dog bite attorney Georgia',
@@ -93,7 +93,7 @@ export const caseTypesData = {
     {
       icon: '/services-page/premises-liability/other-property-hazards.png',
       title: 'Other Property Hazards',
-      description: `Swimming pool accidents, falling merchandise, broken railings, unmarked construction zones, and more. We match you with a <a href="/property-hazards">premises liability attorney in Georgia</a> who handles the full range of property injury cases.`,
+      description: `Swimming pool accidents, falling merchandise, broken railings, unmarked construction zones, and more. We match you with a premises liability attorney in Georgia who handles the full range of property injury cases.`,
       link: '/property-hazards',
       linkText: 'Property Injury Help',
       linkAnchor: 'premises liability attorney Georgia',
@@ -217,4 +217,5 @@ export const ctaBannerData = {
   phone: '(470)-407-2800',
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
+  formSubject: 'New Premises Liability Consultation Request — Accident Professionals',
 }

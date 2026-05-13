@@ -12,9 +12,9 @@
             <a :href="data.phoneHref" class="cta__phone">{{ data.phone }}</a>
           </p>
           <AppButton
-            tag="a"
-            :href="data.phoneHref"
+            tag="button"
             class="reveal reveal-delay-1"
+            @click="scrollToContact"
           >
             {{ data.cta }}
           </AppButton>
@@ -26,8 +26,10 @@
 
 <script setup lang="ts">
 import { ctaBannerData as defaultData } from "../../data/auto-accidents";
+import { useScrollToContact } from "../../composables/useScrollToContact";
 const props = defineProps({ data: { default: () => defaultData } });
 const data = props.data as typeof defaultData;
+const { scrollToContact } = useScrollToContact();
 </script>
 
 <style lang="scss" scoped>
