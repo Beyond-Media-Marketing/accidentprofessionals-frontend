@@ -218,4 +218,11 @@ export const ctaBannerData = {
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Premises Liability Consultation Request — Accident Professionals',
+  caseOptions: [
+    { value: 'slip-fall', label: 'Slip & Fall' },
+    { value: 'negligent-security', label: 'Negligent Security' },
+    { value: 'dog-bite', label: 'Dog Bite' },
+    { value: 'property-hazard', label: 'Other Property Hazard' },
+    { value: 'other', label: 'Other' },
+  ],
 }

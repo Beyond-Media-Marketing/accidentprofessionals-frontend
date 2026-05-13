@@ -243,7 +243,10 @@ const successMessage = ref("");
 const errorMessage = ref("");
 
 const canSubmit = computed(() =>
-  form.agreed && !submitting.value &&
+  !!form.name.trim() &&
+  !!form.email.trim() &&
+  form.agreed &&
+  !submitting.value &&
   !!hcaptchaToken.value
 );
 
@@ -268,7 +271,7 @@ async function submitForm() {
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
-        case_type: form.caseType,
+        case_type: data.caseOptions.find(o => o.value === form.caseType)?.label ?? form.caseType,
         message: form.message,
         service_page: route.path,
         ...(hcaptchaToken.value && { "h-captcha-response": hcaptchaToken.value }),
@@ -279,7 +282,7 @@ async function submitForm() {
       successMessage.value = "Thank you! We'll be in touch shortly.";
       gtmPush({
         form_id: "hero_form",
-        case_type: form.caseType,
+        case_type: data.caseOptions.find(o => o.value === form.caseType)?.label ?? form.caseType,
         service_page: route.path,
       });
       Object.assign(form, {
@@ -673,7 +676,7 @@ async function submitForm() {
   // ── Messages ───────────────────────────────────────────────────────────────
   &__success {
     font-size: 14px;
-    color: #4ade80;
+    color: var(--color-accent);
     text-align: center;
     font-weight: 500;
   }

@@ -216,4 +216,11 @@ export const ctaBannerData = {
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Workplace Accident Consultation Request — Accident Professionals',
+  caseOptions: [
+    { value: 'workers-comp', label: `Workers' Compensation` },
+    { value: 'third-party', label: 'Third-Party Injury Claim' },
+    { value: 'construction', label: 'Construction / Job Site Injury' },
+    { value: 'on-road', label: 'On-the-Road Work Injury' },
+    { value: 'other', label: 'Other' },
+  ],
 }

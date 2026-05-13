@@ -72,11 +72,11 @@
                 class="contact__input contact__input--select"
               >
                 <option value="" disabled>Select</option>
-                <option value="Car Accident">Car Accident</option>
-                <option value="Truck Accident">Truck Accident</option>
-                <option value="Motorcycle Accident">Motorcycle Accident</option>
-                <option value="Rideshare Accident">Rideshare Accident</option>
-                <option value="Other">Other</option>
+                <option
+                  v-for="opt in data.caseOptions"
+                  :key="opt.value"
+                  :value="opt.value"
+                >{{ opt.label }}</option>
               </select>
               <span class="contact__chevron" aria-hidden="true">
                 <svg
@@ -197,11 +197,19 @@ const form = reactive({
 const dialCode = computed(
   () => countries.find((c) => c.code === form.countryCode)?.dial ?? "+1"
 );
+const caseOptions = computed<{ value: string; label: string }[]>(
+  () => (data as any).caseOptions ?? []
+);
+const caseLabel = (value: string) =>
+  caseOptions.value.find((o) => o.value === value)?.label ?? value;
 const { push: gtmPush } = useDataLayer();
 const { token: hcaptchaToken, reset: resetHCaptcha } = useHCaptcha("contact-hcaptcha");
 
 const canSubmit = computed(() =>
-  form.agreed && !loading.value &&
+  !!form.name.trim() &&
+  !!form.email.trim() &&
+  form.agreed &&
+  !loading.value &&
   !!hcaptchaToken.value
 );
 
@@ -224,7 +232,7 @@ async function submit() {
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
-        case_type: form.caseType,
+        case_type: caseLabel(form.caseType),
         message: form.message,
         service_page: route.path,
         ...(hcaptchaToken.value && { "h-captcha-response": hcaptchaToken.value }),
@@ -235,7 +243,7 @@ async function submit() {
       success.value = true;
       gtmPush({
         form_id: "contact_form",
-        case_type: form.caseType,
+        case_type: data.caseOptions.find(o => o.value === form.caseType)?.label ?? form.caseType,
         service_page: route.path,
       });
       Object.assign(form, {

@@ -250,4 +250,11 @@ export const ctaBannerData = {
   phoneHref: 'tel:+14704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Auto Accident Consultation Request — Accident Professionals',
+  caseOptions: [
+    { value: 'car', label: 'Car Accident' },
+    { value: 'truck', label: 'Truck Accident' },
+    { value: 'motorcycle', label: 'Motorcycle Accident' },
+    { value: 'rideshare', label: 'Rideshare Accident' },
+    { value: 'other', label: 'Other' },
+  ],
 }
