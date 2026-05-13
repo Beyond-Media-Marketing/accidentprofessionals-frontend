@@ -36,9 +36,6 @@ export default defineNuxtConfig({
         },
       },
     },
-    build: {
-      cssCodeSplit: false,
-    },
   },
 
   app: {
