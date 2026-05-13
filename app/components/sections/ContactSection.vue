@@ -234,7 +234,6 @@ async function submit() {
     if (json.success) {
       success.value = true;
       gtmPush({
-        event: "lead_submitted",
         form_id: "contact_form",
         case_type: form.caseType,
         service_page: route.path,

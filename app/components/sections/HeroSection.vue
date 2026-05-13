@@ -278,7 +278,6 @@ async function submitForm() {
     if (result.success) {
       successMessage.value = "Thank you! We'll be in touch shortly.";
       gtmPush({
-        event: "lead_submitted",
         form_id: "hero_form",
         case_type: form.caseType,
         service_page: route.path,
