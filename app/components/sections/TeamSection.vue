@@ -69,32 +69,34 @@
         </article>
       </div>
 
-      <!-- Unified pagination -->
-      <div class="team__pagination" role="navigation" aria-label="Attorney pages">
-        <button
-          class="team__page-arrow"
-          :disabled="activeDot === 0"
-          @click="prev"
-          aria-label="Previous"
-        >←</button>
+      <!-- Unified pagination — ClientOnly prevents SSR/client isMobile mismatch -->
+      <ClientOnly>
+        <div class="team__pagination" role="navigation" aria-label="Attorney pages">
+          <button
+            class="team__page-arrow"
+            :disabled="activeDot === 0"
+            @click="prev"
+            aria-label="Previous"
+          >←</button>
 
-        <button
-          v-for="n in dotCount"
-          :key="n"
-          class="team__page-dot"
-          :class="{ 'is-active': activeDot === n - 1 }"
-          @click="goTo(n - 1)"
-          :aria-label="`Go to ${n}`"
-          :aria-current="activeDot === n - 1 ? 'page' : undefined"
-        />
+          <button
+            v-for="n in dotCount"
+            :key="n"
+            class="team__page-dot"
+            :class="{ 'is-active': activeDot === n - 1 }"
+            @click="goTo(n - 1)"
+            :aria-label="`Go to ${n}`"
+            :aria-current="activeDot === n - 1 ? 'page' : undefined"
+          />
 
-        <button
-          class="team__page-arrow"
-          :disabled="activeDot === dotCount - 1"
-          @click="next"
-          aria-label="Next"
-        >→</button>
-      </div>
+          <button
+            class="team__page-arrow"
+            :disabled="activeDot === dotCount - 1"
+            @click="next"
+            aria-label="Next"
+          >→</button>
+        </div>
+      </ClientOnly>
 
     </div>
   </section>
