@@ -25,7 +25,7 @@
         <div class="footer__contact">
           <p class="footer__nav-heading">Contact</p>
           <p class="footer__available">Available 24/7</p>
-          <a :href="config.public.phoneHref" class="footer__phone">{{
+          <a :href="config.public.phoneHref" class="footer__phone" @click="gtmPush({ event: 'phone_click', location: 'footer' })">{{
             config.public.phone
           }}</a>
           <p class="footer__lang">English &amp; Spanish supported</p>
@@ -43,8 +43,10 @@
 </template>
 
 <script setup lang="ts">
+import { useDataLayer } from '../../composables/useDataLayer'
 const config = useRuntimeConfig();
 const year = new Date().getFullYear();
+const { push: gtmPush } = useDataLayer();
 </script>
 
 <style lang="scss" scoped>

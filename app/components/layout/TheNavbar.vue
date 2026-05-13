@@ -25,7 +25,7 @@
       <div class="navbar__contact">
         <div class="navbar__phone-wrap">
           <span class="navbar__question">Have Any Questions?</span>
-          <a :href="config.public.phoneHref" class="navbar__phone">{{
+          <a :href="config.public.phoneHref" class="navbar__phone" @click="gtmPush({ event: 'phone_click', location: 'navbar' })">{{
             config.public.phone
           }}</a>
         </div>
@@ -83,8 +83,10 @@
 </template>
 
 <script setup lang="ts">
+import { useDataLayer } from '../../composables/useDataLayer'
 const config = useRuntimeConfig();
 const menuOpen = ref(false);
+const { push: gtmPush } = useDataLayer();
 </script>
 
 <style lang="scss" scoped>

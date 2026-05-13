@@ -120,6 +120,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ctaBannerData as defaultData } from '../../data/home'
 import { countries } from '../../data/countries'
+import { useDataLayer } from '../../composables/useDataLayer'
 
 const props = defineProps({ data: { default: () => defaultData } })
 const data = props.data as typeof defaultData
@@ -141,6 +142,7 @@ const form = reactive({
 })
 
 const dialCode = computed(() => countries.find(c => c.code === form.countryCode)?.dial ?? '+1')
+const { push: gtmPush } = useDataLayer()
 
 async function submit() {
   if (!form.agreed) return
@@ -164,6 +166,7 @@ async function submit() {
     const json = await res.json()
     if (json.success) {
       success.value = true
+      gtmPush({ event: 'form_submit', form_id: 'contact_form', case_type: form.caseType })
       Object.assign(form, { name: '', email: '', phone: '', caseType: '', message: '', agreed: false })
     } else {
       formError.value = true

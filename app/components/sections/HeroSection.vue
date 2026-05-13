@@ -221,6 +221,7 @@
 import { computed } from "vue";
 import { heroData as defaultData } from "../../data/home";
 import { countries } from "../../data/countries";
+import { useDataLayer } from "../../composables/useDataLayer";
 
 const props = defineProps({ data: { default: () => defaultData } });
 const data = props.data as typeof defaultData;
@@ -241,6 +242,7 @@ const form = reactive({
 });
 
 const dialCode = computed(() => countries.find(c => c.code === form.countryCode)?.dial ?? '+1');
+const { push: gtmPush } = useDataLayer();
 const submitting = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
@@ -269,6 +271,7 @@ async function submitForm() {
     const result = await res.json();
     if (result.success) {
       successMessage.value = "Thank you! We'll be in touch shortly.";
+      gtmPush({ event: 'form_submit', form_id: 'hero_form', case_type: form.accidentType });
       Object.assign(form, {
         name: "",
         email: "",
