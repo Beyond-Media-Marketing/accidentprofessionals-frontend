@@ -132,7 +132,10 @@
           </div>
 
           <!-- CTA button (full width) -->
-          <button type="submit" class="hero__submit" :disabled="submitting">
+          <!-- Turnstile widget (invisible when no sitekey configured) -->
+          <div v-if="config.public.turnstileSiteKey" id="hero-turnstile" />
+
+          <button type="submit" class="hero__submit" :disabled="!canSubmit">
             {{ submitting ? "Sending…" : "Get Free Consultation" }}
             <img
               src="/services-page/auto-accidents/arrow-black.svg"
@@ -228,6 +231,7 @@ import { computed } from "vue";
 import { heroData as defaultData } from "../../data/auto-accidents";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
+import { useTurnstile } from "../../composables/useTurnstile";
 
 const props = defineProps({ data: { default: () => defaultData } });
 const data = props.data as typeof defaultData;
@@ -251,11 +255,21 @@ const dialCode = computed(
   () => countries.find((c) => c.code === form.countryCode)?.dial ?? "+1"
 );
 const { push: gtmPush } = useDataLayer();
+const { token: turnstileToken, reset: resetTurnstile } = useTurnstile("hero-turnstile");
 const submitting = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
 
+const canSubmit = computed(() =>
+  form.agreed && !submitting.value &&
+  (!config.public.turnstileSiteKey || !!turnstileToken.value)
+);
+
 async function submitForm() {
+  if (!form.agreed) {
+    errorMessage.value = "Please agree to the privacy policy to continue.";
+    return;
+  }
   if (!form.name || !form.email) {
     errorMessage.value = "Please fill in your name and email.";
     return;
@@ -274,29 +288,30 @@ async function submitForm() {
         phone: `${dialCode.value} ${form.phone}`,
         accident_type: form.accidentType,
         description: form.description,
+        service_page: route.path,
+        ...(turnstileToken.value && { "cf-turnstile-response": turnstileToken.value }),
       }),
     });
     const result = await res.json();
     if (result.success) {
       successMessage.value = "Thank you! We'll be in touch shortly.";
       gtmPush({
-        event: "form_submit",
+        event: "lead_submitted",
         form_id: "hero_form",
         case_type: form.accidentType,
+        service_page: route.path,
       });
       Object.assign(form, {
-        name: "",
-        email: "",
-        phone: "",
-        accidentType: "",
-        description: "",
-        agreed: false,
+        name: "", email: "", phone: "", accidentType: "", description: "", agreed: false,
       });
+      resetTurnstile();
     } else {
       errorMessage.value = "Something went wrong. Please call us directly.";
+      resetTurnstile();
     }
   } catch {
     errorMessage.value = "Unable to submit. Please call us directly.";
+    resetTurnstile();
   } finally {
     submitting.value = false;
   }

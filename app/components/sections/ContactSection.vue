@@ -121,11 +121,14 @@
             >
           </label>
 
+          <!-- Turnstile widget -->
+          <div v-if="config.public.turnstileSiteKey" id="contact-turnstile" />
+
           <AppButton
             tag="button"
             type="submit"
             class="contact__submit"
-            :disabled="loading"
+            :disabled="!canSubmit"
           >
             {{ loading ? "Sending…" : data.cta }}
             <img
@@ -165,13 +168,16 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import { ctaBannerData as defaultData } from "../../data/auto-accidents";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
+import { useTurnstile } from "../../composables/useTurnstile";
 
 const props = defineProps({ data: { default: () => defaultData } });
 const data = props.data as typeof defaultData;
 const config = useRuntimeConfig();
+const route = useRoute();
 const sectionRef = ref<HTMLElement | null>(null);
 
 const loading = ref(false);
@@ -192,6 +198,12 @@ const dialCode = computed(
   () => countries.find((c) => c.code === form.countryCode)?.dial ?? "+1"
 );
 const { push: gtmPush } = useDataLayer();
+const { token: turnstileToken, reset: resetTurnstile } = useTurnstile("contact-turnstile");
+
+const canSubmit = computed(() =>
+  form.agreed && !loading.value &&
+  (!config.public.turnstileSiteKey || !!turnstileToken.value)
+);
 
 async function submit() {
   if (!form.agreed) return;
@@ -213,29 +225,30 @@ async function submit() {
         phone: `${dialCode.value} ${form.phone}`,
         case_type: form.caseType,
         message: form.message,
+        service_page: route.path,
+        ...(turnstileToken.value && { "cf-turnstile-response": turnstileToken.value }),
       }),
     });
     const json = await res.json();
     if (json.success) {
       success.value = true;
       gtmPush({
-        event: "form_submit",
+        event: "lead_submitted",
         form_id: "contact_form",
         case_type: form.caseType,
+        service_page: route.path,
       });
       Object.assign(form, {
-        name: "",
-        email: "",
-        phone: "",
-        caseType: "",
-        message: "",
-        agreed: false,
+        name: "", email: "", phone: "", caseType: "", message: "", agreed: false,
       });
+      resetTurnstile();
     } else {
       formError.value = true;
+      resetTurnstile();
     }
   } catch {
     formError.value = true;
+    resetTurnstile();
   } finally {
     loading.value = false;
   }
