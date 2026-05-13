@@ -105,7 +105,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
-import { teamData } from '../../data/home'
+import { teamData } from '../../data/auto-accidents'
 import attorneys from '../../data/attorneys.json'
 
 const PER_PAGE = 3

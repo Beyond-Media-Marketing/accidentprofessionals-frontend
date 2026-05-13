@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { howItWorksData as defaultData } from '../../data/home'
+import { howItWorksData as defaultData } from '../../data/auto-accidents'
 const props = defineProps({ data: { default: () => defaultData } })
 const data = props.data as typeof defaultData
 const sectionRef = ref<HTMLElement | null>(null)

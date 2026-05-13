@@ -1,4 +1,5 @@
 export const heroData = {
+  heroBg: '/services-page/auto-accidents/hero-bg.webp',
   badge: 'Available 24/7 · No Upfront Fees',
   h1: 'One Crash Changes Everything. Speak With an Auto Accident Attorney in Georgia Today.',
   h1Part1: 'One Crash Changes',

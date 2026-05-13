@@ -1,4 +1,5 @@
 export const heroData = {
+  heroBg: '/services-page/premises-liability/premise-liability-hero.webp',
   badge: 'Available 24/7 · No Upfront Fees',
   h1: 'One Hazard Changes Everything. Speak With a Premises Liability Attorney in Georgia Today.',
   h1Part1: 'One Hazard Changes',
@@ -39,7 +40,7 @@ export const heroData = {
 export const howItWorksData = {
   heading: 'How We Help After a Property Injury in Georgia',
   subheading: `We're not a law firm—we're the bridge between you and one. When you call Accident Professionals, you're not navigating premises liability law alone. We connect you with a vetted local premises liability attorney in Georgia, and stay alongside you to answer all your questions and provide guidance throughout your case.`,
-  image: '/services-page/auto-accidents/image1.webp',
+  image: '/services-page/premises-liability/premise-liability-image.webp',
   imageAlt: 'Accident Professionals attorney consultation',
   steps: [
     {
@@ -66,7 +67,7 @@ export const caseTypesData = {
   cta: 'Get Free Consultation',
   cases: [
     {
-      icon: '/services-page/premises-liability/slip-fall.png',
+      icon: '/services-page/premises-liability/slip-and-fall.png',
       title: 'Slip & Fall',
       description: `Wet floors, uneven surfaces, broken stairs, and poor lighting are among the most common causes of serious injuries in Georgia. We connect you with a <a href="/slip-and-fall">slip and fall attorney in Georgia</a> who knows how to prove negligence and fight insurance carriers.`,
       link: '/slip-and-fall',
@@ -90,7 +91,7 @@ export const caseTypesData = {
       linkAnchor: 'dog bite attorney Georgia',
     },
     {
-      icon: '/services-page/premises-liability/property-hazards.png',
+      icon: '/services-page/premises-liability/other-property-hazards.png',
       title: 'Other Property Hazards',
       description: `Swimming pool accidents, falling merchandise, broken railings, unmarked construction zones, and more. We match you with a <a href="/property-hazards">premises liability attorney in Georgia</a> who handles the full range of property injury cases.`,
       link: '/property-hazards',

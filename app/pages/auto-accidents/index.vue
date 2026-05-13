@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { faqData } from "~/data/home";
+import { faqData } from "~/data/auto-accidents";
 
 // ── SEO meta ──────────────────────────────────────────────────────────────────
 useSeoMeta({

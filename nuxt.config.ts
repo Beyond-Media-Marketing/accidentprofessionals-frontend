@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { fileURLToPath } from 'url'
 import { resolve, dirname } from 'path'
 
@@ -63,8 +64,6 @@ export default defineNuxtConfig({
       link: [
         // Preconnect for GTM
         { rel: 'preconnect', href: 'https://www.googletagmanager.com' },
-        // Preload hero background — biggest LCP image on every service page
-        { rel: 'preload', as: 'image', href: '/services-page/auto-accidents/hero-bg.webp' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
         { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' },
         { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },

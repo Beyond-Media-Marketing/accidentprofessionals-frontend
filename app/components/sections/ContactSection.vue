@@ -165,7 +165,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue";
-import { ctaBannerData as defaultData } from "../../data/home";
+import { ctaBannerData as defaultData } from "../../data/auto-accidents";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
 

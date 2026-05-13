@@ -1,7 +1,13 @@
 <template>
   <section class="hero" aria-label="Hero">
     <!-- bg image already has all effects baked in -->
-    <div class="hero__bg" aria-hidden="true" />
+    <div
+      class="hero__bg"
+      aria-hidden="true"
+      :style="
+        data.heroBg ? `background-image: url('${data.heroBg}')` : undefined
+      "
+    />
 
     <!-- Floating side CTA -->
     <div class="hero__side-cta" aria-hidden="true">
@@ -219,7 +225,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { heroData as defaultData } from "../../data/home";
+import { heroData as defaultData } from "../../data/auto-accidents";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
 
@@ -313,7 +319,6 @@ async function submitForm() {
   &__bg {
     position: absolute;
     inset: 0;
-    background-image: url("/services-page/auto-accidents/hero-bg.webp");
     background-size: cover;
     background-position: center top;
   }
@@ -649,7 +654,7 @@ async function submitForm() {
   // ── Urgency checks ─────────────────────────────────────────────────────────
   &__checks {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 8px 16px;
   }

@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ctaBannerData as defaultData } from "../../data/home";
+import { ctaBannerData as defaultData } from "../../data/auto-accidents";
 const props = defineProps({ data: { default: () => defaultData } });
 const data = props.data as typeof defaultData;
 </script>

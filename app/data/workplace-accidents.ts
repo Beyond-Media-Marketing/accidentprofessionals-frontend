@@ -1,4 +1,5 @@
 export const heroData = {
+  heroBg: '/services-page/workplace-accidents/workplace-injury-hero.webp',
   badge: 'Available 24/7 · No Upfront Fees',
   h1: 'A Workplace Injury Changes Everything. Speak With a Workplace Accident Attorney in Georgia Today.',
   h1Part1: 'A Workplace Injury Changes',
@@ -37,7 +38,7 @@ export const heroData = {
 export const howItWorksData = {
   heading: 'How We Help After a Workplace Injury in Georgia',
   subheading: `We're not a law firm—we're the bridge between you and one. When you call Accident Professionals, you're not navigating the workers' compensation system or the legal process alone. We connect you with a vetted local workplace accident attorney in Georgia, and stay alongside you to answer all your questions and provide guidance.`,
-  image: '/services-page/auto-accidents/image1.webp',
+  image: '/services-page/workplace-accidents/workplace-injury-image.webp',
   imageAlt: 'Accident Professionals attorney consultation',
   steps: [
     {
@@ -64,7 +65,7 @@ export const caseTypesData = {
   cta: 'Get Free Consultation',
   cases: [
     {
-      icon: '/services-page/workplace-accidents/workers-comp.png',
+      icon: '/services-page/workplace-accidents/workers-compensation-claims.png',
       title: `Workers' Compensation Claims`,
       description: `Georgia requires most employers to carry workers' comp insurance. If you're injured on the job, you're generally entitled to benefits regardless of fault. We connect you with a <a href="/workers-compensation">workers' compensation attorney in Georgia</a> who knows how to protect your claim.`,
       link: '/workers-compensation',
@@ -72,7 +73,7 @@ export const caseTypesData = {
       linkAnchor: 'workers compensation attorney Georgia',
     },
     {
-      icon: '/services-page/workplace-accidents/third-party.png',
+      icon: '/services-page/workplace-accidents/third-party-personal-injury-claims.png',
       title: 'Third-Party Personal Injury Claims',
       description: `If a contractor, equipment manufacturer, or property owner contributed to your injury, you may have a claim beyond workers' comp. We connect you with an <a href="/third-party-workplace-injury">on-the-job injury lawyer in Georgia</a> who can pursue full damages—including pain and suffering.`,
       link: '/third-party-workplace-injury',
@@ -80,7 +81,7 @@ export const caseTypesData = {
       linkAnchor: 'third party workplace injury claim Georgia',
     },
     {
-      icon: '/services-page/workplace-accidents/construction.png',
+      icon: '/services-page/workplace-accidents/construction-and-job-site-injuries.png',
       title: 'Construction & Job Site Injuries',
       description: `Falls, scaffolding collapses, heavy machinery injuries, and electrical incidents are among the most serious workplace injuries in Georgia. We connect you with a <a href="/construction-accidents">construction accident attorney in Georgia</a> who understands site liability and contractor responsibility.`,
       link: '/construction-accidents',
@@ -88,7 +89,7 @@ export const caseTypesData = {
       linkAnchor: 'construction accident attorney Georgia',
     },
     {
-      icon: '/services-page/workplace-accidents/on-road.png',
+      icon: '/services-page/workplace-accidents/on-the-road-injuries.png',
       title: 'On-the-Road Work Injuries',
       description: `Delivery drivers, field workers, and anyone injured in a vehicle accident while on the clock may qualify for both workers' compensation and a personal injury claim. We match you with a <a href="/on-road-work-injuries">workplace accident attorney in Georgia</a> who handles dual-claim cases.`,
       link: '/on-road-work-injuries',

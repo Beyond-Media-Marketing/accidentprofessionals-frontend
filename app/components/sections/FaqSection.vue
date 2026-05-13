@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { faqData as defaultData } from '../../data/home'
+import { faqData as defaultData } from '../../data/auto-accidents'
 
 const props = defineProps({ data: { default: () => defaultData } })
 const data = props.data as typeof defaultData
