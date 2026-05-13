@@ -1,8 +1,10 @@
 <template>
   <header class="navbar">
     <div class="navbar__inner">
-      <NuxtLink
-        to="/"
+      <a
+        href="https://accidentprofessionals.com"
+        target="_blank"
+        rel="noopener"
         class="navbar__logo"
         aria-label="Accident Professionals — Home"
       >
@@ -14,7 +16,7 @@
           fetchpriority="high"
           loading="eager"
         />
-      </NuxtLink>
+      </a>
 
       <!-- <nav class="navbar__nav" aria-label="Primary navigation">
         <NuxtLink to="/auto-accidents" class="navbar__link">Auto Accidents</NuxtLink>

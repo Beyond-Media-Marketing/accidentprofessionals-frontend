@@ -4,8 +4,10 @@
     <div class="footer__inner">
       <div class="footer__top">
         <div class="footer__brand">
-          <NuxtLink
-            to="/"
+          <a
+            href="https://accidentprofessionals.com"
+            target="_blank"
+            rel="noopener"
             class="footer__logo"
             aria-label="Accident Professionals"
           >
@@ -15,7 +17,7 @@
               width="178"
               height="37"
             />
-          </NuxtLink>
+          </a>
           <p class="footer__tagline">
             Connecting accident victims with vetted auto accident attorneys in
             Georgia. No upfront fees. Available 24/7.
