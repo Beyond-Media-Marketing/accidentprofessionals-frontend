@@ -135,8 +135,17 @@
 
       <div class="footer__bottom">
         <p class="footer__copy">
-          © {{ year }} Accident Professionals. Connecting you with legal help in
-          Georgia.
+          Copyright {{ year }} – Accident Professionals LLC – Connecting you with legal help in Georgia.
+        </p>
+        <p class="footer__copy footer__copy--small">
+          Designed &amp; Built by
+          <a
+            href="https://beyondmediamarketing.com/"
+            target="_blank"
+            rel="noopener"
+            class="footer__copy-link"
+            >BMM</a
+          >
         </p>
       </div>
     </div>
@@ -302,6 +311,23 @@ const { push: gtmPush } = useDataLayer();
     font-size: 14px;
     color: var(--color-muted);
     letter-spacing: -0.01em;
+
+    &--small {
+      font-size: 12px;
+      margin-top: 6px;
+      opacity: 0.7;
+    }
+  }
+
+  &__copy-link {
+    color: var(--color-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--transition-base);
+
+    &:hover {
+      color: var(--color-accent);
+    }
   }
 }
 </style>
