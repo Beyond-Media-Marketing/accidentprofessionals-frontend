@@ -7,7 +7,7 @@ export const heroData = {
   h1Subtitle: 'Speak With an Auto Accident Attorney in Georgia Today.',
   heroBody: `Whether it was a car crash on I-285, a truck collision on I-75, a rideshare accident downtown, or a motorcycle hit-and-run, a serious accident can turn your life upside down in seconds. The insurance company will start building their case immediately—you deserve someone in your corner just as fast.`,
   description: `Whether it was a car crash on I-285, a truck collision on I-75, a rideshare accident downtown, or a motorcycle hit-and-run, a serious accident can turn your life upside down in seconds. The insurance company will start building their case immediately—you deserve someone in your corner just as fast.\n\nAccident Professionals connects you with a vetted auto accident attorney in Georgia at no cost to you. No upfront fees. No gimmicks. Just real help when you need it most.`,
-  phone: '(470)-407-2800',
+  phone: '(470) 407-2800',
   phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   stats: [
@@ -205,7 +205,7 @@ export const stepsData = {
       number: '05',
       icon: '/services-page/auto-accidents/arrow-next-icon.png',
       title: 'Call Accident Professionals for a Free Consultation',
-      description: 'The sooner you act, the better. Call (470)-407-2800 or get your free consultation to be connected with a vetted Georgia attorney who can protect your rights from day one.',
+      description: 'The sooner you act, the better. Call (470) 407-2800 or get your free consultation to be connected with a vetted Georgia attorney who can protect your rights from day one.',
     },
   ],
 }
@@ -246,7 +246,7 @@ export const ctaBannerData = {
   headingMain: `Had an Accident?`,
   headingAccent: ` Let's Talk.`,
   subheading: 'No pressure. No jargon. Just an honest conversation about your options.',
-  phone: '(470)-407-2800',
+  phone: '(470) 407-2800',
   phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Auto Accident Consultation Request — Accident Professionals',

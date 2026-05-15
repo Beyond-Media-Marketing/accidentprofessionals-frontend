@@ -7,7 +7,7 @@ export const heroData = {
   h1Subtitle: 'Speak With a Premises Liability Attorney in Georgia Today.',
   heroBody: `Whether you slipped on an unmarked wet floor at a grocery store, tripped on a broken staircase at an apartment complex, were assaulted in a parking lot with inadequate security, or bitten by a dog on someone else's property—a property owner's negligence can turn your life upside down in an instant. The property owner's insurance company will start building their case immediately—you deserve someone in your corner just as fast.`,
   description: `Whether you slipped on an unmarked wet floor at a grocery store, tripped on a broken staircase at an apartment complex, were assaulted in a parking lot with inadequate security, or bitten by a dog on someone else's property—a property owner's negligence can turn your life upside down in an instant.\n\nAccident Professionals connects you with a vetted premises liability attorney in Georgia at no cost to you. No upfront fees. No gimmicks. Just real help when you need it most.`,
-  phone: '(470)-407-2800',
+  phone: '(470) 407-2800',
   phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   stats: [
@@ -173,7 +173,7 @@ export const stepsData = {
       number: '05',
       icon: '/services-page/auto-accidents/arrow-next-icon.png',
       title: 'Call Accident Professionals for a Free Consultation',
-      description: 'The sooner you act, the better your chances of preserving evidence and protecting your claim. Call (470)-407-2800 or get your free consultation to be connected with a vetted Georgia premises liability attorney.',
+      description: 'The sooner you act, the better your chances of preserving evidence and protecting your claim. Call (470) 407-2800 or get your free consultation to be connected with a vetted Georgia premises liability attorney.',
     },
   ],
 }
@@ -214,7 +214,7 @@ export const ctaBannerData = {
   headingMain: `Injured on Someone Else's Property?`,
   headingAccent: ` Let's Talk.`,
   subheading: `No pressure. No jargon. Just an honest conversation about whether you have a case.`,
-  phone: '(470)-407-2800',
+  phone: '(470) 407-2800',
   phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Premises Liability Consultation Request — Accident Professionals',

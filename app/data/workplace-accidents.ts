@@ -7,7 +7,7 @@ export const heroData = {
   h1Subtitle: 'Speak With a Workplace Accident Attorney in Georgia Today.',
   heroBody: `Whether it was a fall on a construction site, a warehouse forklift accident, an injury from defective equipment, or a vehicle accident while on the clock, a serious workplace injury can upend your finances, your health, and your future. Your employer's insurance company will start building their case immediately—you deserve someone in your corner just as fast.`,
   description: `Whether it was a fall on a construction site, a warehouse forklift accident, an injury from defective equipment, or a vehicle accident while on the clock, a serious workplace injury can upend your finances, your health, and your future.\n\nAccident Professionals connects you with a vetted workplace accident attorney in Georgia at no cost to you. No upfront fees. No gimmicks. Just real help when you need it most.`,
-  phone: '(470)-407-2800',
+  phone: '(470) 407-2800',
   phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   stats: [
@@ -171,7 +171,7 @@ export const stepsData = {
       number: '05',
       icon: '/services-page/auto-accidents/arrow-next-icon.png',
       title: 'Call Accident Professionals for a Free Consultation',
-      description: `The sooner you act, the stronger your case. Call (470)-407-2800 or get your free consultation to be connected with a vetted Georgia workplace accident attorney who can protect your rights from day one.`,
+      description: `The sooner you act, the stronger your case. Call (470) 407-2800 or get your free consultation to be connected with a vetted Georgia workplace accident attorney who can protect your rights from day one.`,
     },
   ],
 }
@@ -212,7 +212,7 @@ export const ctaBannerData = {
   headingMain: `Injured at Work?`,
   headingAccent: ` Let's Talk.`,
   subheading: `No pressure. No jargon. And no—your employer doesn't have to know you called.`,
-  phone: '(470)-407-2800',
+  phone: '(470) 407-2800',
   phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Workplace Accident Consultation Request — Accident Professionals',

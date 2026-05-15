@@ -38,50 +38,19 @@
         </button>
       </div>
 
-      <button
-        class="navbar__burger"
-        :class="{ 'is-open': menuOpen }"
-        aria-label="Toggle menu"
-        @click="menuOpen = !menuOpen"
+      <a
+        :href="config.public.phoneHref"
+        class="navbar__mobile-phone"
+        @click="gtmPush({ event: 'phone_click', location: 'navbar' })"
       >
-        <span /><span /><span />
-      </button>
-    </div>
-
-    <div class="navbar__mobile-menu" :class="{ 'is-open': menuOpen }">
-      <NuxtLink
-        to="/auto-accidents"
-        class="navbar__mobile-link"
-        @click="menuOpen = false"
-        >Auto Accidents</NuxtLink
-      >
-      <NuxtLink
-        to="/car-accidents"
-        class="navbar__mobile-link"
-        @click="menuOpen = false"
-        >Car Accidents</NuxtLink
-      >
-      <NuxtLink
-        to="/truck-accidents"
-        class="navbar__mobile-link"
-        @click="menuOpen = false"
-        >Truck Accidents</NuxtLink
-      >
-      <NuxtLink
-        to="/motorcycle-accidents"
-        class="navbar__mobile-link"
-        @click="menuOpen = false"
-        >Motorcycle</NuxtLink
-      >
-      <NuxtLink
-        to="/rideshare-accidents"
-        class="navbar__mobile-link"
-        @click="menuOpen = false"
-        >Rideshare</NuxtLink
-      >
-      <a :href="config.public.phoneHref" class="navbar__mobile-cta">{{
-        config.public.phone
-      }}</a>
+        <img
+          src="/services-page/auto-accidents/phone-icon-circle.png"
+          alt=""
+          width="36"
+          height="36"
+        />
+        {{ config.public.phone }}
+      </a>
     </div>
   </header>
 </template>
@@ -90,7 +59,6 @@
 import { useDataLayer } from '../../composables/useDataLayer'
 import { useScrollToContact } from '../../composables/useScrollToContact'
 const config = useRuntimeConfig();
-const menuOpen = ref(false);
 const { push: gtmPush } = useDataLayer();
 const { scrollToContact } = useScrollToContact();
 </script>
@@ -214,83 +182,23 @@ const { scrollToContact } = useScrollToContact();
     }
   }
 
-  &__burger {
+  &__mobile-phone {
     display: none;
-    flex-direction: column;
-    gap: 5px;
-    padding: 4px;
-    margin-left: auto;
-    cursor: pointer;
-
-    @include tablet-down {
-      display: flex;
-    }
-
-    span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--color-dark);
-      border-radius: 2px;
-      transition: transform 0.25s ease, opacity 0.25s ease;
-    }
-
-    &.is-open {
-      span:nth-child(1) {
-        transform: translateY(7px) rotate(45deg);
-      }
-      span:nth-child(2) {
-        opacity: 0;
-      }
-      span:nth-child(3) {
-        transform: translateY(-7px) rotate(-45deg);
-      }
-    }
-  }
-
-  &__mobile-menu {
-    display: none;
-    flex-direction: column;
-    background: var(--color-white);
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
-    overflow: hidden;
-    max-height: 0;
-    transition: max-height 0.35s ease;
-
-    @include tablet-down {
-      display: flex;
-    }
-
-    &.is-open {
-      max-height: 400px;
-    }
-  }
-
-  &__mobile-link {
-    padding: 16px 24px;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--color-dark);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    transition: color var(--transition-base);
-
-    &:hover {
-      color: var(--color-accent);
-    }
-  }
-
-  &__mobile-cta {
-    margin: 16px 24px;
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 14px 24px;
-    background: var(--color-accent);
-    color: var(--color-dark);
+    gap: 8px;
+    margin-left: auto;
     font-size: 16px;
     font-weight: 600;
-    border-radius: var(--radius-pill);
-    text-align: center;
+    color: var(--color-accent);
+    letter-spacing: -0.02em;
+
+    @include tablet-down {
+      display: flex;
+    }
+
+    img {
+      flex-shrink: 0;
+    }
   }
 }
 </style>

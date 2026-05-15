@@ -69,7 +69,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       web3FormsKey: process.env.WEB3FORMS_KEY ?? '',
-      phone: '(470)-407-2800',
+      phone: '(470) 407-2800',
       phoneHref: 'tel:4704072800',
     },
   },
