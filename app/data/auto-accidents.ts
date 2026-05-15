@@ -8,7 +8,7 @@ export const heroData = {
   heroBody: `Whether it was a car crash on I-285, a truck collision on I-75, a rideshare accident downtown, or a motorcycle hit-and-run, a serious accident can turn your life upside down in seconds. The insurance company will start building their case immediately—you deserve someone in your corner just as fast.`,
   description: `Whether it was a car crash on I-285, a truck collision on I-75, a rideshare accident downtown, or a motorcycle hit-and-run, a serious accident can turn your life upside down in seconds. The insurance company will start building their case immediately—you deserve someone in your corner just as fast.\n\nAccident Professionals connects you with a vetted auto accident attorney in Georgia at no cost to you. No upfront fees. No gimmicks. Just real help when you need it most.`,
   phone: '(470)-407-2800',
-  phoneHref: 'tel:+14704072800',
+  phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   stats: [
     { value: '85', label: 'Closed Cases Assisted' },
@@ -247,7 +247,7 @@ export const ctaBannerData = {
   headingAccent: ` Let's Talk.`,
   subheading: 'No pressure. No jargon. Just an honest conversation about your options.',
   phone: '(470)-407-2800',
-  phoneHref: 'tel:+14704072800',
+  phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Auto Accident Consultation Request — Accident Professionals',
   caseOptions: [

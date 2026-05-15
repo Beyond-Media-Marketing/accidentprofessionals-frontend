@@ -8,7 +8,7 @@ export const heroData = {
   heroBody: `Whether you slipped on an unmarked wet floor at a grocery store, tripped on a broken staircase at an apartment complex, were assaulted in a parking lot with inadequate security, or bitten by a dog on someone else's property—a property owner's negligence can turn your life upside down in an instant. The property owner's insurance company will start building their case immediately—you deserve someone in your corner just as fast.`,
   description: `Whether you slipped on an unmarked wet floor at a grocery store, tripped on a broken staircase at an apartment complex, were assaulted in a parking lot with inadequate security, or bitten by a dog on someone else's property—a property owner's negligence can turn your life upside down in an instant.\n\nAccident Professionals connects you with a vetted premises liability attorney in Georgia at no cost to you. No upfront fees. No gimmicks. Just real help when you need it most.`,
   phone: '(470)-407-2800',
-  phoneHref: 'tel:+14704072800',
+  phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   stats: [
     { value: '85', label: 'Closed Cases Assisted' },
@@ -215,7 +215,7 @@ export const ctaBannerData = {
   headingAccent: ` Let's Talk.`,
   subheading: `No pressure. No jargon. Just an honest conversation about whether you have a case.`,
   phone: '(470)-407-2800',
-  phoneHref: 'tel:+14704072800',
+  phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Premises Liability Consultation Request — Accident Professionals',
   caseOptions: [

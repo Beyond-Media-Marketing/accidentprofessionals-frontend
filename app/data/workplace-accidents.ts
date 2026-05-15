@@ -8,7 +8,7 @@ export const heroData = {
   heroBody: `Whether it was a fall on a construction site, a warehouse forklift accident, an injury from defective equipment, or a vehicle accident while on the clock, a serious workplace injury can upend your finances, your health, and your future. Your employer's insurance company will start building their case immediately—you deserve someone in your corner just as fast.`,
   description: `Whether it was a fall on a construction site, a warehouse forklift accident, an injury from defective equipment, or a vehicle accident while on the clock, a serious workplace injury can upend your finances, your health, and your future.\n\nAccident Professionals connects you with a vetted workplace accident attorney in Georgia at no cost to you. No upfront fees. No gimmicks. Just real help when you need it most.`,
   phone: '(470)-407-2800',
-  phoneHref: 'tel:+14704072800',
+  phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   stats: [
     { value: '85', label: 'Closed Cases Assisted' },
@@ -213,7 +213,7 @@ export const ctaBannerData = {
   headingAccent: ` Let's Talk.`,
   subheading: `No pressure. No jargon. And no—your employer doesn't have to know you called.`,
   phone: '(470)-407-2800',
-  phoneHref: 'tel:+14704072800',
+  phoneHref: 'tel:4704072800',
   cta: 'Get Your Free Consultation',
   formSubject: 'New Workplace Accident Consultation Request — Accident Professionals',
   caseOptions: [
