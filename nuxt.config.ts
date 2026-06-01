@@ -8,7 +8,17 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxtjs/google-fonts', '@vueuse/nuxt'],
+  modules: ['@nuxtjs/google-fonts', '@vueuse/nuxt', '@nuxtjs/tailwindcss', '@nuxtjs/sitemap'],
+
+  // Tailwind powers the NEW (Strapi-driven) pages. Preflight is disabled in
+  // tailwind.config.ts so it coexists with the legacy SCSS pages.
+  tailwindcss: {
+    cssPath: '~/assets/css/tailwind.css',
+  },
+
+  site: {
+    url: process.env.SITE_URL ?? 'http://localhost:3000',
+  },
 
   components: [
     { path: '~/components', pathPrefix: false },
@@ -69,6 +79,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       web3FormsKey: process.env.WEB3FORMS_KEY ?? '',
+      strapiUrl: process.env.STRAPI_URL ?? 'http://localhost:1337',
+      siteUrl: process.env.SITE_URL ?? 'http://localhost:3000',
+      // NOTE: phone/phoneHref stay here only for the 3 legacy SCSS pages.
+      // New pages read these from the Strapi global-setting single-type.
       phone: '(470) 407-2800',
       phoneHref: 'tel:4704072800',
     },
