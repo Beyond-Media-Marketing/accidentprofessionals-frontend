@@ -22,8 +22,10 @@ const props = withDefaults(
     secondaryCta?: Cta | null
     bgImage?: string | null
     stats?: Stat[] | null
+    /** 'card' = single white bar (home); 'pills' = separate dark chips (about). */
+    statsVariant?: 'card' | 'pills' | null
   }>(),
-  { align: 'left' },
+  { align: 'left', statsVariant: 'card' },
 )
 
 const slots = useSlots()
@@ -102,10 +104,23 @@ const isCenter = computed(() => props.align === 'center')
     </div>
   </section>
 
-  <!-- Stats bar — overlaps the hero's bottom edge onto the page background -->
-  <div v-if="stats?.length" class="relative z-10 -mt-16 3xl:-mt-20">
+  <!-- Stats — overlaps the hero's bottom edge -->
+  <div v-if="stats?.length" class="relative z-10 -mt-12 3xl:-mt-16">
     <div class="site-container">
-      <div class="grid grid-cols-2 rounded-[28px] bg-white/[0.81] shadow-card backdrop-blur-sm md:grid-cols-4">
+      <!-- Pills variant (about): separate dark chips -->
+      <div v-if="statsVariant === 'pills'" class="flex flex-wrap justify-center gap-3 sm:gap-4">
+        <div
+          v-for="(s, i) in stats"
+          :key="i"
+          class="inline-flex items-center gap-2.5 rounded-pill border border-white/10 bg-dark/80 px-5 py-3 backdrop-blur 3xl:px-6 3xl:py-4"
+        >
+          <span class="font-secondary text-xl font-bold text-accent 3xl:text-2xl">{{ s.value }}</span>
+          <span class="max-w-[170px] font-primary text-xs leading-snug text-white/70 3xl:text-sm">{{ s.label }}</span>
+        </div>
+      </div>
+
+      <!-- Card variant (home): single white bar -->
+      <div v-else class="grid grid-cols-2 rounded-[28px] bg-white/[0.81] shadow-card backdrop-blur-sm md:grid-cols-4">
         <div
           v-for="(s, i) in stats"
           :key="i"

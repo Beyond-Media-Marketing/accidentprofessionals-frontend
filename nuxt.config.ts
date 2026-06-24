@@ -8,7 +8,16 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxtjs/google-fonts', '@vueuse/nuxt', '@nuxtjs/tailwindcss', '@nuxtjs/sitemap'],
+  modules: ['@nuxtjs/google-fonts', '@vueuse/nuxt', '@nuxtjs/tailwindcss', '@nuxtjs/sitemap', '@nuxt/image'],
+
+  // Optimized responsive images (WebP/AVIF + lazy). Local /public assets work
+  // out of the box; allow the Strapi host so CMS-uploaded media is optimized too.
+  image: {
+    domains: [
+      (() => { try { return new URL(process.env.STRAPI_URL ?? 'http://localhost:1337').hostname } catch { return 'localhost' } })(),
+    ],
+    format: ['avif', 'webp'],
+  },
 
   // Tailwind powers the NEW (Strapi-driven) pages. Preflight is disabled in
   // tailwind.config.ts so it coexists with the legacy SCSS pages.
