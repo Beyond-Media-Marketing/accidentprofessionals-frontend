@@ -36,10 +36,10 @@ withDefaults(
 
     <h2
       v-if="heading || headingAccent"
-      class="font-secondary font-semibold leading-[1.12] text-[clamp(1.8rem,3.5vw,3.125rem)]"
+      class="section-heading font-secondary font-semibold leading-[1.12] text-[clamp(1.8rem,3.5vw,3.125rem)]"
       :class="theme === 'dark' ? 'text-white' : 'text-dark'"
     >
-      <span>{{ heading }}</span> <span v-if="headingAccent" class="text-accent">{{ headingAccent }}</span>
+      <span v-if="heading" v-html="renderInlineMarkdown(heading)" /> <span v-if="headingAccent" class="text-accent">{{ headingAccent }}</span>
     </h2>
 
     <p
@@ -64,6 +64,11 @@ withDefaults(
 </template>
 
 <style scoped>
+/* **bold** in a heading renders as a gold accent word (mid-sentence accent). */
+.section-heading :deep(strong) {
+  color: var(--color-accent);
+  font-weight: inherit;
+}
 /* Emphasised phrases in the CMS intro read darker on light backgrounds. */
 .section-intro :deep(strong) {
   color: var(--color-dark);

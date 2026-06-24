@@ -24,8 +24,10 @@ const props = withDefaults(
     stats?: Stat[] | null
     /** 'card' = single white bar (home); 'pills' = separate dark chips (about). */
     statsVariant?: 'card' | 'pills' | null
+    /** Set false when the background image already has its own darkening baked in. */
+    overlay?: boolean | null
   }>(),
-  { align: 'left', statsVariant: 'card' },
+  { align: 'left', statsVariant: 'card', overlay: true },
 )
 
 const slots = useSlots()
@@ -38,8 +40,10 @@ const isCenter = computed(() => props.align === 'center')
     <!-- Background image + readability gradients -->
     <div class="absolute inset-0 -z-10">
       <img v-if="bgImage" :src="bgImage" alt="" class="h-full w-full object-cover object-center" />
-      <div class="absolute inset-0 bg-gradient-to-r from-dark via-dark/85 to-dark/30" />
-      <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-dark/50" />
+      <template v-if="overlay">
+        <div class="absolute inset-0 bg-gradient-to-r from-dark via-dark/85 to-dark/30" />
+        <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-dark/50" />
+      </template>
     </div>
 
     <div class="site-container">
@@ -107,15 +111,16 @@ const isCenter = computed(() => props.align === 'center')
   <!-- Stats — overlaps the hero's bottom edge -->
   <div v-if="stats?.length" class="relative z-10 -mt-12 3xl:-mt-16">
     <div class="site-container">
-      <!-- Pills variant (about): separate dark chips -->
-      <div v-if="statsVariant === 'pills'" class="flex flex-wrap justify-center gap-3 sm:gap-4">
+      <!-- Pills variant (about): 2-col grid on mobile (value over label, like the homepage),
+           wrapping pill row from sm up. -->
+      <div v-if="statsVariant === 'pills'" class="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
         <div
           v-for="(s, i) in stats"
           :key="i"
-          class="inline-flex items-center gap-2.5 rounded-pill border border-white/10 bg-dark/80 px-5 py-3 backdrop-blur 3xl:px-6 3xl:py-4"
+          class="flex flex-col items-center gap-1 rounded-2xl border border-white/10 bg-dark/80 px-4 py-4 text-center backdrop-blur sm:w-auto sm:flex-row sm:items-center sm:gap-2.5 sm:rounded-pill sm:px-5 sm:py-3 sm:text-left 3xl:px-6 3xl:py-4"
         >
-          <span class="font-secondary text-xl font-bold text-accent 3xl:text-2xl">{{ s.value }}</span>
-          <span class="max-w-[170px] font-primary text-xs leading-snug text-white/70 3xl:text-sm">{{ s.label }}</span>
+          <span class="font-secondary text-2xl font-bold text-accent sm:text-xl 3xl:text-2xl">{{ s.value }}</span>
+          <span class="font-primary text-xs leading-snug text-white/70 sm:max-w-[170px] 3xl:text-sm">{{ s.label }}</span>
         </div>
       </div>
 
