@@ -2,7 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Preflight is disabled (to protect the legacy SCSS pages), but Tailwind's
+ * border utilities need a default `border-style: solid` — otherwise `border`
+ * sets a width with style `none`, so nothing renders. This re-adds ONLY the
+ * border part of Preflight. Safe for legacy: default width is 0 (invisible),
+ * and any explicit SCSS border (class/element selector) overrides this `*` rule.
+ */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-width: 0;
+    border-style: solid;
+    border-color: currentColor;
+  }
+}
+
 @layer components {
+  /* Consistent vertical rhythm for full-width sections. */
+  .section {
+    @apply py-16 md:py-24 3xl:py-32;
+  }
+
   /*
    * Site-wide content container. Progressively widens on large displays so the
    * whole website fills 27"+ screens instead of stranding content at a narrow

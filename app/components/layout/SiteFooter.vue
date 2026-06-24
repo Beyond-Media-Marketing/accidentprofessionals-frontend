@@ -21,7 +21,7 @@ const copyright = computed(() =>
 </script>
 
 <template>
-  <footer class="relative overflow-hidden bg-dark text-on-dark">
+  <footer class="relative overflow-hidden text-on-dark">
     <div class="site-container pb-12 pt-16 3xl:pt-20">
       <div
         class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1.3fr_1fr_1fr_1.1fr] lg:gap-8"

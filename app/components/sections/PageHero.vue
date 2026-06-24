@@ -56,14 +56,14 @@ const isCenter = computed(() => props.align === 'center')
             {{ eyebrow }}
           </span>
 
-          <h1 class="font-primary text-4xl font-semibold leading-[1.08] sm:text-5xl lg:text-6xl 3xl:text-7xl">
+          <h1 class="font-secondary text-4xl font-semibold leading-[1.08] sm:text-5xl lg:text-6xl 3xl:text-7xl">
             <span v-if="headingAccent" class="block text-accent">{{ headingAccent }}</span>
             <span v-if="heading" class="block text-white">{{ heading }}</span>
           </h1>
 
           <p
             v-if="subhead"
-            class="hero-subhead mt-6 max-w-[560px] text-[15px] leading-relaxed text-white/70 3xl:text-base"
+            class="hero-subhead mt-6 max-w-[560px] font-primary text-[15px] leading-relaxed text-white/70 3xl:text-base"
             :class="isCenter ? 'mx-auto' : ''"
             v-html="renderInlineMarkdown(subhead)"
           />
@@ -81,9 +81,7 @@ const isCenter = computed(() => props.align === 'center')
               :scroll-to="primaryCta.scrollTo"
             >
               {{ primaryCta.label }}
-              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M5 12h14M13 6l6 6-6 6" />
-              </svg>
+              <img src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
             </BaseButton>
             <BaseButton
               v-if="secondaryCta?.label"
@@ -107,15 +105,19 @@ const isCenter = computed(() => props.align === 'center')
   <!-- Stats bar — overlaps the hero's bottom edge onto the page background -->
   <div v-if="stats?.length" class="relative z-10 -mt-16 3xl:-mt-20">
     <div class="site-container">
-      <div class="grid grid-cols-2 overflow-hidden rounded-[28px] border border-black/5 bg-white shadow-card md:grid-cols-4">
+      <div class="grid grid-cols-2 rounded-[28px] bg-white/[0.81] shadow-card backdrop-blur-sm md:grid-cols-4">
         <div
           v-for="(s, i) in stats"
           :key="i"
-          class="px-6 py-7 text-center 3xl:py-9"
-          :class="i > 0 ? 'md:border-l md:border-black/10' : ''"
+          class="relative px-6 py-7 text-center font-inter 3xl:py-9"
+          :class="
+            i > 0
+              ? `md:before:absolute md:before:left-0 md:before:top-1/2 md:before:h-14 md:before:w-px md:before:-translate-y-1/2 md:before:bg-white md:before:content-['']`
+              : ''
+          "
         >
-          <p class="font-primary text-3xl font-bold text-accent 3xl:text-4xl">{{ s.value }}</p>
-          <p class="mx-auto mt-2 max-w-[180px] text-xs leading-snug text-muted 3xl:text-sm">{{ s.label }}</p>
+          <p class="text-4xl font-bold text-accent 3xl:text-5xl">{{ s.value }}</p>
+          <p class="mx-auto mt-2 max-w-[180px] text-xs leading-snug text-[#1E1E1E]/50 3xl:text-sm">{{ s.label }}</p>
         </div>
       </div>
     </div>
@@ -127,5 +129,15 @@ const isCenter = computed(() => props.align === 'center')
 .hero-subhead :deep(strong) {
   color: #ffffff;
   font-weight: 600;
+}
+/* Internal/external links editors add via the rich-text field. */
+.hero-subhead :deep(a) {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity 0.2s ease;
+}
+.hero-subhead :deep(a):hover {
+  opacity: 0.85;
 }
 </style>

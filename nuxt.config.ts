@@ -20,6 +20,11 @@ export default defineNuxtConfig({
     url: process.env.SITE_URL ?? 'http://localhost:3000',
   },
 
+  // Keep the legacy home backup out of the sitemap (duplicate content).
+  sitemap: {
+    exclude: ['/home-legacy'],
+  },
+
   components: [
     { path: '~/components', pathPrefix: false },
   ],
@@ -28,6 +33,7 @@ export default defineNuxtConfig({
     families: {
       'Fira Sans': [400, 500, 600, 700],
       'DM Sans': [400, 500, 600],
+      'Inter': [400, 500, 600, 700],
     },
     subsets: ['latin'],
     display: 'swap',

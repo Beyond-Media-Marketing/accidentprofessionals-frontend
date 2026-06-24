@@ -25,21 +25,24 @@ export default <Partial<Config>>{
         '3xl': '1920px',
         '4xl': '2560px',
       },
-      // Single source of truth: these map to the CSS custom properties defined
-      // in app/assets/scss/_tokens.scss, so SCSS and Tailwind never drift.
+      // Literal hex (NOT the CSS vars) so Tailwind opacity modifiers work —
+      // e.g. text-accent/20, bg-dark/85. With var(--x) holding a hex, Tailwind
+      // emits invalid `rgb(#hex / .2)` and the rule is dropped. These mirror the
+      // exact values in app/assets/scss/_tokens.scss (legacy SCSS keeps the vars).
       colors: {
-        accent: 'var(--color-accent)',
-        'accent-light': 'var(--color-accent-light)',
-        'accent-glow': 'var(--color-accent-glow)',
-        dark: 'var(--color-dark)',
-        cream: 'var(--color-cream)',
-        muted: 'var(--color-muted)',
-        'border-subtle': 'var(--color-border)',
-        'on-dark': 'var(--color-text-on-dark)',
+        accent: '#f3af00',
+        'accent-light': '#f8edd4',
+        'accent-glow': 'rgba(243, 175, 0, 0.2)',
+        dark: '#1e1e1e',
+        cream: '#f8f6f4',
+        muted: '#a8a197',
+        'border-subtle': 'rgba(30, 30, 30, 0.05)',
+        'on-dark': '#f8f6f4',
       },
       fontFamily: {
         primary: ['Fira Sans', 'sans-serif'],
         secondary: ['DM Sans', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
       },
       borderRadius: {
         sm: 'var(--radius-sm)',

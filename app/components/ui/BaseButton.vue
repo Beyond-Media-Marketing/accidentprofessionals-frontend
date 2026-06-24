@@ -16,12 +16,12 @@ const props = withDefaults(
 )
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-pill px-6 text-[15px] font-semibold transition-all h-[52px] 3xl:h-[56px]'
+  'inline-flex items-center justify-center gap-2 rounded-pill px-6 font-primary text-[15px] font-semibold transition-all h-[52px] 3xl:h-[56px]'
 
 const variants: Record<string, string> = {
   primary: 'bg-accent text-dark hover:-translate-y-px hover:shadow-button',
   dark: 'bg-dark text-on-dark hover:-translate-y-px hover:shadow-button',
-  ghost: 'border border-white/30 text-white hover:bg-white/10',
+  ghost: 'bg-white/[0.19] text-white hover:bg-white/25',
 }
 
 const classes = computed(() => `${base} ${variants[props.variant || 'primary']}`)
