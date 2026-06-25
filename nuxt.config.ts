@@ -13,9 +13,17 @@ export default defineNuxtConfig({
   // Optimized responsive images (WebP/AVIF + lazy). Local /public assets work
   // out of the box; allow the Strapi host so CMS-uploaded media is optimized too.
   image: {
-    domains: [
-      (() => { try { return new URL(process.env.STRAPI_URL ?? 'http://localhost:1337').hostname } catch { return 'localhost' } })(),
-    ],
+    // Allow the Strapi API host AND the Strapi Cloud media subdomain
+    // (<project>.media.strapiapp.com), where uploaded media is actually served.
+    domains: (() => {
+      try {
+        const host = new URL(process.env.STRAPI_URL ?? 'http://localhost:1337').hostname
+        const media = host.replace(/\.strapiapp\.com$/, '.media.strapiapp.com')
+        return media === host ? [host] : [host, media]
+      } catch {
+        return ['localhost']
+      }
+    })(),
     format: ['avif', 'webp'],
   },
 

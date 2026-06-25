@@ -44,13 +44,12 @@ const imageRight = computed(() => layout.value === 'image-right')
       <!-- Image pulled up by half its height: top half over the band, bottom half on the page bg.
            The band's extra bottom padding (vs the -mt) creates breathing room between the CTA and the image. -->
       <div v-if="image" class="site-container">
-        <NuxtImg
+        <img
           :src="image"
           :alt="imageAlt || block.heading || ''"
           class="relative z-10 -mt-[150px] block h-[300px] w-full rounded-3xl object-cover md:-mt-[210px] md:h-[420px] lg:-mt-[270px] lg:h-[540px]"
-          sizes="100vw lg:1100px"
-          format="avif,webp"
           loading="lazy"
+          decoding="async"
         />
       </div>
     </template>
@@ -61,14 +60,13 @@ const imageRight = computed(() => layout.value === 'image-right')
         <div class="grid items-center gap-10 lg:grid-cols-2 3xl:gap-16">
           <div class="relative" :class="imageRight ? 'lg:order-2' : ''">
             <div class="aspect-[4/3] overflow-hidden rounded-3xl sm:aspect-[5/4] lg:aspect-square">
-              <NuxtImg
+              <img
                 v-if="image"
                 :src="image"
                 :alt="imageAlt || block.heading || ''"
                 class="h-full w-full object-cover"
-                sizes="100vw lg:600px"
-                format="avif,webp"
                 loading="lazy"
+                decoding="async"
               />
             </div>
 
