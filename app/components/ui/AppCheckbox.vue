@@ -34,52 +34,45 @@ defineProps({ modelValue: Boolean });
 defineEmits(["update:modelValue"]);
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .app-checkbox {
   display: flex;
   gap: 12px;
   align-items: flex-start;
   cursor: pointer;
-
-  &__input-wrap {
-    position: relative;
-    flex-shrink: 0;
-    padding-top: 2px;
-  }
-
-  &__input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  &__box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    border: 1px solid #d4d4d4;
-    border-radius: 6px;
-    background: transparent;
-    transition: background var(--transition-base),
-      border-color var(--transition-base);
-
-    .app-checkbox__input:checked + & {
-      background: var(--color-accent);
-      border-color: var(--color-accent);
-    }
-  }
-
-  &__text {
-    font-size: 14px;
-    color: var(--color-white);
-
-    :deep(a) {
-      text-decoration: underline;
-      color: var(--color-white);
-    }
-  }
+}
+.app-checkbox__input-wrap {
+  position: relative;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.app-checkbox__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.app-checkbox__box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  background: transparent;
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+.app-checkbox__input:checked + .app-checkbox__box {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.app-checkbox__text {
+  font-size: 14px;
+  color: var(--color-white);
+}
+.app-checkbox__text :deep(a) {
+  text-decoration: underline;
+  color: var(--color-white);
 }
 </style>

@@ -105,7 +105,12 @@ function onPhoneClick() {
                   :style="{ gridTemplateColumns: `repeat(${Math.max(item.columns?.length || 1, 1)}, minmax(180px, 1fr))` }"
                 >
                   <div v-for="(col, ci) in item.columns ?? []" :key="ci">
-                    <p class="mb-3 text-[12px] font-semibold uppercase tracking-wide text-muted">
+                    <NuxtLink
+                      v-if="col.href"
+                      :to="col.href"
+                      class="mb-3 block text-[12px] font-semibold uppercase tracking-wide text-muted transition-colors hover:text-accent"
+                    >{{ col.heading }}</NuxtLink>
+                    <p v-else class="mb-3 text-[12px] font-semibold uppercase tracking-wide text-muted">
                       {{ col.heading }}
                     </p>
                     <ul class="space-y-2">
@@ -195,7 +200,13 @@ function onPhoneClick() {
                 </button>
                 <div v-if="mobileExpanded === i" class="pb-3 pl-3">
                   <div v-for="(col, ci) in item.columns ?? []" :key="ci" class="mb-3">
-                    <p class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">{{ col.heading }}</p>
+                    <NuxtLink
+                      v-if="col.href"
+                      :to="col.href"
+                      class="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-muted"
+                      @click="closeAll"
+                    >{{ col.heading }}</NuxtLink>
+                    <p v-else class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">{{ col.heading }}</p>
                     <ul class="space-y-2">
                       <li v-for="(link, li) in col.links ?? []" :key="li">
                         <NuxtLink :to="link.href || '#'" class="block text-sm text-dark" @click="closeAll">

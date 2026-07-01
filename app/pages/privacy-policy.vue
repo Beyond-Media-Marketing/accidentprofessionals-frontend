@@ -108,84 +108,76 @@ useSeoMeta({
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .policy {
   background: var(--color-white);
   padding-top: 90px;
+}
+.policy__inner {
+  width: 100%;
+  max-width: 860px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+  padding-top: 60px;
+  padding-bottom: 80px;
+}
+@media (min-width: 640px) { .policy__inner { padding-inline: 2rem; } }
+@media (min-width: 1024px) { .policy__inner { padding-inline: 2.5rem; } }
+@media (max-width: 767px) { .policy__inner { padding-top: 40px; padding-bottom: 48px; } }
 
-  &__inner {
-    @include container;
-    max-width: 860px;
-    padding-top: 60px;
-    padding-bottom: 80px;
+.policy__title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  color: var(--color-dark);
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+.policy__updated {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin-bottom: 40px;
+}
 
-    @include mobile {
-      padding-top: 40px;
-      padding-bottom: 48px;
-    }
-  }
-
-  &__title {
-    font-size: clamp(2rem, 4vw, 3rem);
-    font-weight: 700;
-    color: var(--color-dark);
-    letter-spacing: -0.03em;
-    margin-bottom: 8px;
-  }
-
-  &__updated {
-    font-size: 14px;
-    color: var(--color-muted);
-    margin-bottom: 40px;
-  }
-
-  :deep(h2) {
-    font-size: clamp(1.25rem, 2.5vw, 1.6rem);
-    font-weight: 700;
-    color: var(--color-dark);
-    letter-spacing: -0.02em;
-    margin-top: 40px;
-    margin-bottom: 12px;
-  }
-
-  :deep(h3) {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--color-dark);
-    margin-top: 28px;
-    margin-bottom: 10px;
-  }
-
-  :deep(h4) {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--color-dark);
-    margin-top: 20px;
-    margin-bottom: 8px;
-  }
-
-  :deep(p) {
-    font-size: 15px;
-    color: var(--color-muted);
-    line-height: 1.75;
-    margin-bottom: 16px;
-  }
-
-  :deep(ul) {
-    padding-left: 20px;
-    margin-bottom: 16px;
-
-    li {
-      font-size: 15px;
-      color: var(--color-muted);
-      line-height: 1.75;
-      margin-bottom: 10px;
-    }
-  }
-
-  :deep(strong) {
-    color: var(--color-dark);
-    font-weight: 600;
-  }
+.policy :deep(h2) {
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  color: var(--color-dark);
+  letter-spacing: -0.02em;
+  margin-top: 40px;
+  margin-bottom: 12px;
+}
+.policy :deep(h3) {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-dark);
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+.policy :deep(h4) {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-dark);
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+.policy :deep(p) {
+  font-size: 15px;
+  color: var(--color-muted);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+.policy :deep(ul) {
+  padding-left: 20px;
+  margin-bottom: 16px;
+}
+.policy :deep(ul li) {
+  font-size: 15px;
+  color: var(--color-muted);
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+.policy :deep(strong) {
+  color: var(--color-dark);
+  font-weight: 600;
 }
 </style>

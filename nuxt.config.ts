@@ -1,9 +1,3 @@
-/// <reference types="node" />
-import { fileURLToPath } from 'url'
-import { resolve, dirname } from 'path'
-
-const __dirname = dirname(fileURLToPath(import.meta.url))
-
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
@@ -59,18 +53,6 @@ export default defineNuxtConfig({
     inject: true,
   },
 
-
-  css: ['~/assets/scss/main.scss'],
-
-  vite: {
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `@import "${resolve(__dirname, 'app/assets/scss/_mixins')}";`,
-        },
-      },
-    },
-  },
 
   app: {
     head: {

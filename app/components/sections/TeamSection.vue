@@ -1,10 +1,13 @@
 <template>
-  <section class="team" ref="sectionRef" aria-labelledby="team-heading">
-    <div class="team__inner">
+  <section class="bg-cream" ref="sectionRef" aria-labelledby="team-heading">
+    <div class="site-container flex flex-col gap-[42px] py-12 md:py-[60px] min-[1200px]:py-20">
 
-      <div class="team__header reveal">
-        <h2 id="team-heading">{{ data.heading }}</h2>
-        <p class="team__sub">{{ data.subheading }}</p>
+      <div class="reveal text-center">
+        <h2
+          id="team-heading"
+          class="mb-4 font-primary text-[clamp(1.8rem,3.5vw,3.125rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-dark"
+        >{{ data.heading }}</h2>
+        <p class="mx-auto max-w-[876px] text-base leading-[1.75] tracking-[-0.025em] text-muted">{{ data.subheading }}</p>
       </div>
 
       <!-- Desktop: paginated 3-up grid -->
@@ -182,225 +185,170 @@ function goTo(n: number) {
 }
 </script>
 
-<style lang="scss" scoped>
-.team {
-  background: var(--color-cream);
+<!-- Plain CSS (no SCSS): the 3-up grid ↔ mobile scroll-snap carousel, photo
+     overlay stats, and pagination dots/arrows. -->
+<style scoped>
+.team__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+@media (min-width: 768px) and (max-width: 1199px) {
+  .team__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 767px) {
+  .team__grid { display: none; }
+}
 
-  &__inner {
-    @include container;
-    @include section-padding;
+.team__track { display: none; }
+@media (max-width: 767px) {
+  .team__track {
     display: flex;
-    flex-direction: column;
-    gap: 42px;
-  }
-
-  &__header {
-    text-align: center;
-
-    h2 {
-      font-size: clamp(1.8rem, 3.5vw, 3.125rem);
-      color: var(--color-dark);
-      margin-bottom: 16px;
-    }
-  }
-
-  &__sub {
-    font-size: 16px;
-    color: var(--color-muted);
-    line-height: 1.75;
-    letter-spacing: -0.025em;
-    max-width: 876px;
-    margin-inline: auto;
-  }
-
-  // Desktop grid — hide on mobile
-  &__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
-
-    @include tablet {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    @include mobile {
-      display: none;
-    }
-  }
-
-  // Mobile carousel — hide on desktop/tablet
-  &__track {
-    display: none;
-
-    @include mobile {
-      display: flex;
-      gap: 16px;
-      overflow-x: scroll;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      // Break out of the container padding so first card aligns with content edge
-      margin-inline: -24px;
-      padding-inline: 24px;
-      scroll-padding-inline-start: 24px;
-
-      &::-webkit-scrollbar { display: none; }
-
-      .team__card {
-        flex-shrink: 0;
-        width: 82%;
-        scroll-snap-align: start;
-      }
-    }
-  }
-
-  &__card {
-    display: flex;
-    flex-direction: column;
     gap: 16px;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-inline: -24px;
+    padding-inline: 24px;
+    scroll-padding-inline-start: 24px;
   }
-
-  &__photo {
-    position: relative;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    height: 384px;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: top;
-    }
+  .team__track::-webkit-scrollbar { display: none; }
+  .team__track .team__card {
+    flex-shrink: 0;
+    width: 82%;
+    scroll-snap-align: start;
   }
+}
 
-  &__photo-stats {
-    position: absolute;
-    bottom: 24px;
-    left: 24px;
-    right: 24px;
-    display: flex;
-    gap: 8px;
-  }
+.team__card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.team__photo {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 384px;
+}
+.team__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.team__photo-stats {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  gap: 8px;
+}
+.team__photo-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  background: rgba(150, 150, 150, 0.19);
+  flex: 0 0 calc(50% - 4px);
+}
+.team__photo-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.team__photo-stat-label {
+  font-size: 11px;
+  color: #ffda79;
+  line-height: 1.5;
+}
+.team__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.team__name {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-dark);
+  line-height: 1.4;
+}
+.team__firm {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-accent);
+  letter-spacing: -0.01em;
+}
+.team__title {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin-bottom: 4px;
+}
+.team__bio {
+  font-size: 14px;
+  color: var(--color-dark);
+  line-height: 1.6;
+  opacity: 0.75;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-  &__photo-stat {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 8px 12px;
-    border-radius: 10px;
-    backdrop-filter: blur(25px);
-    -webkit-backdrop-filter: blur(25px);
-    background: rgba(150, 150, 150, 0.19);
-    flex: 0 0 calc(50% - 4px);
-  }
-
-  &__photo-stat-value {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--color-white);
-    line-height: 1.5;
-    white-space: nowrap;
-  }
-
-  &__photo-stat-label {
-    font-size: 11px;
-    color: #ffda79;
-    line-height: 1.5;
-  }
-
-  &__info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  &__name {
-    font-size: 17px;
-    font-weight: 700;
-    color: var(--color-dark);
-    line-height: 1.4;
-  }
-
-  &__firm {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--color-accent);
-    letter-spacing: -0.01em;
-  }
-
-  &__title {
-    font-size: 14px;
-    color: var(--color-muted);
-    margin-bottom: 4px;
-  }
-
-  &__bio {
-    font-size: 14px;
-    color: var(--color-dark);
-    line-height: 1.6;
-    opacity: 0.75;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  // ── Pagination ──────────────────────────────────────────────────────────────
-  &__pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  &__page-arrow {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 1.5px solid var(--color-border, #e0dcd8);
-    background: var(--color-white);
-    color: var(--color-dark);
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background var(--transition-base), border-color var(--transition-base), opacity var(--transition-base);
-
-    &:hover:not(:disabled) {
-      background: var(--color-accent);
-      border-color: var(--color-accent);
-      color: var(--color-dark);
-    }
-
-    &:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-  }
-
-  &__page-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: none;
-    background: var(--color-muted);
-    opacity: 0.35;
-    cursor: pointer;
-    padding: 0;
-    transition: opacity var(--transition-base), background var(--transition-base), transform var(--transition-base);
-
-    &.is-active {
-      background: var(--color-accent);
-      opacity: 1;
-      transform: scale(1.3);
-    }
-
-    &:hover:not(.is-active) {
-      opacity: 0.65;
-    }
-  }
+.team__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.team__page-arrow {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border, #e0dcd8);
+  background: var(--color-white);
+  color: var(--color-dark);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, opacity 0.25s ease;
+}
+.team__page-arrow:hover:not(:disabled) {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-dark);
+}
+.team__page-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.team__page-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-muted);
+  opacity: 0.35;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+.team__page-dot.is-active {
+  background: var(--color-accent);
+  opacity: 1;
+  transform: scale(1.3);
+}
+.team__page-dot:hover:not(.is-active) {
+  opacity: 0.65;
 }
 </style>

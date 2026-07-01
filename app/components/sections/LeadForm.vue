@@ -177,7 +177,7 @@ async function submitForm() {
   </form>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 /* Exact design ported from the legacy services-page hero form (dark glass card). */
 .lead-form {
   background: rgba(103, 103, 103, 0.15);
@@ -194,9 +194,9 @@ async function submitForm() {
 .lead-form__row {
   display: flex;
   gap: 10px;
-  @media (max-width: 575px) {
-    flex-direction: column;
-  }
+}
+@media (max-width: 575px) {
+  .lead-form__row { flex-direction: column; }
 }
 
 .lead-form__field {
@@ -204,65 +204,50 @@ async function submitForm() {
   flex-direction: column;
   gap: 6px;
   flex: 1;
-
-  label {
-    font-size: 14px;
-    font-weight: 500;
-    color: #ffffff;
-    letter-spacing: -0.01em;
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    padding: 10px 14px;
-    background: rgba(255, 255, 255, 0.88);
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-primary);
-    font-size: 15px;
-    color: var(--color-dark);
-    outline: none;
-    transition: box-shadow var(--transition-base);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-
-    &::placeholder {
-      color: #767676;
-    }
-    &:focus {
-      box-shadow: 0 0 0 2px var(--color-accent);
-    }
-  }
-
-  textarea {
-    resize: none;
-    line-height: 1.5;
-  }
 }
-
-.lead-form__select-wrap {
-  position: relative;
-
-  select {
-    width: 100%;
-    padding: 10px 36px 10px 14px;
-    background: rgba(255, 255, 255, 0.88);
-    border: none;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-primary);
-    font-size: 15px;
-    color: var(--color-dark);
-    outline: none;
-    appearance: none;
-    cursor: pointer;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
-    transition: box-shadow var(--transition-base);
-
-    &:focus {
-      box-shadow: 0 0 0 2px var(--color-accent);
-    }
-  }
+.lead-form__field label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  letter-spacing: -0.01em;
 }
+.lead-form__field input,
+.lead-form__field textarea {
+  width: 100%;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.88);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-primary);
+  font-size: 15px;
+  color: var(--color-dark);
+  outline: none;
+  transition: box-shadow var(--transition-base);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+}
+.lead-form__field input::placeholder,
+.lead-form__field textarea::placeholder { color: #767676; }
+.lead-form__field input:focus,
+.lead-form__field textarea:focus { box-shadow: 0 0 0 2px var(--color-accent); }
+.lead-form__field textarea { resize: none; line-height: 1.5; }
+
+.lead-form__select-wrap { position: relative; }
+.lead-form__select-wrap select {
+  width: 100%;
+  padding: 10px 36px 10px 14px;
+  background: rgba(255, 255, 255, 0.88);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-primary);
+  font-size: 15px;
+  color: var(--color-dark);
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  transition: box-shadow var(--transition-base);
+}
+.lead-form__select-wrap select:focus { box-shadow: 0 0 0 2px var(--color-accent); }
 
 .lead-form__chevron {
   position: absolute;
@@ -291,15 +276,9 @@ async function submitForm() {
   letter-spacing: -0.01em;
   box-shadow: var(--shadow-button);
   transition: transform var(--transition-base), opacity var(--transition-base);
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
 }
+.lead-form__submit:hover:not(:disabled) { transform: translateY(-2px); }
+.lead-form__submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .lead-form__divider {
   border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -316,18 +295,15 @@ async function submitForm() {
 .lead-form__avatars {
   display: flex;
   align-items: center;
-
-  img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-left: -10px;
-    object-fit: cover;
-    &:first-child {
-      margin-left: 0;
-    }
-  }
 }
+.lead-form__avatars img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-left: -10px;
+  object-fit: cover;
+}
+.lead-form__avatars img:first-child { margin-left: 0; }
 
 .lead-form__proof-text {
   display: flex;

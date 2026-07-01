@@ -217,7 +217,7 @@ async function submitForm() {
   </section>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .contact-form {
   display: flex;
   flex-direction: column;
@@ -227,9 +227,9 @@ async function submitForm() {
 .contact-form__row {
   display: flex;
   gap: 16px;
-  @media (max-width: 575px) {
-    flex-direction: column;
-  }
+}
+@media (max-width: 575px) {
+  .contact-form__row { flex-direction: column; }
 }
 
 .contact-form__field {
@@ -237,54 +237,39 @@ async function submitForm() {
   flex-direction: column;
   gap: 7px;
   flex: 1;
-
-  label {
-    font-family: var(--font-primary);
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--color-dark);
-
-    span {
-      color: #e11d48;
-    }
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    padding: 11px 14px;
-    background: var(--color-white);
-    border: 1px solid #e2e0dd;
-    border-radius: 8px;
-    font-family: var(--font-primary);
-    font-size: 15px;
-    color: var(--color-dark);
-    outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-    &::placeholder {
-      color: #9b9893;
-    }
-    &:focus {
-      border-color: var(--color-accent);
-      box-shadow: 0 0 0 3px rgba(248, 192, 28, 0.15);
-    }
-  }
-
-  textarea {
-    resize: vertical;
-    line-height: 1.55;
-  }
 }
-
-// AppCheckbox text is white by default (used on dark hero) — darken it here.
-.contact-form :deep(.app-checkbox__text) {
+.contact-form__field label {
+  font-family: var(--font-primary);
+  font-size: 14px;
+  font-weight: 600;
   color: var(--color-dark);
-
-  a {
-    color: var(--color-dark);
-  }
 }
+.contact-form__field label span { color: #e11d48; }
+.contact-form__field input,
+.contact-form__field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--color-white);
+  border: 1px solid #e2e0dd;
+  border-radius: 8px;
+  font-family: var(--font-primary);
+  font-size: 15px;
+  color: var(--color-dark);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.contact-form__field input::placeholder,
+.contact-form__field textarea::placeholder { color: #9b9893; }
+.contact-form__field input:focus,
+.contact-form__field textarea:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(248, 192, 28, 0.15);
+}
+.contact-form__field textarea { resize: vertical; line-height: 1.55; }
+
+/* AppCheckbox text is white by default (used on dark hero) — darken it here. */
+.contact-form :deep(.app-checkbox__text) { color: var(--color-dark); }
+.contact-form :deep(.app-checkbox__text a) { color: var(--color-dark); }
 
 .contact-form__submit {
   display: flex;
@@ -304,15 +289,9 @@ async function submitForm() {
   cursor: pointer;
   box-shadow: var(--shadow-button);
   transition: transform var(--transition-base), opacity var(--transition-base);
-
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-  }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
 }
+.contact-form__submit:hover:not(:disabled) { transform: translateY(-2px); }
+.contact-form__submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .contact-form__success {
   font-size: 14px;

@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
+<style scoped>
 .app-badge {
   display: inline-flex;
   align-items: center;
@@ -16,20 +16,19 @@
   border-radius: var(--radius-pill);
   box-shadow: 0 0 24px 0 var(--color-accent-glow);
   width: fit-content;
-  &__dot {
-    width: 8px;
-    height: 8px;
-    background: var(--color-accent);
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-
-  &__text {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--color-cream);
-    letter-spacing: -0.01em;
-    white-space: nowrap;
-  }
+}
+.app-badge__dot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.app-badge__text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-cream);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 </style>

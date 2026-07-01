@@ -22,7 +22,7 @@ defineProps({
 })
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .app-btn {
   display: inline-flex;
   align-items: center;
@@ -39,36 +39,32 @@ defineProps({
   cursor: pointer;
   transition: transform var(--transition-base), box-shadow var(--transition-base), opacity var(--transition-base);
   text-decoration: none;
+}
+.app-btn:hover { transform: translateY(-2px); }
+.app-btn:active { transform: translateY(0); }
 
-  &:hover { transform: translateY(-2px); }
-  &:active { transform: translateY(0); }
+.app-btn--primary {
+  background: var(--color-accent);
+  color: var(--color-dark);
+  box-shadow: var(--shadow-button);
+}
+.app-btn--primary:hover { box-shadow: 0px 24px 16px rgba(0,0,0,0.12), 0px 10px 6px rgba(0,0,0,0.12); }
 
-  &--primary {
-    background: var(--color-accent);
-    color: var(--color-dark);
-    box-shadow: var(--shadow-button);
+.app-btn--dark {
+  background: var(--color-dark);
+  color: var(--color-cream);
+}
+.app-btn--dark:hover { opacity: 0.88; }
 
-    &:hover { box-shadow: 0px 24px 16px rgba(0,0,0,0.12), 0px 10px 6px rgba(0,0,0,0.12); }
-  }
+.app-btn--ghost {
+  background: transparent;
+  color: var(--color-cream);
+  border: 1px solid rgba(248, 246, 244, 0.3);
+}
+.app-btn--ghost:hover { background: rgba(248, 246, 244, 0.08); }
 
-  &--dark {
-    background: var(--color-dark);
-    color: var(--color-cream);
-
-    &:hover { opacity: 0.88; }
-  }
-
-  &--ghost {
-    background: transparent;
-    color: var(--color-cream);
-    border: 1px solid rgba(248, 246, 244, 0.3);
-
-    &:hover { background: rgba(248, 246, 244, 0.08); }
-  }
-
-  &--sm {
-    padding: 10px 20px;
-    font-size: 14px;
-  }
+.app-btn--sm {
+  padding: 10px 20px;
+  font-size: 14px;
 }
 </style>
