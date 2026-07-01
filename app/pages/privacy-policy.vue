@@ -95,9 +95,12 @@
       </ul>
     </div>
   </div>
+  <PageBottom />
 </template>
 
 <script setup lang="ts">
+definePageMeta({ layout: 'site' })
+
 useSeoMeta({
   title: 'Privacy Policy | Accident Professionals',
   description: 'Privacy Policy for Accident Professionals LLC. Learn how we collect, use, and protect your personal information.',

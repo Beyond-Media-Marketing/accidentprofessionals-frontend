@@ -210,13 +210,12 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { heroData as defaultData } from "../../data/auto-accidents";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
 import { useHCaptcha } from "../../composables/useHCaptcha";
 
-const props = defineProps({ data: { default: () => defaultData } });
-const data = props.data as typeof defaultData;
+const props = defineProps({ data: { type: Object, required: true } });
+const data = props.data as any;
 const config = useRuntimeConfig();
 const route = useRoute();
 
@@ -324,12 +323,11 @@ async function submitForm() {
 
   // ── Layout ─────────────────────────────────────────────────────────────────
   &__inner {
+    @include container; // match .site-container width used across the site
     position: relative;
     z-index: 1;
-    width: 100%;
-    max-width: 1440px;
-    margin-inline: auto;
-    padding: 40px 112px 60px;
+    padding-top: 40px;
+    padding-bottom: 60px;
     display: grid;
     grid-template-columns: 1fr 551px;
     gap: 50px;
@@ -337,7 +335,8 @@ async function submitForm() {
 
     @include tablet-down {
       grid-template-columns: 1fr;
-      padding: 32px 24px 48px;
+      padding-top: 32px;
+      padding-bottom: 48px;
       gap: 40px;
     }
   }

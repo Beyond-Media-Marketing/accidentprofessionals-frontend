@@ -33,9 +33,8 @@
 </template>
 
 <script setup lang="ts">
-import { howItWorksData as defaultData } from '../../data/auto-accidents'
-const props = defineProps({ data: { default: () => defaultData } })
-const data = props.data as typeof defaultData
+const props = defineProps({ data: { type: Object, required: true } })
+const data = props.data as any
 const sectionRef = ref<HTMLElement | null>(null)
 useRevealSection(sectionRef)
 </script>

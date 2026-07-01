@@ -14,15 +14,20 @@
   @media (min-width: 1200px) { @content; }
 }
 
+// Mirrors the Tailwind `.site-container` so legacy SCSS sections line up with
+// the new pages and fill large (27"/2560px) displays instead of stranding
+// content at a narrow max-width.
 @mixin container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   margin-inline: auto;
-  padding-inline: 24px;
+  padding-inline: 1.5rem;
 
-  @include desktop {
-    padding-inline: 0;
-  }
+  @media (min-width: 640px) { padding-inline: 2rem; }
+  @media (min-width: 1024px) { padding-inline: 2.5rem; }
+  @media (min-width: 1536px) { max-width: 1440px; padding-inline: 3rem; }
+  @media (min-width: 1920px) { max-width: 1700px; padding-inline: 4rem; }
+  @media (min-width: 2560px) { max-width: 2100px; padding-inline: 5rem; }
 }
 
 @mixin section-padding {

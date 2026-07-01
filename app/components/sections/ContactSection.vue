@@ -169,13 +169,12 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import { ctaBannerData as defaultData } from "../../data/auto-accidents";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
 import { useHCaptcha } from "../../composables/useHCaptcha";
 
-const props = defineProps({ data: { default: () => defaultData } });
-const data = props.data as typeof defaultData;
+const props = defineProps({ data: { type: Object, required: true } });
+const data = props.data as any;
 const config = useRuntimeConfig();
 const route = useRoute();
 const sectionRef = ref<HTMLElement | null>(null);

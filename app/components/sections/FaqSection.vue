@@ -55,10 +55,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, nextTick } from 'vue'
-import { faqData as defaultData } from '../../data/auto-accidents'
 
-const props = defineProps({ data: { default: () => defaultData } })
-const data = props.data as typeof defaultData
+const props = defineProps({ data: { type: Object, required: true } })
+const data = props.data as any
 const sectionRef = ref<HTMLElement | null>(null)
 const openIndex = ref<number | null>(0)
 const answerRefs = ref<HTMLElement[]>([])

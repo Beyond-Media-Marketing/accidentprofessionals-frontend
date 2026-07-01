@@ -10,8 +10,8 @@
       <!-- Desktop: paginated 3-up grid -->
       <div class="team__grid">
         <article
-          v-for="attorney in paginated"
-          :key="attorney.id"
+          v-for="(attorney, i) in paginated"
+          :key="i"
           class="team__card"
           itemscope
           itemtype="https://schema.org/Person"
@@ -41,8 +41,8 @@
       <!-- Mobile: swipeable scroll-snap carousel (all attorneys) -->
       <div class="team__track" ref="trackRef" @scroll.passive="onTrackScroll">
         <article
-          v-for="attorney in attorneys"
-          :key="attorney.id"
+          v-for="(attorney, i) in attorneys"
+          :key="'m-' + i"
           class="team__card"
           itemscope
           itemtype="https://schema.org/Person"
@@ -103,13 +103,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
-import { teamData } from '../../data/auto-accidents'
-import attorneys from '../../data/attorneys.json'
+
+const props = defineProps({ data: { type: Object, required: true } })
+const data = computed<any>(() => props.data ?? {})
+const attorneys = computed<any[]>(() => data.value.attorneys ?? [])
 
 const PER_PAGE = 3
-const data = teamData
 const sectionRef = ref<HTMLElement | null>(null)
 const trackRef = ref<HTMLElement | null>(null)
 useRevealSection(sectionRef)
@@ -118,9 +119,9 @@ const isMobile = useMediaQuery('(max-width: 767px)')
 
 // Desktop pagination state
 const page = ref(0)
-const totalPages = computed(() => Math.ceil(attorneys.length / PER_PAGE))
+const totalPages = computed(() => Math.ceil(attorneys.value.length / PER_PAGE))
 const paginated = computed(() =>
-  attorneys.slice(page.value * PER_PAGE, (page.value + 1) * PER_PAGE)
+  attorneys.value.slice(page.value * PER_PAGE, (page.value + 1) * PER_PAGE)
 )
 
 // Mobile carousel state
@@ -154,7 +155,7 @@ function scrollToCard(i: number) {
 
 // Unified dot/arrow logic
 const activeDot = computed(() => isMobile.value ? mobileIndex.value : page.value)
-const dotCount = computed(() => isMobile.value ? attorneys.length : totalPages.value)
+const dotCount = computed(() => isMobile.value ? attorneys.value.length : totalPages.value)
 
 function prev() {
   if (isMobile.value) {
@@ -166,7 +167,7 @@ function prev() {
 
 function next() {
   if (isMobile.value) {
-    if (mobileIndex.value < attorneys.length - 1) scrollToCard(mobileIndex.value + 1)
+    if (mobileIndex.value < attorneys.value.length - 1) scrollToCard(mobileIndex.value + 1)
   } else {
     if (page.value < totalPages.value - 1) page.value++
   }

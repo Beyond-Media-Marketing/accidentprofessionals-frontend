@@ -48,10 +48,9 @@
 </template>
 
 <script setup lang="ts">
-import { stepsData as defaultData } from "../../data/auto-accidents";
 import { useScrollToContact } from "../../composables/useScrollToContact";
-const props = defineProps({ data: { default: () => defaultData } });
-const data = props.data as typeof defaultData;
+const props = defineProps({ data: { type: Object, required: true } });
+const data = props.data as any;
 const { scrollToContact } = useScrollToContact();
 const sectionRef = ref<HTMLElement | null>(null);
 useRevealSection(sectionRef);
