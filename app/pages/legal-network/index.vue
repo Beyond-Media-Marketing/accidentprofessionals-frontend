@@ -1,0 +1,88 @@
+<script setup lang="ts">
+import qs from 'qs'
+import { computed } from 'vue'
+
+definePageMeta({ layout: 'site' })
+
+const { strapiUrl } = useRuntimeConfig().public
+
+const populate = qs.stringify(
+  {
+    populate: {
+      hero: { populate: { bgImage: true, stats: true, roleCards: { populate: { cta: true } } } },
+      betterWay: { populate: { cta: true, ctaSecondary: true, image: true } },
+      reviewSteps: { populate: { cards: true } },
+      attorneysCta: true,
+      whyJoin: { populate: { cards: true } },
+      lookFor: { populate: { image: true, preferred: true, mustHaves: true, cta: true } },
+      dualCta: { populate: { primaryCta: true, secondaryCta: true } },
+      faq: { populate: { clientFaqs: true, attorneyFaqs: true } },
+      applyForms: {
+        populate: {
+          attorneyForm: { populate: { image: true } },
+          clientForm: { populate: { image: true } },
+        },
+      },
+      seo: { populate: '*' },
+    },
+  },
+  { encodeValuesOnly: true },
+)
+
+const attorneysQuery = qs.stringify(
+  { filters: { featured: { $eq: true } }, sort: ['order:asc'], populate: { photo: true } },
+  { encodeValuesOnly: true },
+)
+
+const { data } = await useAsyncData('legal-network', async () => {
+  const [pageRes, attorneysRes] = await Promise.all([
+    $fetch<any>(`${strapiUrl}/api/legal-network-page?${populate}`),
+    $fetch<any>(`${strapiUrl}/api/attorneys?${attorneysQuery}`),
+  ])
+  return { page: pageRes?.data ?? null, attorneys: attorneysRes?.data ?? [] }
+})
+
+const page = computed(() => data.value?.page ?? null)
+const attorneys = computed(() => data.value?.attorneys ?? [])
+
+usePageSeo(() => page.value?.seo)
+useSeoMeta({ ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
+</script>
+
+<template>
+  <div v-if="page">
+    <NetworkHero :data="page.hero" :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')" />
+
+    <MediaTextSection
+      :block="page.betterWay"
+      :image="strapiMedia(page.betterWay?.image, '/about/why-matters.png')"
+      image-alt="Attorney and client shaking hands"
+    />
+
+    <ReviewStepsSection :block="page.reviewSteps" />
+
+    <AttorneyCardsSection
+      :heading="page.attorneysHeading"
+      :subheading="page.attorneysSubheading"
+      :cta="page.attorneysCta"
+      :attorneys="attorneys"
+    />
+
+    <WhyJoinSection :block="page.whyJoin" />
+
+    <LookForSection
+      :block="page.lookFor"
+      :image="strapiMedia(page.lookFor?.image, '/homepage/homepage-hero.png')"
+    />
+
+    <DualCtaBand :block="page.dualCta" />
+
+    <FaqTabsSection :block="page.faq" />
+
+    <ApplyFormsSection
+      :block="page.applyForms"
+      :attorney-image="strapiMedia(page.applyForms?.attorneyForm?.image, '/about/why-matters.png')"
+      :client-image="strapiMedia(page.applyForms?.clientForm?.image, '/about/problem.png')"
+    />
+  </div>
+</template>

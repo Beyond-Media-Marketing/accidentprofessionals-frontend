@@ -2,7 +2,7 @@
 interface Cta {
   label?: string | null
   href?: string | null
-  variant?: 'primary' | 'dark' | 'ghost' | null
+  variant?: 'primary' | 'dark' | 'ghost' | 'outline' | null
   external?: boolean | null
   scrollTo?: string | null
 }
@@ -16,6 +16,8 @@ withDefaults(
     /** Markdown/rich-text string (supports **bold**, links). */
     intro?: string | null
     cta?: Cta | null
+    /** Optional second CTA rendered beside the primary one. */
+    secondaryCta?: Cta | null
     align?: 'left' | 'center' | null
     /** 'light' (default, dark text on light bg) or 'dark' (light text on dark bg). */
     theme?: 'light' | 'dark' | null
@@ -49,17 +51,32 @@ withDefaults(
       v-html="renderInlineMarkdown(intro)"
     />
 
-    <BaseButton
-      v-if="cta?.label"
-      class="mt-8"
-      :href="cta.href"
-      :variant="cta.variant || 'primary'"
-      :external="cta.external"
-      :scroll-to="cta.scrollTo"
+    <div
+      v-if="cta?.label || secondaryCta?.label"
+      class="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+      :class="align === 'center' ? 'sm:justify-center' : ''"
     >
-      {{ cta.label }}
-      <img src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
-    </BaseButton>
+      <BaseButton
+        v-if="cta?.label"
+        :href="cta.href"
+        :variant="cta.variant || 'primary'"
+        :external="cta.external"
+        :scroll-to="cta.scrollTo"
+      >
+        {{ cta.label }}
+        <img src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
+      </BaseButton>
+      <BaseButton
+        v-if="secondaryCta?.label"
+        :href="secondaryCta.href"
+        :variant="secondaryCta.variant || 'outline'"
+        :external="secondaryCta.external"
+        :scroll-to="secondaryCta.scrollTo"
+      >
+        {{ secondaryCta.label }}
+        <img src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
+      </BaseButton>
+    </div>
   </div>
 </template>
 

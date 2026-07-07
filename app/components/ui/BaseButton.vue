@@ -7,7 +7,7 @@ const props = withDefaults(
   defineProps<{
     label?: string | null
     href?: string | null
-    variant?: 'primary' | 'dark' | 'ghost' | null
+    variant?: 'primary' | 'dark' | 'ghost' | 'outline' | null
     external?: boolean | null
     /** id of an element to smooth-scroll to instead of navigating */
     scrollTo?: string | null
@@ -22,9 +22,13 @@ const variants: Record<string, string> = {
   primary: 'bg-accent text-dark hover:-translate-y-px hover:shadow-button',
   dark: 'bg-dark text-on-dark hover:-translate-y-px hover:shadow-button',
   ghost: 'bg-white/[0.19] text-white hover:bg-white/25',
+  outline: 'border border-dark/15 bg-white text-dark hover:border-dark/40',
 }
 
 const classes = computed(() => `${base} ${variants[props.variant || 'primary']}`)
+
+/** A pure `#hash` href is an in-page anchor, not a route — render a plain <a>. */
+const isAnchor = computed(() => (props.href || '').startsWith('#'))
 
 function onScroll(e: Event) {
   if (!props.scrollTo || !import.meta.client) return
@@ -41,7 +45,13 @@ function onScroll(e: Event) {
   <button v-if="scrollTo" type="button" :class="classes" @click="onScroll">
     <slot>{{ label }}</slot>
   </button>
-  <a v-else-if="external" :href="href || '#'" target="_blank" rel="noopener" :class="classes">
+  <a
+    v-else-if="external || isAnchor"
+    :href="href || '#'"
+    :target="external ? '_blank' : undefined"
+    :rel="external ? 'noopener' : undefined"
+    :class="classes"
+  >
     <slot>{{ label }}</slot>
   </a>
   <NuxtLink v-else :to="href || '#'" :class="classes">

@@ -2,8 +2,10 @@
 interface MediaText {
   eyebrow?: string | null
   heading?: string | null
+  headingAccent?: string | null
   body?: string | null
   cta?: any
+  ctaSecondary?: any
   highlightTitle?: string | null
   highlightText?: string | null
   layout?: 'image-left' | 'image-right' | 'stacked' | null
@@ -34,8 +36,10 @@ const imageRight = computed(() => layout.value === 'image-right')
           <SectionHeader
             :eyebrow="block.eyebrow"
             :heading="block.heading"
+            :heading-accent="block.headingAccent"
             :intro="block.body"
             :cta="block.cta"
+            :secondary-cta="block.ctaSecondary"
             align="center"
             :theme="isDark ? 'dark' : 'light'"
           />
@@ -102,8 +106,10 @@ const imageRight = computed(() => layout.value === 'image-right')
             :class="imageRight ? 'lg:order-1' : ''"
             :eyebrow="block.eyebrow"
             :heading="block.heading"
+            :heading-accent="block.headingAccent"
             :intro="block.body"
             :cta="block.cta"
+            :secondary-cta="block.ctaSecondary"
             align="left"
             :theme="isDark ? 'dark' : 'light'"
           />
