@@ -20,7 +20,7 @@
           itemtype="https://schema.org/Person"
         >
           <div class="team__photo">
-            <img :src="strapiMedia(attorney.image, '/services-page/auto-accidents/image1.webp')" :alt="attorney.name" itemprop="image" loading="lazy" />
+            <img :src="strapiMedia(attorney.photo ?? attorney.image, '/services-page/auto-accidents/image1.webp')" :alt="attorney.name" itemprop="image" loading="lazy" />
             <div class="team__photo-stats">
               <div v-if="attorney.yearsExperience" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
@@ -36,7 +36,7 @@
             <p class="team__name" itemprop="name">{{ attorney.name }}</p>
             <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
             <p class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
-            <p class="team__bio" itemprop="description">{{ attorney.bio }}</p>
+            <p class="team__bio" itemprop="description">{{ attorney.shortBio ?? attorney.bio }}</p>
           </div>
         </article>
       </div>
@@ -51,7 +51,7 @@
           itemtype="https://schema.org/Person"
         >
           <div class="team__photo">
-            <img :src="strapiMedia(attorney.image, '/services-page/auto-accidents/image1.webp')" :alt="attorney.name" itemprop="image" loading="lazy" />
+            <img :src="strapiMedia(attorney.photo ?? attorney.image, '/services-page/auto-accidents/image1.webp')" :alt="attorney.name" itemprop="image" loading="lazy" />
             <div class="team__photo-stats">
               <div v-if="attorney.yearsExperience" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
@@ -67,7 +67,7 @@
             <p class="team__name" itemprop="name">{{ attorney.name }}</p>
             <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
             <p class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
-            <p class="team__bio" itemprop="description">{{ attorney.bio }}</p>
+            <p class="team__bio" itemprop="description">{{ attorney.shortBio ?? attorney.bio }}</p>
           </div>
         </article>
       </div>

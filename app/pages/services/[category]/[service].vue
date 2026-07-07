@@ -31,13 +31,17 @@ const defaultsQuery = qs.stringify(
   {
     populate: {
       heroDefaults: { populate: { stats: true } },
-      team: { populate: { attorneys: { populate: { image: true } } } },
+      team: true,
+      selectedAttorneys: { populate: { photo: true } },
       cities: { populate: { regions: { populate: { cities: true } } } },
       closingCta: { populate: { cta: true } },
     },
   },
   { encodeValuesOnly: true },
 )
+
+// Full attorney roster — the source of truth when no attorneys are curated.
+const { data: roster } = await useAttorneyRoster()
 
 const { data: svc } = await useFetch<any>(`${strapiUrl}/api/services?${serviceQuery}`, {
   key: `service-${categorySlug}-${serviceSlug}`,
@@ -101,7 +105,7 @@ const stepsToTake = computed(() => {
 const team = computed(() => ({
   heading: def.value?.team?.heading ?? 'Our Attorneys',
   subheading: def.value?.team?.subheading ?? '',
-  attorneys: def.value?.team?.attorneys ?? [],
+  attorneys: def.value?.selectedAttorneys?.length ? def.value.selectedAttorneys : (roster.value ?? []),
 }))
 
 const faq = computed(() => {

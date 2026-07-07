@@ -13,6 +13,7 @@ const populate = qs.stringify(
       betterWay: { populate: { cta: true, ctaSecondary: true, image: true } },
       reviewSteps: { populate: { cards: true } },
       attorneysCta: true,
+      selectedAttorneys: { populate: { photo: true } },
       whyJoin: { populate: { cards: true } },
       lookFor: { populate: { image: true, preferred: true, mustHaves: true, cta: true } },
       dualCta: { populate: { primaryCta: true, secondaryCta: true } },
@@ -29,8 +30,9 @@ const populate = qs.stringify(
   { encodeValuesOnly: true },
 )
 
+// Full roster fallback — used when no attorneys are curated in the CMS.
 const attorneysQuery = qs.stringify(
-  { filters: { featured: { $eq: true } }, sort: ['order:asc'], populate: { photo: true } },
+  { sort: ['order:asc'], populate: { photo: true }, pagination: { pageSize: 100 } },
   { encodeValuesOnly: true },
 )
 
@@ -43,7 +45,10 @@ const { data } = await useAsyncData('legal-network', async () => {
 })
 
 const page = computed(() => data.value?.page ?? null)
-const attorneys = computed(() => data.value?.attorneys ?? [])
+// Curated selection from the CMS if set, otherwise the full roster.
+const attorneys = computed(() =>
+  page.value?.selectedAttorneys?.length ? page.value.selectedAttorneys : (data.value?.attorneys ?? []),
+)
 
 usePageSeo(() => page.value?.seo)
 useSeoMeta({ ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
