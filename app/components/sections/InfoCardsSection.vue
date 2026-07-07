@@ -2,6 +2,7 @@
 interface InfoCard {
   icon?: string | null
   title?: string | null
+  code?: string | null
   description?: string | null
 }
 interface InfoCards {
@@ -54,7 +55,10 @@ const items = computed(() => {
               <path d="M34 44C30.2605 44 26.7447 42.5438 24.1005 39.8995C21.4562 37.2553 20 33.7395 20 30C20 26.2605 21.4563 22.7448 24.1005 20.1005C26.7447 17.4562 30.2605 16 34 16C37.7395 16 41.2553 17.4562 43.8995 20.1005C46.5438 22.7447 48 26.2605 48 30C48 33.7395 46.5437 37.2552 43.8995 39.8995C41.2553 42.5438 37.7395 44 34 44ZM34 17.75C27.2453 17.75 21.75 23.2453 21.75 30C21.75 36.7547 27.2453 42.25 34 42.25C40.7547 42.25 46.25 36.7547 46.25 30C46.25 23.2453 40.7547 17.75 34 17.75Z"/>
               <path d="M34 29.125C32.7938 29.125 31.8125 28.1437 31.8125 26.9375C31.8125 25.7313 32.7938 24.75 34 24.75C35.2062 24.75 36.1875 25.7313 36.1875 26.9375C36.1875 27.4207 36.5792 27.8125 37.0625 27.8125C37.5458 27.8125 37.9375 27.4207 37.9375 26.9375C37.9375 25.0671 36.6262 23.4983 34.875 23.0992V22.125C34.875 21.6418 34.4833 21.25 34 21.25C33.5167 21.25 33.125 21.6418 33.125 22.125V23.0992C31.3738 23.4983 30.0625 25.0671 30.0625 26.9375C30.0625 29.1086 31.8289 30.875 34 30.875C35.2062 30.875 36.1875 31.8563 36.1875 33.0625C36.1875 34.2687 35.2062 35.25 34 35.25C32.7938 35.25 31.8125 34.2687 31.8125 33.0625C31.8125 32.5793 31.4208 32.1875 30.9375 32.1875C30.4542 32.1875 30.0625 32.5793 30.0625 33.0625C30.0625 34.9329 31.3738 36.5017 33.125 36.9008V37.875C33.125 38.3582 33.5167 38.75 34 38.75C34.4833 38.75 34.875 38.3582 34.875 37.875V36.9008C36.6262 36.5017 37.9375 34.9329 37.9375 33.0625C37.9375 30.8914 36.1711 29.125 34 29.125Z"/>
             </svg>
+            <svg v-else-if="item.card.icon === 'clock'" class="mb-5 h-7 w-7 text-[#B5B5B5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+            <svg v-else-if="item.card.icon === 'shield'" class="mb-5 h-7 w-7 text-[#B5B5B5]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" /></svg>
             <h3 class="font-primary text-lg font-semibold leading-snug text-dark">{{ item.card.title }}</h3>
+            <p v-if="item.card.code" class="mt-1 font-primary text-sm font-semibold text-accent">{{ item.card.code }}</p>
             <p class="mt-2 font-primary text-base leading-relaxed text-[#1e1e1e]/70 3xl:text-lg">{{ item.card.description }}</p>
           </article>
 
