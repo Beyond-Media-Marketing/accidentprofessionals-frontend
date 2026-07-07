@@ -15,13 +15,13 @@ const categoryQuery = qs.stringify(
   {
     filters: { slug: { $eq: slug } },
     populate: {
-      hero: { populate: { urgencyBullets: true, caseOptions: true } },
-      howItWorks: { populate: { steps: true } },
+      hero: { populate: { bgImage: true, urgencyBullets: true, caseOptions: true } },
+      howItWorks: { populate: { steps: true, image: true } },
       whyUs: true,
       stepsToTake: { populate: { steps: true } },
       faq: { populate: { items: true } },
       ctaBanner: { populate: { caseOptions: true } },
-      services: true,
+      services: { populate: { cardIcon: true } },
       seo: { populate: '*' },
     },
   },
@@ -33,7 +33,7 @@ const defaultsQuery = qs.stringify(
     populate: {
       heroDefaults: { populate: { stats: true } },
       whyUsFeatures: true,
-      team: true,
+      team: { populate: { attorneys: { populate: { image: true } } } },
     },
   },
   { encodeValuesOnly: true },
@@ -59,7 +59,7 @@ const hd = computed(() => def.value?.heroDefaults ?? {})
 const hero = computed(() => {
   const h = cat.value?.hero ?? {}
   return {
-    heroBg: h.bgImage,
+    heroBg: strapiMedia(h.bgImage, '/about/hero-bg.png'),
     badge: hd.value.badge,
     h1Part1: h.h1Part1,
     h1Accent: h.h1Accent,
@@ -83,7 +83,7 @@ const howItWorks = computed(() => {
   return {
     heading: w.heading,
     subheading: w.subheading,
-    image: w.image,
+    image: strapiMedia(w.image, '/services-page/auto-accidents/image1.webp'),
     imageAlt: 'Accident Professionals attorney consultation',
     steps: (w.steps ?? []).map((s: any) => ({ number: s.number, title: s.title, description: s.description })),
   }
@@ -96,7 +96,7 @@ const caseTypes = computed(() => {
     subheading: cat.value?.caseTypesSubheading,
     cta: 'Get Free Consultation',
     cases: services.map((s: any) => ({
-      icon: s.cardIcon,
+      icon: strapiMedia(s.cardIcon, '/icons/shield.svg'),
       title: s.title,
       description: s.cardDescription,
       link: `/services/${slug}/${s.slug}`,

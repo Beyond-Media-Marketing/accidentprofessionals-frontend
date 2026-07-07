@@ -29,8 +29,7 @@ defineProps<{ block: CardGrid | null | undefined }>()
           class="flex gap-5 rounded-3xl border border-black/5 bg-white p-6 shadow-card 3xl:p-7"
         >
           <img
-            v-if="c.icon"
-            :src="c.icon"
+            :src="strapiMedia(c.icon, '/icons/shield.svg')"
             :alt="c.title || ''"
             class="h-14 w-14 shrink-0 3xl:h-16 3xl:w-16"
             loading="lazy"

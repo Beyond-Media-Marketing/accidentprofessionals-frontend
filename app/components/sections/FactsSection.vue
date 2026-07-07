@@ -45,8 +45,8 @@ const paragraphs = computed(() =>
             </p>
           </div>
 
-          <div v-if="block.image" class="overflow-hidden rounded-3xl">
-            <img :src="block.image" alt="" class="h-full w-full object-cover" loading="lazy" decoding="async" />
+          <div v-if="strapiMedia(block.image)" class="overflow-hidden rounded-3xl">
+            <img :src="strapiMedia(block.image)" alt="" class="h-full w-full object-cover" loading="lazy" decoding="async" />
           </div>
         </div>
 

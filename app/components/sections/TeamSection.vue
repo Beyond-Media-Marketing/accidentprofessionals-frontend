@@ -20,7 +20,7 @@
           itemtype="https://schema.org/Person"
         >
           <div class="team__photo">
-            <img :src="attorney.image" :alt="attorney.name" itemprop="image" loading="lazy" />
+            <img :src="strapiMedia(attorney.image, '/services-page/auto-accidents/image1.webp')" :alt="attorney.name" itemprop="image" loading="lazy" />
             <div class="team__photo-stats">
               <div v-if="attorney.yearsExperience" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
@@ -51,7 +51,7 @@
           itemtype="https://schema.org/Person"
         >
           <div class="team__photo">
-            <img :src="attorney.image" :alt="attorney.name" itemprop="image" loading="lazy" />
+            <img :src="strapiMedia(attorney.image, '/services-page/auto-accidents/image1.webp')" :alt="attorney.name" itemprop="image" loading="lazy" />
             <div class="team__photo-stats">
               <div v-if="attorney.yearsExperience" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>

@@ -11,7 +11,7 @@ const hd = computed(() => props.def?.heroDefaults ?? {})
 const hero = computed(() => {
   const h = props.loc?.hero ?? {}
   return {
-    heroBg: h.bgImage,
+    heroBg: strapiMedia(h.bgImage, '/about/hero-bg.png'),
     badge: props.loc?.heroBadge,
     h1Part1: h.h1Part1,
     h1Accent: h.h1Accent,

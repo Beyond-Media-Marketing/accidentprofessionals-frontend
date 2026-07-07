@@ -15,8 +15,8 @@ export async function useLocationPage(type: 'state' | 'city', slug: string) {
   const endpoint = type === 'state' ? 'state-pages' : 'city-pages'
 
   const common = {
-    hero: { populate: { urgencyBullets: true, caseOptions: true } },
-    practiceAreas: { populate: { cta: true, features: true } },
+    hero: { populate: { bgImage: true, urgencyBullets: true, caseOptions: true } },
+    practiceAreas: { populate: { cta: true, features: { populate: { icon: true } } } },
     testimonials: { populate: { items: true } },
     faq: { populate: { items: true } },
     seo: { populate: '*' },
@@ -28,12 +28,12 @@ export async function useLocationPage(type: 'state' | 'city', slug: string) {
           ...common,
           heroStats: true,
           cities: { populate: { regions: { populate: { cities: true } } } },
-          facts: { populate: { stats: true } },
+          facts: { populate: { stats: true, image: true } },
         }
       : {
           ...common,
           whyTrust: { populate: { cta: true, image: true } },
-          whyChoose: { populate: { items: true } },
+          whyChoose: { populate: { items: true, image: true } },
           stepsToTake: { populate: { steps: true } },
           damages: { populate: { tabs: { populate: { items: true } }, cta: true } },
           georgiaLaw: { populate: { cards: true, images: true } },

@@ -12,7 +12,7 @@ const populate = qs.stringify(
       whyLocal: { populate: { cta: true, image: true } },
       howConnect: { populate: { cta: true, steps: true } },
       cityAreas: { populate: { regions: { populate: { cities: true } } } },
-      caseTypes: { populate: { cta: true, features: true } },
+      caseTypes: { populate: { cta: true, features: { populate: { icon: true } } } },
       gaLaw: { populate: { cards: true, images: true } },
       faq: { populate: { items: true } },
       closingCta: { populate: { cta: true } },

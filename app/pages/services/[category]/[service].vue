@@ -12,10 +12,10 @@ const serviceQuery = qs.stringify(
   {
     filters: { slug: { $eq: serviceSlug }, category: { slug: { $eq: categorySlug } } },
     populate: {
-      hero: { populate: { urgencyBullets: true, caseOptions: true } },
-      whatToKnow: { populate: { cta: true } },
-      howItWorks: { populate: { steps: true } },
-      typesOfCases: { populate: { cta: true, features: true } },
+      hero: { populate: { bgImage: true, urgencyBullets: true, caseOptions: true } },
+      whatToKnow: { populate: { cta: true, image: true } },
+      howItWorks: { populate: { steps: true, image: true } },
+      typesOfCases: { populate: { cta: true, features: { populate: { icon: true } } } },
       stepsToTake: { populate: { steps: true } },
       damages: { populate: { tabs: { populate: { items: true } }, cta: true } },
       testimonials: { populate: { items: true } },
@@ -31,7 +31,7 @@ const defaultsQuery = qs.stringify(
   {
     populate: {
       heroDefaults: { populate: { stats: true } },
-      team: { populate: { attorneys: true } },
+      team: { populate: { attorneys: { populate: { image: true } } } },
       cities: { populate: { regions: { populate: { cities: true } } } },
       closingCta: { populate: { cta: true } },
     },
@@ -58,7 +58,7 @@ const hd = computed(() => def.value?.heroDefaults ?? {})
 const hero = computed(() => {
   const h = svc.value?.hero ?? {}
   return {
-    heroBg: h.bgImage,
+    heroBg: strapiMedia(h.bgImage, '/about/hero-bg.png'),
     badge: (svc.value?.title || '').toUpperCase(),
     h1Part1: h.h1Part1,
     h1Accent: h.h1Accent,
@@ -82,7 +82,7 @@ const howItWorks = computed(() => {
   return {
     heading: w.heading,
     subheading: w.subheading,
-    image: w.image,
+    image: strapiMedia(w.image, '/services-page/auto-accidents/image1.webp'),
     imageAlt: `${svc.value?.title} — Accident Professionals`,
     steps: (w.steps ?? []).map((s: any) => ({ number: s.number, title: s.title, description: s.description })),
   }

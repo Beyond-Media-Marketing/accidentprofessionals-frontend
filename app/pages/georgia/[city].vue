@@ -13,7 +13,7 @@ if (!loc.value) {
 
 usePageSeo(() => loc.value?.seo)
 useFaqJsonLd(() => (loc.value?.faq?.items ?? []).map((i: any) => ({ question: i.question, answer: i.answer })))
-useSeoMeta({ ogImage: () => loc.value?.hero?.bgImage })
+useSeoMeta({ ogImage: () => strapiMedia(loc.value?.hero?.bgImage) })
 
 const canonical = computed(() => loc.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/georgia/${slug}/`)
 useHead({

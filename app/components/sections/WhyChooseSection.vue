@@ -37,8 +37,8 @@ defineProps<{ block: WhyChoose | null | undefined }>()
         </article>
       </div>
 
-      <div v-if="block.image" class="mt-12 overflow-hidden rounded-3xl 3xl:mt-16">
-        <img :src="block.image" alt="" class="h-[300px] w-full object-cover md:h-[440px] lg:h-[520px]" loading="lazy" decoding="async" />
+      <div v-if="strapiMedia(block.image)" class="mt-12 overflow-hidden rounded-3xl 3xl:mt-16">
+        <img :src="strapiMedia(block.image)" alt="" class="h-[300px] w-full object-cover md:h-[440px] lg:h-[520px]" loading="lazy" decoding="async" />
       </div>
     </div>
   </section>
