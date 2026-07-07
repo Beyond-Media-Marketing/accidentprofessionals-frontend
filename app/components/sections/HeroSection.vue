@@ -15,8 +15,14 @@
         <AppBadge class="reveal">{{ data.badge }}</AppBadge>
 
         <h1 class="hero__h1 reveal reveal-delay-1">
-          {{ data.h1Part1 }}<br />
-          <span class="text-accent">{{ data.h1Accent }}</span>
+          <template v-if="data.accentFirst">
+            <span class="text-accent">{{ data.h1Accent }}</span><br />
+            {{ data.h1Part1 }}
+          </template>
+          <template v-else>
+            {{ data.h1Part1 }}<br />
+            <span class="text-accent">{{ data.h1Accent }}</span>
+          </template>
         </h1>
 
         <p class="hero__subtitle reveal reveal-delay-1">
