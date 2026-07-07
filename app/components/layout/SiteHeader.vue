@@ -101,28 +101,38 @@ function onPhoneClick() {
                 class="absolute left-1/2 top-full z-50 -translate-x-1/2 pt-3"
               >
                 <div
-                  class="grid gap-8 rounded-xl border border-black/5 bg-white p-6 shadow-card"
-                  :style="{ gridTemplateColumns: `repeat(${Math.max(item.columns?.length || 1, 1)}, minmax(180px, 1fr))` }"
+                  class="grid gap-1 rounded-2xl border border-black/5 bg-white p-3 shadow-[0_24px_70px_-20px_rgba(0,0,0,0.28)]"
+                  :style="{ gridTemplateColumns: `repeat(${Math.max(item.columns?.length || 1, 1)}, minmax(232px, 1fr))` }"
                 >
-                  <div v-for="(col, ci) in item.columns ?? []" :key="ci">
+                  <div v-for="(col, ci) in item.columns ?? []" :key="ci" class="px-3 py-2">
+                    <!-- Category = clickable title (hover accent + reveal arrow), divider below -->
                     <NuxtLink
                       v-if="col.href"
                       :to="col.href"
-                      class="mb-3 block text-[12px] font-semibold uppercase tracking-wide text-muted transition-colors hover:text-accent"
-                    >{{ col.heading }}</NuxtLink>
-                    <p v-else class="mb-3 text-[12px] font-semibold uppercase tracking-wide text-muted">
+                      class="group/head mb-2.5 flex items-center justify-between gap-3 border-b border-black/5 pb-2.5"
+                    >
+                      <span class="font-secondary text-[15px] font-bold leading-tight text-dark transition-colors group-hover/head:text-accent">
+                        {{ col.heading }}
+                      </span>
+                      <svg
+                        class="h-3.5 w-3.5 shrink-0 -translate-x-1 text-accent opacity-0 transition-all duration-200 group-hover/head:translate-x-0 group-hover/head:opacity-100"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </NuxtLink>
+                    <p v-else class="mb-2.5 text-[12px] font-semibold uppercase tracking-wide text-muted">
                       {{ col.heading }}
                     </p>
-                    <ul class="space-y-2">
+
+                    <ul class="space-y-0.5">
                       <li v-for="(link, li) in col.links ?? []" :key="li">
                         <NuxtLink
                           :to="link.href || '#'"
-                          class="block whitespace-nowrap text-sm font-medium text-dark transition-colors hover:text-accent"
+                          class="group/link flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-dark/70 transition-colors hover:bg-cream hover:text-dark"
                         >
-                          {{ link.label }}
-                          <span v-if="link.description" class="mt-0.5 block text-xs font-normal text-muted">
-                            {{ link.description }}
-                          </span>
+                          <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-dark/15 transition-colors group-hover/link:bg-accent" />
+                          <span class="whitespace-nowrap">{{ link.label }}</span>
                         </NuxtLink>
                       </li>
                     </ul>
