@@ -5,7 +5,7 @@ definePageMeta({ layout: 'site' })
 
 const route = useRoute()
 const slug = String(route.params.city)
-const { loc, def } = await useLocationPage('city', slug)
+const { loc, def, cities } = await useLocationPage('city', slug)
 
 if (!loc.value) {
   throw createError({ statusCode: 404, statusMessage: 'City not found', fatal: true })
@@ -39,5 +39,5 @@ useScrollReveal()
 </script>
 
 <template>
-  <LocationSections :loc="loc" :def="def" type="city" />
+  <LocationSections :loc="loc" :def="def" type="city" :all-cities="cities" />
 </template>

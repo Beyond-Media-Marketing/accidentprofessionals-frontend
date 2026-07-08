@@ -49,18 +49,28 @@ export async function useLocationPage(type: 'state' | 'city', slug: string) {
     { encodeValuesOnly: true },
   )
 
+  // Lightweight list of every city (title + slug) — used to auto-generate each
+  // city's "Where to Find Us" nearby-cities list. Only needed on city pages.
+  const citiesQuery = qs.stringify(
+    { fields: ['title', 'slug'], sort: ['title:asc'], pagination: { pageSize: 200 } },
+    { encodeValuesOnly: true },
+  )
+
   const { data } = await useAsyncData(`${type}-page-${slug}`, async () => {
-    const [locRes, defRes] = await Promise.all([
+    const [locRes, defRes, citiesRes] = await Promise.all([
       $fetch<any>(`${strapiUrl}/api/${endpoint}?${locationQuery}`),
       $fetch<any>(`${strapiUrl}/api/service-defaults?${defaultsQuery}`),
+      type === 'city' ? $fetch<any>(`${strapiUrl}/api/city-pages?${citiesQuery}`) : Promise.resolve(null),
     ])
     return {
       loc: locRes?.data?.[0] ?? null,
       def: defRes?.data ?? null,
+      cities: citiesRes?.data ?? [],
     }
   })
 
   const loc = computed(() => data.value?.loc ?? null)
   const def = computed(() => data.value?.def ?? null)
-  return { loc, def }
+  const cities = computed(() => data.value?.cities ?? [])
+  return { loc, def, cities }
 }

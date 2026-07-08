@@ -6,42 +6,47 @@ definePageMeta({ layout: 'site' })
 
 const { strapiUrl } = useRuntimeConfig().public
 
-const query = qs.stringify(
+const attorneysQuery = qs.stringify(
   { sort: ['order:asc'], populate: { photo: true }, pagination: { pageSize: 100 } },
   { encodeValuesOnly: true },
 )
-
-const { data: attorneys } = await useFetch<any>(`${strapiUrl}/api/attorneys?${query}`, {
+const { data: attorneys } = await useFetch<any>(`${strapiUrl}/api/attorneys?${attorneysQuery}`, {
   key: 'attorneys-directory',
   transform: (r: any) => r?.data ?? [],
+  default: () => [],
 })
+
+// Hero content comes from the legal-network-page single-type. Falls back to
+// sensible defaults until the `directoryHero` field is deployed to the CMS.
+const heroQuery = qs.stringify(
+  { populate: { directoryHero: { populate: { bgImage: true } } } },
+  { encodeValuesOnly: true },
+)
+const { data: heroData } = await useFetch<any>(`${strapiUrl}/api/legal-network-page?${heroQuery}`, {
+  key: 'attorneys-directory-hero',
+  transform: (r: any) => r?.data?.directoryHero ?? null,
+  default: () => null,
+})
+const hero = computed<any>(() => heroData.value ?? {})
 
 useHead({ title: 'Our Attorney Network — Accident Professionals' })
 useSeoMeta({
   description:
     'Browse the vetted personal injury attorneys in the Accident Professionals network. Every attorney is reviewed before being included.',
 })
-
-const count = computed(() => attorneys.value?.length ?? 0)
 </script>
 
 <template>
   <div>
-    <!-- Header -->
-    <section class="bg-dark text-on-dark">
-      <div class="site-container py-16 text-center 3xl:py-20">
-        <nav class="mb-5 font-primary text-sm text-white/50">
-          <NuxtLink to="/legal-network" class="transition-colors hover:text-accent">Legal Network</NuxtLink>
-          <span class="px-2">/</span><span class="text-white/80">Attorneys</span>
-        </nav>
-        <h1 class="font-secondary text-[clamp(2rem,4vw,3.25rem)] font-bold leading-[1.12]">
-          Meet the Attorneys in <span class="text-accent">Our Network</span>
-        </h1>
-        <p class="mx-auto mt-4 max-w-[680px] font-primary text-base leading-[1.7] text-white/65">
-          Every attorney in the AP network has been reviewed before being included — {{ count }} and growing across Georgia.
-        </p>
-      </div>
-    </section>
+    <PageHero
+      :eyebrow="hero.eyebrow || 'LEGAL NETWORK'"
+      :heading="hero.heading || 'Meet the Attorneys in'"
+      :heading-accent="hero.headingAccent || 'Our Network'"
+      :subhead="hero.subhead || 'Every attorney in the AP network has been reviewed before being included — a growing roster of vetted personal injury attorneys across Georgia.'"
+      :align="hero.align || 'center'"
+      :bg-image="strapiMedia(hero.bgImage, '/about/hero-bg.png')"
+      :overlay="false"
+    />
 
     <TeamSection :data="{ attorneys }" full-grid />
 
