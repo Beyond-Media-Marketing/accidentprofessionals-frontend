@@ -32,8 +32,10 @@ export default defineNuxtConfig({
   },
 
   // Keep the legacy home backup out of the sitemap (duplicate content).
+  // Dynamic (Strapi-driven) routes are added via the server source below.
   sitemap: {
     exclude: ['/home-legacy'],
+    sources: ['/api/__sitemap__/urls'],
   },
 
   components: [
