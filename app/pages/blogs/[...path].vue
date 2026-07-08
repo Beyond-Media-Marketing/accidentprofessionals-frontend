@@ -170,6 +170,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
               <BlogCtaBlock :block="post.midCta" />
               <ProseHtml v-if="post.contentTwo" :html="post.contentTwo" />
 
+              <BlogCtaBlock :block="post.endCta" dark />
+
               <div v-if="post.faq?.items?.length" class="mt-12">
                 <h2 class="mb-6 font-secondary text-2xl font-bold text-dark 3xl:text-3xl">{{ post.faq.heading || 'Frequently Asked Questions' }}</h2>
                 <div class="flex flex-col gap-3">
@@ -182,8 +184,6 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
                   </details>
                 </div>
               </div>
-
-              <BlogCtaBlock :block="post.endCta" dark />
             </article>
 
             <aside v-if="toc.length" class="hidden lg:block">
