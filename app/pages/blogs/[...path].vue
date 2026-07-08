@@ -139,7 +139,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
       <!-- Cover hero with overlaid content -->
       <section class="relative isolate flex min-h-[62vh] items-end overflow-hidden sm:min-h-[72vh]">
         <img :src="cover" :alt="post.title" class="absolute inset-0 -z-10 h-full w-full object-cover" loading="eager" />
-        <div class="absolute inset-0 -z-10 bg-gradient-to-t from-dark/85 via-dark/35 to-dark/10" />
+        <div class="absolute inset-0 -z-10 bg-gradient-to-t from-dark via-dark/85 to-dark/70" />
+        <div class="absolute inset-0 -z-10 bg-dark/35" />
         <div class="site-container w-full pb-12 pt-40 text-on-dark 3xl:pb-16">
           <nav class="mb-5 font-primary text-sm text-white/60">
             <NuxtLink to="/blogs" class="transition-colors hover:text-accent">Blog</NuxtLink>

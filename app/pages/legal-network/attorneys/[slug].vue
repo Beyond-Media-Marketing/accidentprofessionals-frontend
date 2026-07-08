@@ -207,14 +207,24 @@ useHead({
             </p>
 
             <div class="mt-9 flex flex-col gap-5">
-              <div v-if="attorney.location" class="flex items-center gap-4">
-                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/[0.07] text-accent ring-1 ring-white/10">
+              <component
+                :is="attorney.locationLink ? 'a' : 'div'"
+                v-if="attorney.locationDetail || attorney.location"
+                :href="attorney.locationLink || undefined"
+                :target="attorney.locationLink ? '_blank' : undefined"
+                :rel="attorney.locationLink ? 'noopener noreferrer' : undefined"
+                class="group flex items-start gap-4"
+              >
+                <span class="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/[0.07] text-accent ring-1 ring-white/10">
                   <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" />
                   </svg>
                 </span>
-                <span class="font-secondary text-lg font-semibold text-white">{{ attorney.location }}</span>
-              </div>
+                <span
+                  class="self-center font-secondary text-base font-semibold leading-snug text-white"
+                  :class="{ 'transition-colors group-hover:text-accent': attorney.locationLink }"
+                >{{ attorney.locationDetail || attorney.location }}</span>
+              </component>
 
               <a v-if="attorney.email" :href="`mailto:${attorney.email}`" class="group flex items-center gap-4">
                 <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/[0.07] text-accent ring-1 ring-white/10">
