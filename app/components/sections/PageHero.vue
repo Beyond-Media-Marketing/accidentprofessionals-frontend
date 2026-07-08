@@ -24,10 +24,12 @@ const props = withDefaults(
     stats?: Stat[] | null
     /** 'card' = single white bar (home); 'pills' = separate dark chips (about). */
     statsVariant?: 'card' | 'pills' | null
+    /** 'wide' gives the copy + subhead a larger max-width (e.g. contact page). */
+    contentWidth?: 'default' | 'wide' | null
     /** Set false when the background image already has its own darkening baked in. */
     overlay?: boolean | null
   }>(),
-  { align: 'left', statsVariant: 'card', overlay: true },
+  { align: 'left', statsVariant: 'card', contentWidth: 'default', overlay: true },
 )
 
 const slots = useSlots()
@@ -54,7 +56,7 @@ const isCenter = computed(() => props.align === 'center')
         ]"
       >
         <!-- Copy -->
-        <div :class="['max-w-[640px] 3xl:max-w-[760px]', isCenter ? 'mx-auto text-center' : '']">
+        <div :class="[contentWidth === 'wide' ? 'max-w-[880px] 3xl:max-w-[1040px]' : 'max-w-[640px] 3xl:max-w-[760px]', isCenter ? 'mx-auto text-center' : '']">
           <span
             v-if="eyebrow"
             class="mb-5 inline-block rounded-pill border border-accent/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-accent"
@@ -69,8 +71,8 @@ const isCenter = computed(() => props.align === 'center')
 
           <p
             v-if="subhead"
-            class="hero-subhead mt-6 max-w-[560px] font-primary text-[15px] leading-relaxed text-white/70 3xl:text-base"
-            :class="isCenter ? 'mx-auto' : ''"
+            class="hero-subhead mt-6 font-primary text-[15px] leading-relaxed text-white/70 3xl:text-base"
+            :class="[contentWidth === 'wide' ? 'max-w-[780px]' : 'max-w-[560px]', isCenter ? 'mx-auto' : '']"
             v-html="renderInlineMarkdown(subhead)"
           />
 

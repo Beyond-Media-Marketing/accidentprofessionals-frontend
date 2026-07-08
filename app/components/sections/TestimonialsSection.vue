@@ -28,16 +28,14 @@ defineProps<{ block: Testimonials | null | undefined }>()
         <article
           v-for="(t, i) in block.items ?? []"
           :key="i"
-          class="flex w-[85%] shrink-0 snap-start flex-col rounded-2xl bg-[#f4f3f0] p-7 sm:w-[360px]"
+          class="flex w-[85%] shrink-0 snap-start flex-col rounded-2xl bg-[#F7F2E9] p-7 sm:w-[360px]"
         >
-          <svg class="h-9 w-9 text-accent" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M7 7h4v4c0 2.21-1.79 4-4 4v-2c1.1 0 2-.9 2-2H7V7zm7 0h4v4c0 2.21-1.79 4-4 4v-2c1.1 0 2-.9 2-2h-2V7z" />
-          </svg>
-          <p class="mt-3 flex-1 font-primary text-sm leading-relaxed text-dark/80">{{ t.quote }}</p>
+          <img src="/icons/quote.svg" alt="" class="mx-auto h-9 w-auto" loading="lazy" />
+          <p class="mt-5 flex-1 font-primary text-[15px] font-light leading-relaxed text-[#212529]">{{ t.quote }}</p>
           <div class="mt-6 flex items-end justify-between gap-4">
             <div>
               <p class="font-primary text-sm font-bold text-dark">{{ t.name }}</p>
-              <p class="font-primary text-xs text-muted">{{ t.location }}</p>
+              <p class="font-primary text-xs text-[#616161]">{{ t.location }}</p>
             </div>
             <div class="flex shrink-0 gap-0.5 text-accent" :aria-label="`${t.rating || 5} stars`" role="img">
               <svg v-for="n in (t.rating || 5)" :key="n" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">

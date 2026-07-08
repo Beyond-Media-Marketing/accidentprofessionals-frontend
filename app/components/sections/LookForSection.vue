@@ -21,7 +21,7 @@ defineProps<{
     <div class="site-container">
       <h2 class="text-center font-secondary text-[clamp(1.8rem,3.5vw,3.125rem)] font-semibold leading-[1.12] text-dark">{{ block.heading }}</h2>
 
-      <div class="mt-12 grid items-stretch gap-8 lg:grid-cols-2 3xl:mt-16 3xl:gap-12">
+      <div class="mt-12 grid items-center gap-8 lg:grid-cols-2 3xl:mt-16 3xl:gap-12">
         <!-- Image -->
         <div class="overflow-hidden rounded-3xl">
           <img

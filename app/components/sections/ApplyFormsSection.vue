@@ -222,7 +222,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
         <!-- Right: image + what happens next -->
         <div class="flex flex-col gap-6">
           <div class="overflow-hidden rounded-3xl">
-            <img v-if="attorneyImage" :src="attorneyImage" alt="AP attorney network" class="h-[300px] w-full object-cover lg:h-[420px]" loading="lazy" decoding="async" />
+            <img v-if="attorneyImage" :src="attorneyImage" alt="AP attorney network" class="h-[380px] w-full object-cover lg:h-[560px]" loading="lazy" decoding="async" />
           </div>
           <div v-if="block.attorneyForm?.nextSteps?.length" class="rounded-3xl bg-dark p-7 text-on-dark 3xl:p-8">
             <h3 class="mb-5 font-secondary text-lg font-bold text-white">{{ block.attorneyForm.nextStepsTitle }}</h3>

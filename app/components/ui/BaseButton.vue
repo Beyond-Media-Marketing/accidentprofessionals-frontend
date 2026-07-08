@@ -22,7 +22,7 @@ const variants: Record<string, string> = {
   primary: 'bg-accent text-dark hover:-translate-y-px hover:shadow-button',
   dark: 'bg-dark text-on-dark hover:-translate-y-px hover:shadow-button',
   ghost: 'bg-white/[0.19] text-white hover:bg-white/25',
-  outline: 'border border-dark/15 bg-white text-dark hover:border-dark/40',
+  outline: 'border border-dark bg-transparent text-dark hover:bg-dark/[0.04]',
 }
 
 const classes = computed(() => `${base} ${variants[props.variant || 'primary']}`)

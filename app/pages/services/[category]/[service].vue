@@ -155,9 +155,10 @@ useScrollReveal()
       :block="svc.whatToKnow"
       :image="strapiMedia(svc.whatToKnow?.image, '/homepage/homepage-hero.png')"
       :image-alt="`${svc.title} in Georgia`"
+      highlight-icon="/icons/trusted-network.svg"
     />
     <HowItWorksSection :data="howItWorks" />
-    <CardGridSection :block="svc.typesOfCases" />
+    <CardGridSection :block="svc.typesOfCases" stacked />
     <StepsSection :data="stepsToTake" />
     <DamagesSection :block="svc.damages" />
     <TestimonialsSection :block="svc.testimonials" />

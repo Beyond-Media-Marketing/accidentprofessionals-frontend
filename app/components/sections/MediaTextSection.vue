@@ -16,10 +16,19 @@ const props = defineProps<{
   block: MediaText | null | undefined
   image?: string | null
   imageAlt?: string | null
+  /** Icon shown in the gold highlight strip (defaults to the vetted-network badge). */
+  highlightIcon?: string | null
 }>()
 
 const isDark = computed(() => props.block?.theme === 'dark')
 const layout = computed(() => props.block?.layout || 'image-left')
+// On a light media-text the secondary CTA renders as the white/black outline
+// button (regardless of the variant stored in the CMS). Dark sections keep theirs.
+const secondaryCta = computed(() => {
+  const c = props.block?.ctaSecondary
+  if (!c) return null
+  return isDark.value ? c : { ...c, variant: 'outline' }
+})
 const stacked = computed(() => layout.value === 'stacked')
 const imageRight = computed(() => layout.value === 'image-right')
 </script>
@@ -39,7 +48,7 @@ const imageRight = computed(() => layout.value === 'image-right')
             :heading-accent="block.headingAccent"
             :intro="block.body"
             :cta="block.cta"
-            :secondary-cta="block.ctaSecondary"
+            :secondary-cta="secondaryCta"
             align="center"
             :theme="isDark ? 'dark' : 'light'"
           />
@@ -80,20 +89,12 @@ const imageRight = computed(() => layout.value === 'image-right')
               class="media-highlight absolute bottom-5 left-5 right-5 rounded-3xl px-6 py-6 backdrop-blur-[50px] sm:right-auto sm:max-w-[470px] lg:-left-4"
             >
               <div class="flex items-center gap-5">
-                <svg
-                  class="h-12 w-12 shrink-0 text-accent 3xl:h-14 3xl:w-14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.8"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                <img
+                  :src="highlightIcon || '/icons/vetted-network.svg'"
+                  alt=""
+                  class="h-12 w-12 shrink-0 3xl:h-14 3xl:w-14"
                   aria-hidden="true"
-                >
-                  <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                  <line x1="12" y1="9" x2="12" y2="13" />
-                  <line x1="12" y1="17" x2="12.01" y2="17" />
-                </svg>
+                />
                 <div>
                   <p class="font-primary text-lg font-semibold text-white">{{ block.highlightTitle }}</p>
                   <p class="mt-1.5 font-primary text-sm leading-relaxed text-white">{{ block.highlightText }}</p>
@@ -109,7 +110,7 @@ const imageRight = computed(() => layout.value === 'image-right')
             :heading-accent="block.headingAccent"
             :intro="block.body"
             :cta="block.cta"
-            :secondary-cta="block.ctaSecondary"
+            :secondary-cta="secondaryCta"
             align="left"
             :theme="isDark ? 'dark' : 'light'"
           />

@@ -98,7 +98,7 @@ async function submitForm() {
 </script>
 
 <template>
-  <section v-if="block" id="contact-form" class="section scroll-mt-24 bg-cream">
+  <section v-if="block" id="contact-form" class="section scroll-mt-24 bg-white">
     <div class="site-container">
       <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 3xl:gap-16">
         <!-- ── Left: form ── -->
@@ -244,14 +244,14 @@ async function submitForm() {
   font-weight: 600;
   color: var(--color-dark);
 }
-.contact-form__field label span { color: #e11d48; }
+.contact-form__field label span { color: var(--color-accent); }
 .contact-form__field input,
 .contact-form__field textarea {
   width: 100%;
-  padding: 11px 14px;
-  background: var(--color-white);
-  border: 1px solid #e2e0dd;
-  border-radius: 8px;
+  padding: 12px 15px;
+  background: #f6f6f5;
+  border: 1px solid #eaeae8;
+  border-radius: 10px;
   font-family: var(--font-primary);
   font-size: 15px;
   color: var(--color-dark);

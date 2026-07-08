@@ -2,18 +2,19 @@
   <section class="bg-cream" ref="sectionRef" aria-labelledby="team-heading">
     <div class="site-container flex flex-col gap-[42px] py-12 md:py-[60px] min-[1200px]:py-20">
 
-      <div class="reveal text-center">
+      <div v-if="data.heading || data.subheading" class="reveal text-center">
         <h2
+          v-if="data.heading"
           id="team-heading"
           class="mb-4 font-primary text-[clamp(1.8rem,3.5vw,3.125rem)] font-semibold leading-[1.15] tracking-[-0.02em] text-dark"
         >{{ data.heading }}</h2>
-        <p class="mx-auto max-w-[876px] text-base leading-[1.75] tracking-[-0.025em] text-muted">{{ data.subheading }}</p>
+        <p v-if="data.subheading" class="mx-auto max-w-[876px] text-base leading-[1.75] tracking-[-0.025em] text-muted">{{ data.subheading }}</p>
       </div>
 
-      <!-- Desktop: paginated 3-up grid -->
-      <div class="team__grid">
+      <!-- Grid — paginated 3-up, or a full static grid (directory) -->
+      <div class="team__grid" :class="{ 'team__grid--full': fullGrid }">
         <article
-          v-for="(attorney, i) in paginated"
+          v-for="(attorney, i) in (fullGrid ? attorneys : paginated)"
           :key="i"
           class="team__card"
           itemscope
@@ -26,23 +27,34 @@
                 <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
                 <span class="team__photo-stat-label">Experience</span>
               </div>
-              <div class="team__photo-stat">
+              <div v-if="attorney.location" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.location }}</span>
                 <span class="team__photo-stat-label">Location</span>
               </div>
             </div>
           </div>
           <div class="team__info">
-            <p class="team__name" itemprop="name">{{ attorney.name }}</p>
-            <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
-            <p class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
-            <p class="team__bio" itemprop="description">{{ attorney.shortBio ?? attorney.bio }}</p>
+            <div class="team__info-top">
+              <div>
+                <p class="team__name" itemprop="name">{{ attorney.name }}</p>
+                <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
+                <p v-if="attorney.title" class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
+              </div>
+              <NuxtLink
+                v-if="attorney.slug"
+                :to="`/legal-network/attorneys/${attorney.slug}`"
+                class="team__profile"
+              >
+                View Profile
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+              </NuxtLink>
+            </div>
           </div>
         </article>
       </div>
 
       <!-- Mobile: swipeable scroll-snap carousel (all attorneys) -->
-      <div class="team__track" ref="trackRef" @scroll.passive="onTrackScroll">
+      <div v-if="!fullGrid" class="team__track" ref="trackRef" @scroll.passive="onTrackScroll">
         <article
           v-for="(attorney, i) in attorneys"
           :key="'m-' + i"
@@ -57,24 +69,35 @@
                 <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
                 <span class="team__photo-stat-label">Experience</span>
               </div>
-              <div class="team__photo-stat">
+              <div v-if="attorney.location" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.location }}</span>
                 <span class="team__photo-stat-label">Location</span>
               </div>
             </div>
           </div>
           <div class="team__info">
-            <p class="team__name" itemprop="name">{{ attorney.name }}</p>
-            <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
-            <p class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
-            <p class="team__bio" itemprop="description">{{ attorney.shortBio ?? attorney.bio }}</p>
+            <div class="team__info-top">
+              <div>
+                <p class="team__name" itemprop="name">{{ attorney.name }}</p>
+                <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
+                <p v-if="attorney.title" class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
+              </div>
+              <NuxtLink
+                v-if="attorney.slug"
+                :to="`/legal-network/attorneys/${attorney.slug}`"
+                class="team__profile"
+              >
+                View Profile
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+              </NuxtLink>
+            </div>
           </div>
         </article>
       </div>
 
       <!-- Unified pagination — ClientOnly prevents SSR/client isMobile mismatch -->
       <ClientOnly>
-        <div class="team__pagination" role="navigation" aria-label="Attorney pages">
+        <div v-if="dotCount > 1 && !fullGrid" class="team__pagination" role="navigation" aria-label="Attorney pages">
           <button
             class="team__page-arrow"
             :disabled="activeDot === 0"
@@ -101,6 +124,13 @@
         </div>
       </ClientOnly>
 
+      <div v-if="data.cta?.label" class="reveal flex justify-center">
+        <BaseButton :href="data.cta.href" :variant="data.cta.variant || 'primary'">
+          {{ data.cta.label }}
+          <img src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
+        </BaseButton>
+      </div>
+
     </div>
   </section>
 </template>
@@ -109,7 +139,11 @@
 import { ref, computed } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 
-const props = defineProps({ data: { type: Object, required: true } })
+const props = defineProps({
+  data: { type: Object, required: true },
+  /** Show every attorney in a static grid (directory) — no pagination/carousel. */
+  fullGrid: { type: Boolean, default: false },
+})
 const data = computed<any>(() => props.data ?? {})
 const attorneys = computed<any[]>(() => data.value.attorneys ?? [])
 
@@ -198,6 +232,8 @@ function goTo(n: number) {
 }
 @media (max-width: 767px) {
   .team__grid { display: none; }
+  /* Full grid (directory) stays visible on mobile as a single column. */
+  .team__grid--full { display: grid; grid-template-columns: 1fr; }
 }
 
 .team__track { display: none; }
@@ -231,7 +267,7 @@ function goTo(n: number) {
   position: relative;
   border-radius: var(--radius-md);
   overflow: hidden;
-  height: 384px;
+  aspect-ratio: 1 / 1;
 }
 .team__photo img {
   width: 100%;
@@ -287,20 +323,28 @@ function goTo(n: number) {
   color: var(--color-accent);
   letter-spacing: -0.01em;
 }
+.team__info-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.team__profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-accent);
+  white-space: nowrap;
+}
+.team__profile svg { width: 14px; height: 14px; }
+.team__profile:hover { text-decoration: underline; }
 .team__title {
   font-size: 14px;
   color: var(--color-muted);
-  margin-bottom: 4px;
-}
-.team__bio {
-  font-size: 14px;
-  color: var(--color-dark);
-  line-height: 1.6;
-  opacity: 0.75;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  margin-top: 2px;
 }
 
 .team__pagination {

@@ -123,8 +123,9 @@ function onPhoneInput(e: Event) {
 
 /* ── Contact variant ── */
 .app-phone--contact {
-  border: 1px solid #e2e0dd;
-  border-radius: 8px;
+  border: 1px solid #eaeae8;
+  border-radius: 10px;
+  background: #f6f6f5;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .app-phone--contact:focus-within {
@@ -132,9 +133,9 @@ function onPhoneInput(e: Event) {
   box-shadow: 0 0 0 3px rgba(248, 192, 28, 0.15);
 }
 .app-phone--contact .app-phone__code-wrap {
-  padding: 10px 8px 10px 12px;
-  background: #f8f6f4;
-  border-right: 1px solid #e2e0dd;
+  padding: 11px 8px 11px 13px;
+  background: #eeeeec;
+  border-right: 1px solid #e4e4e2;
 }
 .app-phone--contact .app-phone__code-display {
   font-size: 14px;
@@ -142,10 +143,10 @@ function onPhoneInput(e: Event) {
   color: var(--color-dark);
 }
 .app-phone--contact .app-phone__field {
-  padding: 10px 14px;
+  padding: 11px 15px;
   font-size: 15px;
   font-family: var(--font-secondary);
   color: var(--color-dark);
-  background: var(--color-white);
+  background: transparent;
 }
 </style>

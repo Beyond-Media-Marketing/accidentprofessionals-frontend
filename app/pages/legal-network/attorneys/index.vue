@@ -43,6 +43,8 @@ const count = computed(() => attorneys.value?.length ?? 0)
       </div>
     </section>
 
-    <AttorneyCardsSection :attorneys="attorneys" />
+    <TeamSection :data="{ attorneys }" full-grid />
+
+    <PageBottom />
   </div>
 </template>

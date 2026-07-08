@@ -10,7 +10,7 @@ const populate = qs.stringify(
     populate: {
       hero: { populate: { bgImage: true } },
       formSection: { populate: { mapImage: true } },
-      reachUs: { populate: { cta: true, features: true } },
+      reachUs: { populate: { cta: true, features: { populate: { icon: true } } } },
       closingCta: { populate: { cta: true } },
       seo: { populate: '*' },
     },
@@ -34,6 +34,7 @@ usePageSeo(() => page.value?.seo)
       :subhead="page.hero?.subhead"
       :align="page.hero?.align || 'center'"
       :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')"
+      content-width="wide"
       :overlay="false"
     />
 

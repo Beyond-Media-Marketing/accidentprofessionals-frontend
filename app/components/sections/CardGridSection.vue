@@ -14,24 +14,33 @@ interface CardGrid {
   features?: Card[] | null
 }
 
-defineProps<{ block: CardGrid | null | undefined }>()
+defineProps<{
+  block: CardGrid | null | undefined
+  /** White section + cream (F7F2E9) cards with a smaller icon stacked on top of the title. */
+  stacked?: boolean
+}>()
 </script>
 
 <template>
-  <section v-if="block" class="section bg-cream">
+  <section v-if="block" class="section" :class="stacked ? 'bg-white' : 'bg-cream'">
     <div class="site-container">
       <SectionHeader :eyebrow="block.eyebrow" :heading="block.heading" :intro="block.intro" align="center" />
 
-      <div class="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2 3xl:mt-16">
+      <div
+        class="mt-12 grid grid-cols-1 gap-6 3xl:mt-16"
+        :class="stacked ? 'sm:grid-cols-2 lg:grid-cols-3' : 'lg:grid-cols-2'"
+      >
         <article
           v-for="(c, i) in block.features ?? []"
           :key="i"
-          class="flex gap-5 rounded-3xl border border-black/5 bg-white p-6 shadow-card 3xl:p-7"
+          :class="stacked
+            ? 'flex flex-col rounded-3xl bg-[#F7F2E9] p-6 3xl:p-7'
+            : 'flex gap-5 rounded-3xl border border-black/5 bg-white p-6 shadow-card 3xl:p-7'"
         >
           <img
             :src="strapiMedia(c.icon, '/icons/shield.svg')"
             :alt="c.title || ''"
-            class="h-14 w-14 shrink-0 3xl:h-16 3xl:w-16"
+            :class="stacked ? 'mb-4 h-9 w-9' : 'h-14 w-14 shrink-0 3xl:h-16 3xl:w-16'"
             loading="lazy"
           />
           <div class="flex flex-1 flex-col">

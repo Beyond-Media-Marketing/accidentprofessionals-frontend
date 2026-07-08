@@ -66,11 +66,13 @@ useSeoMeta({ ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
 
     <ReviewStepsSection :block="page.reviewSteps" />
 
-    <AttorneyCardsSection
-      :heading="page.attorneysHeading"
-      :subheading="page.attorneysSubheading"
-      :cta="page.attorneysCta"
-      :attorneys="attorneys"
+    <TeamSection
+      :data="{
+        heading: page.attorneysHeading,
+        subheading: page.attorneysSubheading,
+        attorneys,
+        cta: page.attorneysCta,
+      }"
     />
 
     <WhyJoinSection :block="page.whyJoin" />
@@ -89,5 +91,7 @@ useSeoMeta({ ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
       :attorney-image="strapiMedia(page.applyForms?.attorneyForm?.image, '/about/why-matters.png')"
       :client-image="strapiMedia(page.applyForms?.clientForm?.image, '/about/problem.png')"
     />
+
+    <PageBottom />
   </div>
 </template>

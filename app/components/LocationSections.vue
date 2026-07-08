@@ -4,7 +4,7 @@ import { computed } from 'vue'
 // Renders a location-page (state or city). Every section is optional and only
 // renders when present — a fixed order that works for both the Georgia state
 // page and city pages (e.g. Atlanta).
-const props = defineProps<{ loc: any; def: any }>()
+const props = defineProps<{ loc: any; def: any; type?: 'state' | 'city' }>()
 
 const hd = computed(() => props.def?.heroDefaults ?? {})
 
@@ -55,7 +55,7 @@ const faq = computed(() => {
 
 <template>
   <div v-if="loc">
-    <HeroSection :data="hero" />
+    <HeroSection :data="hero" :flat="type === 'state'" />
     <CityAreasSection v-if="loc.cities" :block="loc.cities" />
     <MediaTextSection
       v-if="loc.whyTrust"

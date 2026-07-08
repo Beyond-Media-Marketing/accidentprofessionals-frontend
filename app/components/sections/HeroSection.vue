@@ -1,5 +1,5 @@
 <template>
-  <section class="hero" aria-label="Hero">
+  <section class="hero" :class="{ 'hero--flat': flat }" aria-label="Hero">
     <!-- bg image already has all effects baked in -->
     <div
       class="hero__bg"
@@ -31,7 +31,7 @@
 
         <p class="hero__body reveal reveal-delay-2">{{ data.heroBody }}</p>
 
-        <div class="hero__stats reveal reveal-delay-3">
+        <div v-if="data.stats?.length" class="hero__stats reveal reveal-delay-3">
           <div v-for="stat in data.stats" :key="stat.label" class="hero__stat">
             <span class="hero__stat-value">{{ stat.value }}</span>
             <span class="hero__stat-label">{{ stat.label }}</span>
@@ -220,7 +220,11 @@ import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
 import { useHCaptcha } from "../../composables/useHCaptcha";
 
-const props = defineProps({ data: { type: Object, required: true } });
+const props = defineProps({
+  data: { type: Object, required: true },
+  /** Remove the rounded bottom corners (e.g. state pages). */
+  flat: { type: Boolean, default: false },
+});
 const data = props.data as any;
 const config = useRuntimeConfig();
 const route = useRoute();
@@ -317,6 +321,9 @@ async function submitForm() {
   overflow: hidden;
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
+.hero--flat {
+  border-radius: 0;
+}
 @media (max-width: 767px) {
   .hero { min-height: auto; }
 }
@@ -340,7 +347,7 @@ async function submitForm() {
   display: grid;
   grid-template-columns: 1fr 551px;
   gap: 50px;
-  align-items: start;
+  align-items: center;
 }
 @media (min-width: 640px) { .hero__inner { padding-inline: 2rem; } }
 @media (min-width: 1024px) { .hero__inner { padding-inline: 2.5rem; } }

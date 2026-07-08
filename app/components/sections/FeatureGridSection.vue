@@ -44,7 +44,7 @@ defineProps<{
           class="flex items-start gap-5 rounded-2xl border border-white/10 bg-white/[0.04] p-7 3xl:p-8"
           :class="i < 2 ? 'lg:col-span-3' : 'lg:col-span-2'"
         >
-          <img v-if="f.icon" :src="f.icon" alt="" class="h-16 w-16 shrink-0 3xl:h-[72px] 3xl:w-[72px]" loading="lazy" />
+          <img v-if="strapiMedia(f.icon)" :src="strapiMedia(f.icon)" alt="" class="h-16 w-16 shrink-0 3xl:h-[72px] 3xl:w-[72px]" loading="lazy" />
           <div>
             <h3 class="font-primary text-lg font-semibold text-white">{{ f.title }}</h3>
             <p class="mt-2 font-primary text-sm leading-relaxed text-white/60">{{ f.description }}</p>

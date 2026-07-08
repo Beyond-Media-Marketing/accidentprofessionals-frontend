@@ -117,5 +117,7 @@ const highlights = computed<string[]>(() => attorney.value?.highlights ?? [])
         </aside>
       </div>
     </section>
+
+    <PageBottom />
   </div>
 </template>

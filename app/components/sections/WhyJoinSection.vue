@@ -1,6 +1,7 @@
 <script setup lang="ts">
 interface Card {
   icon?: string | null
+  iconImage?: any
   title?: string | null
   description?: string | null
 }
@@ -27,15 +28,22 @@ defineProps<{ block: Block | null | undefined }>()
         <p v-if="block.intro" class="mx-auto mt-4 max-w-[720px] font-primary text-base leading-[1.7] text-white/60">{{ block.intro }}</p>
       </div>
 
-      <div class="mx-auto mt-12 grid max-w-[1040px] grid-cols-1 gap-5 md:grid-cols-2 3xl:mt-16">
+      <div class="mx-auto mt-12 grid max-w-[1200px] grid-cols-1 gap-5 md:grid-cols-2 3xl:mt-16">
         <article
           v-for="(c, i) in block.cards ?? []"
           :key="i"
           class="rounded-2xl border border-white/10 bg-white/[0.04] p-7 3xl:p-8"
         >
-          <div class="mb-3 flex items-start gap-3.5">
-            <span class="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
-              <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <div class="mb-3 flex items-center gap-3.5">
+            <img
+              v-if="strapiMedia(c.iconImage)"
+              :src="strapiMedia(c.iconImage)"
+              alt=""
+              class="h-11 w-11 shrink-0 object-contain"
+              loading="lazy"
+            />
+            <span v-else class="shrink-0 text-accent">
+              <svg class="h-9 w-9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <template v-if="c.icon === 'clipboard'">
                   <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
                   <rect x="8" y="2" width="8" height="4" rx="1" ry="1" /><path d="M9 12h6M9 16h4" />

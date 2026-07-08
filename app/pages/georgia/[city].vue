@@ -39,5 +39,5 @@ useScrollReveal()
 </script>
 
 <template>
-  <LocationSections :loc="loc" :def="def" />
+  <LocationSections :loc="loc" :def="def" type="city" />
 </template>
