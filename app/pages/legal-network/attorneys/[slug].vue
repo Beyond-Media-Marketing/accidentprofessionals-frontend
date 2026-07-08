@@ -22,6 +22,19 @@ if (!attorney.value) {
   throw createError({ statusCode: 404, statusMessage: 'Attorney not found', fatal: true })
 }
 
+// Shared profile labels + CTA come from the CMS (legal-network-page). Falls back
+// to sensible defaults until the `attorneyProfile` field is deployed to Cloud.
+const profileQuery = qs.stringify(
+  { populate: { attorneyProfile: { populate: { requestCta: true } } } },
+  { encodeValuesOnly: true },
+)
+const { data: profileData } = await useFetch<any>(`${strapiUrl}/api/legal-network-page?${profileQuery}`, {
+  key: 'attorney-profile-labels',
+  transform: (r: any) => r?.data?.attorneyProfile ?? null,
+  default: () => null,
+})
+const profile = computed<any>(() => profileData.value ?? {})
+
 usePageSeo(() => attorney.value?.seo)
 useHead({
   title: computed(() => attorney.value?.seo?.metaTitle || `${attorney.value?.name} — AP Legal Network`),
@@ -83,11 +96,14 @@ const highlights = computed<string[]>(() => attorney.value?.highlights ?? [])
             </dl>
 
             <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-              <BaseButton href="/legal-network#apply-client" variant="primary">
-                Request This Attorney
+              <BaseButton
+                :href="profile.requestCta?.href || '/legal-network#apply-client'"
+                :variant="profile.requestCta?.variant || 'primary'"
+              >
+                {{ profile.requestCta?.label || 'Request This Attorney' }}
                 <img src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
               </BaseButton>
-              <BaseButton href="/legal-network/attorneys" variant="ghost">Back to Network</BaseButton>
+              <BaseButton href="/legal-network/attorneys" variant="ghost">{{ profile.backLabel || 'Back to Network' }}</BaseButton>
             </div>
           </div>
         </div>
@@ -98,14 +114,14 @@ const highlights = computed<string[]>(() => attorney.value?.highlights ?? [])
     <section class="section bg-cream">
       <div class="site-container grid gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] 3xl:gap-16">
         <div>
-          <h2 class="font-secondary text-2xl font-bold text-dark 3xl:text-3xl">About {{ attorney.name?.split(' ')?.[0] }}</h2>
+          <h2 class="font-secondary text-2xl font-bold text-dark 3xl:text-3xl">{{ profile.aboutHeading || 'About' }} {{ attorney.name?.split(' ')?.[0] }}</h2>
           <div class="mt-5 flex flex-col gap-4">
             <p v-for="(p, i) in paragraphs" :key="i" class="font-primary text-[15px] leading-[1.8] text-dark/80">{{ p }}</p>
           </div>
         </div>
 
         <aside v-if="highlights.length" class="h-fit rounded-3xl bg-white p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04)] 3xl:p-8">
-          <h3 class="mb-5 font-secondary text-lg font-bold text-dark">Credentials</h3>
+          <h3 class="mb-5 font-secondary text-lg font-bold text-dark">{{ profile.credentialsHeading || 'Credentials' }}</h3>
           <ul class="flex flex-col gap-3.5">
             <li v-for="(h, i) in highlights" :key="i" class="flex items-start gap-3 font-primary text-[15px] text-dark/80">
               <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#16a34a]/15 text-[#16a34a]">
