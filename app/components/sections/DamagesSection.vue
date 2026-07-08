@@ -37,6 +37,10 @@ const icons: Record<string, string> = {
   shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/>',
 }
 const iconPath = (name?: string | null) => icons[name || 'shield'] || icons.shield
+
+// These icons are served from uploaded SVG files instead of the inline set.
+const FILE_ICONS = new Set(['medical', 'wallet', 'car', 'pulse'])
+const fileIcon = (name?: string | null) => (name && FILE_ICONS.has(name) ? `/icons/${name}.svg` : null)
 </script>
 
 <template>
@@ -79,7 +83,8 @@ const iconPath = (name?: string | null) => icons[name || 'shield'] || icons.shie
             class="flex gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-6"
           >
             <span class="shrink-0 text-accent">
-              <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" v-html="iconPath(item.icon)" />
+              <img v-if="fileIcon(item.icon)" :src="fileIcon(item.icon)!" alt="" class="h-7 w-7 object-contain" loading="lazy" />
+              <svg v-else class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" v-html="iconPath(item.icon)" />
             </span>
             <div>
               <h3 class="font-primary text-lg font-semibold text-white">{{ item.title }}</h3>
