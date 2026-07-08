@@ -62,7 +62,7 @@ const catPathOf = (c: any) => (!c?.slug ? '' : c.parent?.slug ? `${c.parent.slug
 // ── Post view helpers ──
 const cover = computed(() => strapiMedia(post.value?.coverImage, post.value?.coverUrl || '/homepage/homepage-hero.png'))
 const date = computed(() => post.value?.publishedDate ? new Date(post.value.publishedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '')
-const toc = computed(() => tocFromHtml(`${post.value?.content || ''}${post.value?.contentTwo || ''}`))
+const toc = computed(() => tocFromHtml(`${addHeadingIds(post.value?.content)}${addHeadingIds(post.value?.contentTwo)}`))
 const readingTime = computed(() => {
   const text = `${post.value?.content || ''} ${post.value?.contentTwo || ''}`.replace(/<[^>]+>/g, ' ')
   return Math.max(1, Math.round((text.split(/\s+/).filter(Boolean).length) / 200))

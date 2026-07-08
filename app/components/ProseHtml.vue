@@ -1,9 +1,12 @@
 <script setup lang="ts">
-defineProps<{ html?: string | null }>()
+import { computed } from 'vue'
+const props = defineProps<{ html?: string | null }>()
+// Ensure every <h2> has an id so the table-of-contents anchors resolve.
+const rendered = computed(() => addHeadingIds(props.html))
 </script>
 
 <template>
-  <div class="prose-blocks" v-html="html || ''" />
+  <div class="prose-blocks" v-html="rendered" />
 </template>
 
 <style scoped>

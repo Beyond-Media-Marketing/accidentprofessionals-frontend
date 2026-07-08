@@ -14,6 +14,17 @@ export function headingSlug(text: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
+/** Add an id (slug of the heading text) to every <h2> that doesn't already have
+ *  one — so CKEditor-authored posts get anchor targets for the table of contents. */
+export function addHeadingIds(html?: string | null): string {
+  if (!html) return ''
+  return html.replace(/<h2(\s[^>]*)?>([\s\S]*?)<\/h2>/gi, (full, attrs = '', inner = '') => {
+    if (/\sid\s*=/i.test(attrs)) return full
+    const id = headingSlug(inner.replace(/<[^>]+>/g, ''))
+    return id ? `<h2${attrs} id="${id}">${inner}</h2>` : full
+  })
+}
+
 /** Extract H2 headings (with their ids) from an HTML string. */
 export function tocFromHtml(html?: string | null): { id: string; text: string }[] {
   const out: { id: string; text: string }[] = []
