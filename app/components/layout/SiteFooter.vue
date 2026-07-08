@@ -14,6 +14,7 @@ const phone = computed(() => settings.value.phone || '')
 const phoneHref = computed(() => settings.value.phoneHref || '#')
 
 const linkColumns = computed<any[]>(() => footer.value.linkColumns ?? [])
+const legalLinks = computed<any[]>(() => footer.value.legalLinks ?? [])
 
 const copyright = computed(() =>
   (footer.value.copyright || '© {year} Accident Professionals.').replace('{year}', String(new Date().getFullYear())),
@@ -107,6 +108,22 @@ const copyright = computed(() =>
 
       <!-- Bottom bar -->
       <div class="mt-12 border-t border-white/10 pt-6 text-center">
+        <ul v-if="legalLinks.length" class="mb-3 flex flex-wrap justify-center gap-x-6 gap-y-2">
+          <li v-for="(l, i) in legalLinks" :key="i">
+            <NuxtLink
+              v-if="!l.external"
+              :to="l.href || '#'"
+              class="text-sm text-muted transition-colors hover:text-accent"
+            >{{ l.label }}</NuxtLink>
+            <a
+              v-else
+              :href="l.href || '#'"
+              target="_blank"
+              rel="noopener"
+              class="text-sm text-muted transition-colors hover:text-accent"
+            >{{ l.label }}</a>
+          </li>
+        </ul>
         <p class="text-sm text-muted">{{ copyright }}</p>
         <p v-if="footer.builtByName" class="mt-1.5 text-xs text-muted/70">
           {{ footer.builtByLabel || 'Designed & Built by' }}
