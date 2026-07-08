@@ -81,7 +81,7 @@ useHead({
 <template>
   <div v-if="attorney">
     <!-- ── Profile hero ─────────────────────────────────────────── -->
-    <section class="bg-white pb-16 pt-6 md:pb-24 md:pt-8 3xl:pb-32 3xl:pt-10">
+    <section class="bg-white pb-4 pt-6 md:pb-6 md:pt-8 3xl:pb-8 3xl:pt-10">
       <div class="site-container">
         <nav class="mb-6 font-primary text-sm text-dark/45">
           <NuxtLink to="/legal-network" class="transition-colors hover:text-accent">Legal Network</NuxtLink>
@@ -162,22 +162,21 @@ useHead({
     </section>
 
     <!-- ── Credentials (between the two components) ──────────────── -->
-    <section v-if="credentials.length" class="section bg-cream">
+    <section v-if="credentials.length" class="bg-white py-10 md:py-12 3xl:py-16">
       <div class="site-container">
         <h2 class="font-secondary text-2xl font-bold text-dark 3xl:text-3xl">
           {{ profile.credentialsHeading || 'Education & Credentials' }}
         </h2>
 
-        <div class="mt-7 grid gap-4 sm:grid-cols-2 3xl:mt-9 3xl:gap-5">
-          <div
-            v-for="(c, i) in credentials"
-            :key="i"
-            class="rounded-2xl border border-dark/[0.07] bg-white p-5 3xl:p-6"
-          >
+        <div
+          class="mt-6 grid gap-x-10 gap-y-6 3xl:mt-8"
+          :class="credentials.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : credentials.length === 2 ? 'sm:grid-cols-2' : 'grid-cols-1'"
+        >
+          <div v-for="(c, i) in credentials" :key="i" class="border-l-2 border-accent/50 pl-4">
             <p class="font-secondary text-[15px] font-bold uppercase leading-snug tracking-wide text-dark">
-              {{ c.title }}<span v-if="c.period" class="text-dark/40"> {{ c.period }}</span>
+              {{ c.title }}<span v-if="c.period" class="ml-2 font-medium normal-case text-dark/40">{{ c.period }}</span>
             </p>
-            <p v-if="c.field" class="mt-2 font-primary text-sm text-dark/60">{{ c.field }}</p>
+            <p v-if="c.field" class="mt-1.5 font-primary text-sm text-dark/60">{{ c.field }}</p>
             <p v-if="c.institution" class="mt-0.5 font-primary text-sm text-dark/60">{{ c.institution }}</p>
           </div>
         </div>
@@ -187,12 +186,12 @@ useHead({
     <!-- ── Consultation CTA (contact + lead form) ───────────────── -->
     <section class="relative isolate overflow-hidden bg-dark text-on-dark">
       <img
-        src="/services-page/auto-accidents/image-end.webp"
+        src="/images/contact-hero.png"
         alt=""
-        class="absolute inset-0 -z-10 h-full w-full object-cover opacity-25"
+        class="absolute inset-0 -z-10 h-full w-full object-cover"
         loading="lazy"
       />
-      <div class="absolute inset-0 -z-10 bg-gradient-to-r from-dark via-dark/90 to-dark/70" />
+      <div class="absolute inset-0 -z-10 bg-gradient-to-r from-dark via-dark/80 to-dark/30" />
 
       <div class="site-container py-16 3xl:py-24">
         <div class="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] 3xl:gap-20">
@@ -262,6 +261,6 @@ useHead({
       </div>
     </section>
 
-    <PageBottom />
+    <PageBottom flat />
   </div>
 </template>

@@ -2,7 +2,9 @@
 // Closing CTA + footer sharing one continuous textured background (the same
 // footer-bg used on the legacy services pages). The light lead heading sits
 // above the shared dark area.
-defineProps<{ closingCta?: any | null }>()
+// `flat` drops the curved (rounded) top edge — used when the preceding section
+// is already dark and should flow seamlessly into the footer.
+defineProps<{ closingCta?: any | null; flat?: boolean }>()
 </script>
 
 <template>
@@ -18,7 +20,7 @@ defineProps<{ closingCta?: any | null }>()
     </div>
 
     <!-- Shared background spanning the CTA + footer -->
-    <div class="relative isolate overflow-hidden rounded-t-[32px] bg-dark 3xl:rounded-t-[44px]">
+    <div class="relative isolate overflow-hidden bg-dark" :class="flat ? '' : 'rounded-t-[32px] 3xl:rounded-t-[44px]'">
       <div class="absolute inset-0 -z-10">
         <img src="/images/footer-bg.webp" alt="" class="h-full w-full object-cover object-top" />
         <div class="absolute inset-0 bg-dark/55" />
