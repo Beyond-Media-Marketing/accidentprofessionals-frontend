@@ -197,7 +197,10 @@ useScrollReveal()
 
 <template>
   <div v-if="cat">
-    <HeroSection :data="hero" />
+    <HeroSection
+      :data="hero"
+      :breadcrumb="[{ label: 'Home', to: '/' }, { label: 'Services', to: '/services' }, { label: cat?.title }]"
+    />
     <HowItWorksSection :data="howItWorks" />
     <CaseTypesSection :data="caseTypes" />
     <WhyUsSection :data="whyUs" />

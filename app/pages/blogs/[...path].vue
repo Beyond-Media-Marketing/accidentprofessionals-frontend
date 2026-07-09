@@ -72,9 +72,23 @@ const canonical = computed(() => post.value?.seo?.canonicalUrl || `${siteUrl}${p
 
 usePageSeo(() => (mode.value === 'post' ? post.value?.seo : category.value?.seo))
 useHead(() => ({ title: (mode.value === 'post' ? post.value?.seo?.metaTitle || `${post.value?.title} — AP Blog` : category.value?.seo?.metaTitle || `${category.value?.name} — AP Blog`) }))
+// Breadcrumb trail: Home → Blog → [parent category] → category → post.
+const breadcrumbLd = computed(() => {
+  const cat = post.value?.category
+  const items: any[] = [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+    { '@type': 'ListItem', position: 2, name: 'Blog', item: `${siteUrl}/blogs` },
+  ]
+  if (cat?.parent?.slug) items.push({ '@type': 'ListItem', position: items.length + 1, name: cat.parent.name, item: `${siteUrl}/blogs/${cat.parent.slug}` })
+  if (cat?.slug) items.push({ '@type': 'ListItem', position: items.length + 1, name: cat.name, item: `${siteUrl}/blogs/${catPathOf(cat)}` })
+  items.push({ '@type': 'ListItem', position: items.length + 1, name: post.value?.title, item: canonical.value })
+  return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items }
+})
+
 useHead({
   script: computed(() => mode.value !== 'post' || !post.value ? [] : [
     { type: 'application/ld+json', innerHTML: JSON.stringify({ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.value.title, image: cover.value, datePublished: post.value.publishedDate, dateModified: post.value.updatedAt || post.value.publishedDate, author: { '@type': 'Organization', name: post.value.author || 'Accident Professionals' }, publisher: { '@type': 'Organization', name: 'Accident Professionals' }, mainEntityOfPage: canonical.value }) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify(breadcrumbLd.value) },
   ]) as any,
 })
 
@@ -105,14 +119,16 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
     <template v-if="mode === 'category' && category">
       <section class="bg-dark text-on-dark">
         <div class="site-container py-14 text-center lg:py-16 3xl:py-20">
-          <nav class="mb-5 font-primary text-sm text-white/50">
-            <NuxtLink to="/blogs" class="transition-colors hover:text-accent">Blog</NuxtLink>
-            <template v-if="category.parent">
-              <span class="px-2">/</span>
-              <NuxtLink :to="`/blogs/${category.parent.slug}`" class="transition-colors hover:text-accent">{{ category.parent.name }}</NuxtLink>
-            </template>
-            <span class="px-2">/</span><span class="text-white/80">{{ category.name }}</span>
-          </nav>
+          <Breadcrumb
+            class="mb-5 flex justify-center"
+            variant="onDark"
+            :items="[
+              { label: 'Home', to: '/' },
+              { label: 'Blog', to: '/blogs' },
+              ...(category.parent ? [{ label: category.parent.name, to: `/blogs/${category.parent.slug}` }] : []),
+              { label: category.name },
+            ]"
+          />
           <h1 class="font-secondary text-[clamp(2rem,4vw,3.25rem)] font-bold leading-[1.1]">{{ category.name }}</h1>
           <p v-if="category.description" class="mx-auto mt-4 max-w-[620px] font-primary text-[15px] leading-[1.7] text-white/70">{{ category.description }}</p>
         </div>
@@ -142,16 +158,17 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
         <div class="absolute inset-0 -z-10 bg-gradient-to-t from-dark via-dark/85 to-dark/70" />
         <div class="absolute inset-0 -z-10 bg-dark/35" />
         <div class="site-container w-full pb-12 pt-40 text-on-dark 3xl:pb-16">
-          <nav class="mb-5 font-primary text-sm text-white/60">
-            <NuxtLink to="/blogs" class="transition-colors hover:text-accent">Blog</NuxtLink>
-            <template v-if="post.category?.parent">
-              <span class="px-2">/</span>
-              <NuxtLink :to="`/blogs/${post.category.parent.slug}`" class="transition-colors hover:text-accent">{{ post.category.parent.name }}</NuxtLink>
-            </template>
-            <span class="px-2">/</span>
-            <NuxtLink :to="`/blogs/${catPathOf(post.category)}`" class="transition-colors hover:text-accent">{{ post.category?.name }}</NuxtLink>
-            <span class="px-2">/</span><span class="text-white/80">{{ post.title }}</span>
-          </nav>
+          <Breadcrumb
+            class="mb-5"
+            variant="onDark"
+            :items="[
+              { label: 'Home', to: '/' },
+              { label: 'Blog', to: '/blogs' },
+              ...(post.category?.parent ? [{ label: post.category.parent.name, to: `/blogs/${post.category.parent.slug}` }] : []),
+              ...(post.category ? [{ label: post.category.name, to: `/blogs/${catPathOf(post.category)}` }] : []),
+              { label: post.title },
+            ]"
+          />
           <div class="max-w-[880px]">
             <NuxtLink v-if="post.category" :to="`/blogs/${catPathOf(post.category)}`" class="inline-block rounded-full bg-accent/20 px-3 py-1 font-primary text-xs font-semibold uppercase tracking-wide text-accent backdrop-blur-sm">{{ post.category.name }}</NuxtLink>
             <h1 class="mt-4 font-secondary text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.1] text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">{{ post.title }}</h1>

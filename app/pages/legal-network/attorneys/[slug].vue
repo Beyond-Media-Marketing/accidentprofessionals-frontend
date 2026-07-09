@@ -74,6 +74,21 @@ useHead({
         }),
       ),
     },
+    {
+      type: 'application/ld+json',
+      innerHTML: computed(() =>
+        JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+            { '@type': 'ListItem', position: 2, name: 'Legal Network', item: `${siteUrl}/legal-network` },
+            { '@type': 'ListItem', position: 3, name: 'Attorneys', item: `${siteUrl}/legal-network/attorneys` },
+            { '@type': 'ListItem', position: 4, name: attorney.value?.name, item: `${siteUrl}/legal-network/attorneys/${slug}/` },
+          ],
+        }),
+      ),
+    },
   ],
 })
 </script>
@@ -83,12 +98,15 @@ useHead({
     <!-- ── Profile hero ─────────────────────────────────────────── -->
     <section class="bg-white pb-4 pt-6 md:pb-6 md:pt-8 3xl:pb-8 3xl:pt-10">
       <div class="site-container">
-        <nav class="mb-6 font-primary text-sm text-dark/45">
-          <NuxtLink to="/legal-network" class="transition-colors hover:text-accent">Legal Network</NuxtLink>
-          <span class="px-2">/</span>
-          <NuxtLink to="/legal-network/attorneys" class="transition-colors hover:text-accent">Attorneys</NuxtLink>
-          <span class="px-2">/</span><span class="text-dark/70">{{ attorney.name }}</span>
-        </nav>
+        <Breadcrumb
+          class="mb-6"
+          :items="[
+            { label: 'Home', to: '/' },
+            { label: 'Legal Network', to: '/legal-network' },
+            { label: 'Attorneys', to: '/legal-network/attorneys' },
+            { label: attorney.name },
+          ]"
+        />
 
         <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)] 3xl:gap-16">
           <!-- Photo with floating chips + stat cards -->

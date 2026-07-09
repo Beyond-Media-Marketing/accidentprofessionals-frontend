@@ -12,6 +12,7 @@
     <div class="hero__inner">
       <!-- ── LEFT: content ── -->
       <div class="hero__content">
+        <Breadcrumb v-if="breadcrumb?.length" :items="breadcrumb" variant="onDark" class="reveal mb-4" />
         <AppBadge class="reveal">{{ data.badge }}</AppBadge>
 
         <h1 class="hero__h1 reveal reveal-delay-1">
@@ -224,6 +225,8 @@ const props = defineProps({
   data: { type: Object, required: true },
   /** Remove the rounded bottom corners (e.g. state pages). */
   flat: { type: Boolean, default: false },
+  /** Optional breadcrumb trail rendered above the badge. */
+  breadcrumb: { type: Array, default: () => [] },
 });
 const data = props.data as any;
 const config = useRuntimeConfig();

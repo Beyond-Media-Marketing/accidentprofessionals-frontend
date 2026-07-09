@@ -150,7 +150,15 @@ useScrollReveal()
 
 <template>
   <div v-if="svc">
-    <HeroSection :data="hero" />
+    <HeroSection
+      :data="hero"
+      :breadcrumb="[
+        { label: 'Home', to: '/' },
+        { label: 'Services', to: '/services' },
+        { label: svc?.category?.title, to: `/services/${categorySlug}` },
+        { label: svc?.title },
+      ]"
+    />
     <MediaTextSection
       :block="svc.whatToKnow"
       :image="strapiMedia(svc.whatToKnow?.image, '/homepage/homepage-hero.png')"

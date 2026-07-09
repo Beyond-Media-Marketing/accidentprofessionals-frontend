@@ -55,6 +55,16 @@ const nearbyCities = computed(() => {
 
 const hd = computed(() => props.def?.heroDefaults ?? {})
 
+const heroBreadcrumb = computed(() =>
+  props.type === 'city'
+    ? [
+        { label: 'Home', to: '/' },
+        { label: 'Georgia', to: '/georgia' },
+        { label: props.loc?.title },
+      ]
+    : [{ label: 'Home', to: '/' }, { label: props.loc?.title || 'Georgia' }],
+)
+
 const hero = computed(() => {
   const h = props.loc?.hero ?? {}
   return {
@@ -102,7 +112,7 @@ const faq = computed(() => {
 
 <template>
   <div v-if="loc">
-    <HeroSection :data="hero" :flat="type === 'state'" />
+    <HeroSection :data="hero" :flat="type === 'state'" :breadcrumb="heroBreadcrumb" />
     <CityAreasSection v-if="loc.cities" :block="loc.cities" />
     <MediaTextSection
       v-if="loc.whyTrust"
