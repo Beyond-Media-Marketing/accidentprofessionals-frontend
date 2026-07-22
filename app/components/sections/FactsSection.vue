@@ -34,8 +34,8 @@ const paragraphs = computed(() =>
           <div>
             <span
               v-if="block.eyebrow"
-              class="inline-flex items-center rounded-full border border-dark/15 px-4 py-1.5 font-primary text-sm font-medium text-dark/70"
-            >{{ block.eyebrow }}</span>
+              class="inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em] text-dark/55"
+            ><span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />{{ block.eyebrow }}</span>
             <h2
               class="mt-5 font-secondary text-3xl font-bold leading-tight text-dark sm:text-4xl 3xl:text-5xl"
               v-html="renderInlineMarkdown(block.heading)"

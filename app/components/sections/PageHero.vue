@@ -52,15 +52,16 @@ const isCenter = computed(() => props.align === 'center')
       <div
         :class="[
           hasAside ? 'grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]' : '',
-          'pt-24 pb-36 lg:pt-28 3xl:pt-36 3xl:pb-44',
+          'pt-24 pb-28 lg:pt-28 3xl:pt-32 3xl:pb-32',
         ]"
       >
         <!-- Copy -->
         <div :class="[contentWidth === 'wide' ? 'max-w-[880px] 3xl:max-w-[1040px]' : 'max-w-[640px] 3xl:max-w-[760px]', isCenter ? 'mx-auto text-center' : '']">
           <span
             v-if="eyebrow"
-            class="mb-5 inline-block rounded-pill border border-accent/60 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-accent"
+            class="mb-5 inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em] text-white/60"
           >
+            <span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
             {{ eyebrow }}
           </span>
 
@@ -110,8 +111,13 @@ const isCenter = computed(() => props.align === 'center')
     </div>
   </section>
 
-  <!-- Stats — overlaps the hero's bottom edge -->
-  <div v-if="stats?.length" class="relative z-10 -mt-12 3xl:-mt-16">
+  <!-- Stats — overlaps the hero's bottom edge (sits centered on the edge). The
+       card variant (home) sits deeper on the edge than the pills variant (about). -->
+  <div
+    v-if="stats?.length"
+    class="relative z-10"
+    :class="statsVariant === 'pills' ? '-mt-12 3xl:-mt-16' : '-mt-20 3xl:-mt-24'"
+  >
     <div class="site-container">
       <!-- Pills variant (about): 2-col grid on mobile (value over label, like the homepage),
            wrapping pill row from sm up. -->
@@ -119,27 +125,27 @@ const isCenter = computed(() => props.align === 'center')
         <div
           v-for="(s, i) in stats"
           :key="i"
-          class="flex flex-col items-center gap-1 rounded-2xl border border-white/10 bg-dark/80 px-4 py-4 text-center backdrop-blur sm:w-auto sm:flex-row sm:items-center sm:gap-2.5 sm:rounded-pill sm:px-5 sm:py-3 sm:text-left 3xl:px-6 3xl:py-4"
+          class="flex flex-col items-center gap-1 rounded-2xl border border-white/10 bg-dark/70 px-4 py-4 text-center backdrop-blur sm:w-auto sm:min-w-[250px] sm:flex-row sm:items-center sm:gap-2.5 sm:rounded-pill sm:px-7 sm:py-3 sm:text-left 3xl:min-w-[290px] 3xl:px-8 3xl:py-4"
         >
-          <span class="font-secondary text-2xl font-bold text-accent sm:text-xl 3xl:text-2xl">{{ s.value }}</span>
-          <span class="font-primary text-xs leading-snug text-white/70 sm:max-w-[170px] 3xl:text-sm">{{ s.label }}</span>
+          <span class="font-secondary text-3xl font-bold text-accent sm:text-2xl 3xl:text-3xl">{{ s.value }}</span>
+          <span class="font-primary text-sm leading-snug text-white/75 sm:max-w-[190px] 3xl:text-base">{{ s.label }}</span>
         </div>
       </div>
 
       <!-- Card variant (home): single white bar -->
-      <div v-else class="grid grid-cols-2 rounded-[28px] bg-white/[0.81] shadow-card backdrop-blur-sm md:grid-cols-4">
+      <div v-else class="grid grid-cols-2 rounded-[28px] bg-white/90 shadow-card backdrop-blur-sm md:grid-cols-4">
         <div
           v-for="(s, i) in stats"
           :key="i"
           class="relative px-6 py-7 text-center font-inter 3xl:py-9"
           :class="
             i > 0
-              ? `md:before:absolute md:before:left-0 md:before:top-1/2 md:before:h-14 md:before:w-px md:before:-translate-y-1/2 md:before:bg-white md:before:content-['']`
+              ? `md:before:absolute md:before:left-0 md:before:top-1/2 md:before:h-14 md:before:w-px md:before:-translate-y-1/2 md:before:bg-black/10 md:before:content-['']`
               : ''
           "
         >
           <p class="text-4xl font-bold text-accent 3xl:text-5xl">{{ s.value }}</p>
-          <p class="mx-auto mt-2 max-w-[180px] text-xs leading-snug text-[#1E1E1E]/50 3xl:text-sm">{{ s.label }}</p>
+          <p class="mx-auto mt-2 max-w-[180px] text-xs leading-snug text-[#1E1E1E]/60 3xl:text-sm">{{ s.label }}</p>
         </div>
       </div>
     </div>

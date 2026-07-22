@@ -49,7 +49,6 @@ const errorMessage = ref('')
 const canSubmit = computed(
   () =>
     !!form.firstName.trim() &&
-    !!form.email.trim() &&
     form.agreed &&
     !submitting.value &&
     !!hcaptchaToken.value,
@@ -105,8 +104,8 @@ async function submitForm() {
         <div>
           <span
             v-if="block.eyebrow"
-            class="inline-flex items-center rounded-full border border-dark/15 px-4 py-1.5 font-primary text-xs font-semibold uppercase tracking-wide text-dark/60"
-          >{{ block.eyebrow }}</span>
+            class="inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em] text-dark/55"
+          ><span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />{{ block.eyebrow }}</span>
           <h2 class="mt-5 font-secondary text-3xl font-bold leading-tight text-dark sm:text-4xl 3xl:text-5xl">
             {{ block.heading }}
           </h2>
@@ -127,8 +126,8 @@ async function submitForm() {
             </div>
 
             <div class="contact-form__field">
-              <label for="cf-email">Email <span>*</span></label>
-              <input id="cf-email" v-model="form.email" type="email" placeholder="you@company.com" autocomplete="email" required />
+              <label for="cf-email">Email <span class="contact-form__optional">(optional)</span></label>
+              <input id="cf-email" v-model="form.email" type="email" placeholder="you@company.com" autocomplete="email" />
             </div>
 
             <div class="contact-form__field">
@@ -245,6 +244,7 @@ async function submitForm() {
   color: var(--color-dark);
 }
 .contact-form__field label span { color: var(--color-accent); }
+.contact-form__field label span.contact-form__optional { color: var(--color-muted); font-weight: 400; }
 .contact-form__field input,
 .contact-form__field textarea {
   width: 100%;

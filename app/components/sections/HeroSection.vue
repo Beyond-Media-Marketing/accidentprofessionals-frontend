@@ -57,19 +57,18 @@
               />
             </div>
             <div class="hero__field">
-              <label for="hero-email">Email</label>
+              <label for="hero-email">Email <span class="hero__optional">(optional)</span></label>
               <input
                 id="hero-email"
                 v-model="form.email"
                 type="email"
                 placeholder="email@email.com"
                 autocomplete="email"
-                required
               />
             </div>
           </div>
 
-          <!-- Row 2: Phone + Case type -->
+          <!-- Row 2: Phone -->
           <div class="hero__form-row">
             <div class="hero__field">
               <label for="hero-phone">Phone number</label>
@@ -79,34 +78,6 @@
                 variant="hero"
                 input-id="hero-phone"
               />
-            </div>
-            <div class="hero__field">
-              <label for="hero-case">Case type</label>
-              <div class="hero__select-wrap">
-                <select id="hero-case" v-model="form.caseType">
-                  <option value="" disabled selected>Select</option>
-                  <option
-                    v-for="opt in data.caseOptions"
-                    :key="opt.value"
-                    :value="opt.value"
-                  >
-                    {{ opt.label }}
-                  </option>
-                </select>
-                <svg
-                  class="hero__select-chevron"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </div>
             </div>
           </div>
 
@@ -256,7 +227,6 @@ const errorMessage = ref("");
 
 const canSubmit = computed(() =>
   !!form.name.trim() &&
-  !!form.email.trim() &&
   form.agreed &&
   !submitting.value &&
   !!hcaptchaToken.value
@@ -267,8 +237,8 @@ async function submitForm() {
     errorMessage.value = "Please agree to the privacy policy to continue.";
     return;
   }
-  if (!form.name || !form.email) {
-    errorMessage.value = "Please fill in your name and email.";
+  if (!form.name) {
+    errorMessage.value = "Please enter your name.";
     return;
   }
   submitting.value = true;
@@ -283,7 +253,6 @@ async function submitForm() {
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
-        case_type: data.caseOptions.find(o => o.value === form.caseType)?.label ?? form.caseType,
         message: form.message,
         service_page: route.path,
         ...(hcaptchaToken.value && { "h-captcha-response": hcaptchaToken.value }),
@@ -294,7 +263,6 @@ async function submitForm() {
       successMessage.value = "Thank you! We'll be in touch shortly.";
       gtmPush({
         form_id: "hero_form",
-        case_type: data.caseOptions.find(o => o.value === form.caseType)?.label ?? form.caseType,
         service_page: route.path,
       });
       Object.assign(form, {
@@ -452,6 +420,10 @@ async function submitForm() {
   font-weight: 500;
   color: var(--color-white);
   letter-spacing: -0.01em;
+}
+.hero__optional {
+  font-weight: 400;
+  opacity: 0.55;
 }
 .hero__field input,
 .hero__field textarea {

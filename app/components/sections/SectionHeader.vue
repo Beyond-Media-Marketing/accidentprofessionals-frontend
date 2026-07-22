@@ -30,9 +30,10 @@ withDefaults(
   <div :class="['flex flex-col', align === 'center' ? 'items-center text-center' : 'items-start text-left']">
     <span
       v-if="eyebrow"
-      class="mb-6 inline-block rounded-[40px] border px-[21px] py-3 font-inter text-[14.6px] font-semibold leading-[22.4px] tracking-[-0.32px]"
-      :class="theme === 'dark' ? 'border-white/20 text-white/80' : 'border-[#525252]/15 text-[#100E0B]/60'"
+      class="mb-4 inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em]"
+      :class="theme === 'dark' ? 'text-white/55' : 'text-dark/55'"
     >
+      <span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
       {{ eyebrow }}
     </span>
 

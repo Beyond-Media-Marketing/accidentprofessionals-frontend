@@ -29,8 +29,8 @@ const cityShort = (name?: string | null) => (name || '').replace(/,\s*GA$/i, '')
         <div>
           <span
             v-if="block.eyebrow"
-            class="inline-flex items-center rounded-full border border-white/20 px-4 py-1.5 font-primary text-xs font-semibold uppercase tracking-wide text-white/80"
-          >{{ block.eyebrow }}</span>
+            class="inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em] text-white/55"
+          ><span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />{{ block.eyebrow }}</span>
           <h2
             class="mt-5 font-secondary text-3xl font-bold leading-tight text-white sm:text-4xl 3xl:text-5xl [&_strong]:text-accent"
             v-html="renderInlineMarkdown(block.heading)"
