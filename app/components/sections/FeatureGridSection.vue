@@ -41,14 +41,12 @@ defineProps<{
         <article
           v-for="(f, i) in block.features ?? []"
           :key="i"
-          class="flex items-start gap-5 rounded-2xl border border-white/10 bg-white/[0.04] p-7 3xl:p-8"
+          class="grid grid-cols-[auto_1fr] items-center gap-x-5 gap-y-2 rounded-2xl border border-white/10 bg-white/[0.04] p-7 sm:items-start 3xl:p-8"
           :class="i < 2 ? 'lg:col-span-3' : 'lg:col-span-2'"
         >
-          <img v-if="strapiMedia(f.icon)" :src="strapiMedia(f.icon)" alt="" class="h-16 w-16 shrink-0 3xl:h-[72px] 3xl:w-[72px]" loading="lazy" />
-          <div>
-            <h3 class="font-primary text-lg font-semibold text-white">{{ f.title }}</h3>
-            <p class="mt-2 font-primary text-sm leading-relaxed text-white/60">{{ f.description }}</p>
-          </div>
+          <img v-if="strapiMedia(f.icon)" :src="strapiMedia(f.icon)" alt="" class="col-start-1 row-start-1 h-16 w-16 shrink-0 sm:row-span-2 3xl:h-[72px] 3xl:w-[72px]" loading="lazy" />
+          <h3 class="col-start-2 row-start-1 font-primary text-lg font-semibold text-white">{{ f.title }}</h3>
+          <p class="col-start-1 col-span-2 row-start-2 font-primary text-sm leading-relaxed text-white/60 sm:col-start-2 sm:col-span-1">{{ f.description }}</p>
         </article>
       </div>
 

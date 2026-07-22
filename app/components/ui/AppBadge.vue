@@ -9,26 +9,22 @@
 .app-badge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 16px;
-  background: rgba(248, 246, 244, 0.1);
-  border: 1px solid rgba(248, 246, 244, 0.2);
-  border-radius: var(--radius-pill);
-  box-shadow: 0 0 24px 0 var(--color-accent-glow);
+  gap: 8px;
   width: fit-content;
+  color: rgba(248, 246, 244, 0.6);
 }
 .app-badge__dot {
-  width: 8px;
-  height: 8px;
-  background: var(--color-accent);
+  width: 6px;
+  height: 6px;
+  background: currentColor;
   border-radius: 50%;
   flex-shrink: 0;
 }
 .app-badge__text {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--color-cream);
-  letter-spacing: -0.01em;
-  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: inherit;
 }
 </style>

@@ -40,7 +40,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0')
       <div class="mt-12 grid items-center gap-6 lg:grid-cols-[587px_minmax(0,1fr)] 3xl:mt-14">
         <!-- Image + floating highlight card -->
         <div class="relative">
-          <div class="h-[240px] overflow-hidden rounded-3xl md:h-[320px] lg:h-[556px]">
+          <div class="hidden h-[240px] overflow-hidden rounded-3xl md:block md:h-[320px] lg:h-[556px]">
             <img
               v-if="image"
               :src="image"
@@ -55,7 +55,7 @@ const pad = (i: number) => String(i + 1).padStart(2, '0')
 
           <div
             v-if="block.highlightTitle"
-            class="goal-card absolute bottom-4 left-4 right-4 rounded-3xl px-6 py-8 backdrop-blur-[50px] lg:bottom-[-50px] lg:left-[-48px] lg:right-auto lg:w-[447px]"
+            class="goal-card rounded-3xl px-6 py-8 md:absolute md:bottom-4 md:left-4 md:right-4 md:backdrop-blur-[50px] lg:bottom-[-50px] lg:left-[-48px] lg:right-auto lg:w-[447px]"
           >
             <div class="flex items-center gap-[26px]">
               <img v-if="highlightIcon" :src="highlightIcon" alt="" class="h-[70px] w-[70px] shrink-0" />
@@ -74,22 +74,20 @@ const pad = (i: number) => String(i + 1).padStart(2, '0')
           <article
             v-for="(step, i) in block.steps ?? []"
             :key="i"
-            class="flex items-center gap-6 rounded-3xl bg-white p-7 md:gap-7 md:p-8"
+            class="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2 rounded-3xl bg-white p-6 md:gap-x-7 md:p-8"
           >
             <span
-              class="min-w-[44px] flex-shrink-0 select-none text-center font-primary text-[56px] font-bold leading-none text-accent/[0.18] md:min-w-[80px] md:text-[100px]"
+              class="col-start-1 row-start-1 min-w-[32px] select-none text-center font-primary text-[36px] font-bold leading-none text-accent/[0.18] md:row-span-2 md:min-w-[80px] md:text-[100px]"
               aria-hidden="true"
             >
               {{ step.number || pad(i) }}
             </span>
-            <div>
-              <h3 class="font-primary text-xl font-semibold leading-[1.3] text-dark">
-                {{ step.title }}
-              </h3>
-              <p class="mt-2 font-primary text-base leading-[1.65] tracking-[-0.02em] text-muted">
-                {{ step.description }}
-              </p>
-            </div>
+            <h3 class="col-start-2 row-start-1 font-primary text-xl font-semibold leading-[1.3] text-dark">
+              {{ step.title }}
+            </h3>
+            <p class="col-start-1 col-span-2 row-start-2 font-primary text-base leading-[1.65] tracking-[-0.02em] text-muted md:col-start-2 md:col-span-1">
+              {{ step.description }}
+            </p>
           </article>
         </div>
       </div>
@@ -100,10 +98,17 @@ const pad = (i: number) => String(i + 1).padStart(2, '0')
 <style scoped>
 /* "Goal is simple" card — exact fill from Figma: 10% black + 15% white over
    24% gold, behind a heavy backdrop blur. */
+/* Mobile: no image behind it, so use a solid dark fill for legible white text. */
 .goal-card {
-  background:
-    linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-    linear-gradient(0deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)),
-    rgba(243, 175, 0, 0.24);
+  background: var(--color-dark);
+}
+/* From md up it floats over the image as the frosted gold-glass card. */
+@media (min-width: 768px) {
+  .goal-card {
+    background:
+      linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+      linear-gradient(0deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.15)),
+      rgba(243, 175, 0, 0.24);
+  }
 }
 </style>

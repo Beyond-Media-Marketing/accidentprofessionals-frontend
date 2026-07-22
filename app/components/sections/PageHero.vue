@@ -46,13 +46,15 @@ const isCenter = computed(() => props.align === 'center')
         <div class="absolute inset-0 bg-gradient-to-r from-dark via-dark/85 to-dark/30" />
         <div class="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-dark/50" />
       </template>
+      <!-- Extra darkening on small screens so the copy stays readable over the photo. -->
+      <div class="absolute inset-0 bg-dark/30 lg:hidden" />
     </div>
 
     <div class="site-container">
       <div
         :class="[
           hasAside ? 'grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]' : '',
-          'pt-24 pb-28 lg:pt-28 3xl:pt-32 3xl:pb-32',
+          'pt-14 pb-28 lg:pt-20 3xl:pt-24 3xl:pb-32',
         ]"
       >
         <!-- Copy -->
@@ -116,19 +118,20 @@ const isCenter = computed(() => props.align === 'center')
   <div
     v-if="stats?.length"
     class="relative z-10"
-    :class="statsVariant === 'pills' ? '-mt-12 3xl:-mt-16' : '-mt-20 3xl:-mt-24'"
+    :class="statsVariant === 'pills' ? 'mt-8 sm:-mt-12 3xl:-mt-16' : '-mt-20 3xl:-mt-24'"
   >
     <div class="site-container">
       <!-- Pills variant (about): 2-col grid on mobile (value over label, like the homepage),
            wrapping pill row from sm up. -->
-      <div v-if="statsVariant === 'pills'" class="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:justify-center sm:gap-4">
+      <div v-if="statsVariant === 'pills'" class="grid grid-cols-2 gap-2.5 sm:gap-3 md:grid-cols-4">
         <div
           v-for="(s, i) in stats"
           :key="i"
-          class="flex flex-col items-center gap-1 rounded-2xl border border-white/10 bg-dark/70 px-4 py-4 text-center backdrop-blur sm:w-auto sm:min-w-[250px] sm:flex-row sm:items-center sm:gap-2.5 sm:rounded-pill sm:px-7 sm:py-3 sm:text-left 3xl:min-w-[290px] 3xl:px-8 3xl:py-4"
+          class="flex flex-col items-center justify-center gap-1 rounded-pill border border-white/10 bg-dark/70 px-4 py-4 text-center backdrop-blur"
+          :class="stats && stats.length % 2 === 1 && i === stats.length - 1 ? 'col-span-2 md:col-auto' : ''"
         >
-          <span class="font-secondary text-3xl font-bold text-accent sm:text-2xl 3xl:text-3xl">{{ s.value }}</span>
-          <span class="font-primary text-sm leading-snug text-white/75 sm:max-w-[190px] 3xl:text-base">{{ s.label }}</span>
+          <span class="font-secondary text-2xl font-bold text-accent 3xl:text-3xl">{{ s.value }}</span>
+          <span class="font-primary text-[13px] leading-snug text-white/75 3xl:text-sm">{{ s.label }}</span>
         </div>
       </div>
 

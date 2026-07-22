@@ -18,17 +18,15 @@
           <div
             v-for="(step, i) in data.steps"
             :key="i"
-            class="reveal flex items-center gap-7 rounded-lg bg-white p-8"
+            class="reveal grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2 rounded-lg bg-white p-6 md:gap-x-7 md:p-8"
             :class="`reveal-delay-${i + 1}`"
           >
             <div
               aria-hidden="true"
-              class="min-w-[44px] shrink-0 select-none text-center font-primary text-[56px] font-bold leading-none text-accent opacity-[0.18] md:min-w-[80px] md:text-[100px]"
+              class="col-start-1 row-start-1 min-w-[32px] select-none text-center font-primary text-[36px] font-bold leading-none text-accent opacity-[0.18] md:row-span-2 md:min-w-[80px] md:text-[100px]"
             >{{ step.number }}</div>
-            <div>
-              <h3 class="mb-2 font-primary text-xl font-semibold leading-[1.3] tracking-[-0.02em] text-dark">{{ step.title }}</h3>
-              <p class="text-base leading-[1.65] tracking-[-0.02em] text-muted">{{ step.description }}</p>
-            </div>
+            <h3 class="col-start-2 row-start-1 font-primary text-xl font-semibold leading-[1.3] tracking-[-0.02em] text-dark">{{ step.title }}</h3>
+            <p class="col-start-1 col-span-2 row-start-2 text-base leading-[1.65] tracking-[-0.02em] text-muted md:col-start-2 md:col-span-1">{{ step.description }}</p>
           </div>
         </div>
       </div>

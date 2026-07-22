@@ -156,7 +156,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
       </div>
 
       <!-- ============ ATTORNEY APPLICATION ============ -->
-      <div v-if="tab === 'attorney'" class="mt-10 grid gap-10 lg:grid-cols-2 3xl:gap-14">
+      <div v-if="tab === 'attorney'" class="mt-10 grid gap-10 lg:grid-cols-2 lg:items-start 3xl:gap-14">
         <!-- Left: form -->
         <div>
           <h2 class="font-secondary text-[clamp(1.7rem,3vw,2.5rem)] font-bold leading-[1.12] text-dark">
@@ -179,7 +179,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
             </div>
             <div>
               <label :class="labelClass">Practice Areas</label>
-              <select v-model="aForm.practiceArea" :class="fieldClass">
+              <select v-model="aForm.practiceArea" class="ap-select" :class="fieldClass">
                 <option value="" disabled>Select</option>
                 <option v-for="o in block.attorneyForm?.practiceAreaOptions ?? []" :key="o" :value="o">{{ o }}</option>
               </select>
@@ -187,14 +187,14 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
                 <label :class="labelClass">Cities Served</label>
-                <select v-model="aForm.city" :class="fieldClass">
+                <select v-model="aForm.city" class="ap-select" :class="fieldClass">
                   <option value="" disabled>Select</option>
                   <option v-for="o in block.attorneyForm?.cityOptions ?? []" :key="o" :value="o">{{ o }}</option>
                 </select>
               </div>
               <div>
                 <label :class="labelClass">Languages</label>
-                <select v-model="aForm.language" :class="fieldClass">
+                <select v-model="aForm.language" class="ap-select" :class="fieldClass">
                   <option value="" disabled>Select</option>
                   <option v-for="o in block.attorneyForm?.languageOptions ?? []" :key="o" :value="o">{{ o }}</option>
                 </select>
@@ -222,7 +222,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
         <!-- Right: image + what happens next -->
         <div class="flex flex-col gap-6">
           <div class="overflow-hidden rounded-3xl">
-            <img v-if="attorneyImage" :src="attorneyImage" alt="AP attorney network" class="h-[380px] w-full object-cover lg:h-[560px]" loading="lazy" decoding="async" />
+            <img v-if="attorneyImage" :src="attorneyImage" alt="AP attorney network" class="block h-[380px] w-full origin-top scale-[1.03] object-cover lg:h-[560px]" loading="lazy" decoding="async" />
           </div>
           <div v-if="block.attorneyForm?.nextSteps?.length" class="rounded-3xl bg-dark p-7 text-on-dark 3xl:p-8">
             <h3 class="mb-5 font-secondary text-lg font-bold text-white">{{ block.attorneyForm.nextStepsTitle }}</h3>
@@ -245,11 +245,11 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
           <p v-if="block.clientForm?.note" class="mt-3 font-primary text-sm text-muted">{{ block.clientForm.note }}</p>
         </div>
 
-        <div class="mt-8 grid gap-10 lg:grid-cols-2 3xl:gap-14">
+        <div class="mt-8 grid gap-10 lg:grid-cols-2 lg:items-start 3xl:gap-14">
           <!-- Left: image + info rows -->
           <div class="flex flex-col gap-6">
             <div class="overflow-hidden rounded-3xl">
-              <img v-if="clientImage" :src="clientImage" alt="Personal injury consultation" class="h-[260px] w-full object-cover sm:h-[300px]" loading="lazy" decoding="async" />
+              <img v-if="clientImage" :src="clientImage" alt="Personal injury consultation" class="block h-[260px] w-full origin-top scale-[1.03] object-cover sm:h-[300px]" loading="lazy" decoding="async" />
             </div>
             <div v-if="block.clientForm?.infoRows?.length" class="flex flex-col gap-4">
               <div v-for="(row, i) in block.clientForm.infoRows" :key="i" class="flex items-center gap-3">
@@ -290,3 +290,15 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
     </div>
   </section>
 </template>
+
+<style scoped>
+/* Custom dropdown chevron with room from the edge (native arrow sat too close). */
+.ap-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+</style>

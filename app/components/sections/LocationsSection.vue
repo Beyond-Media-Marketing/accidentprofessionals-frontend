@@ -41,7 +41,7 @@ defineProps<{
         />
 
         <!-- Right: city list — wrapping horizontal flex on mobile, 2-col grid from sm up -->
-        <div class="flex flex-wrap gap-x-6 gap-y-4 sm:grid sm:grid-cols-2 sm:gap-x-8 sm:gap-y-8 lg:pt-2">
+        <div class="grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-8 sm:gap-y-8 lg:pt-2">
           <template v-for="(city, i) in block.cities ?? []" :key="i">
             <NuxtLink v-if="city.href" :to="city.href" class="group flex items-center gap-3">
               <img src="/icons/location-pin.png" alt="" class="h-11 w-11 shrink-0" loading="lazy" />

@@ -195,7 +195,7 @@ function onPhoneClick() {
               <template v-if="item.hasMegaMenu">
                 <button
                   type="button"
-                  class="flex w-full items-center justify-between py-3 text-sm font-medium uppercase tracking-wide text-dark"
+                  class="flex w-full items-center justify-between py-3 text-lg font-semibold text-dark"
                   :aria-expanded="mobileExpanded === i"
                   @click="toggleMobileItem(i)"
                 >
@@ -208,18 +208,24 @@ function onPhoneClick() {
                     <path d="M6 9l6 6 6-6" />
                   </svg>
                 </button>
-                <div v-if="mobileExpanded === i" class="pb-3 pl-3">
-                  <div v-for="(col, ci) in item.columns ?? []" :key="ci" class="mb-3">
+                <div v-if="mobileExpanded === i" class="pb-3 pl-1">
+                  <div v-for="(col, ci) in item.columns ?? []" :key="ci" class="mb-5 last:mb-1">
+                    <!-- Category title (clickable → category page) -->
                     <NuxtLink
                       v-if="col.href"
                       :to="col.href"
-                      class="mb-2 block text-[11px] font-semibold uppercase tracking-wide text-muted"
+                      class="flex items-center justify-between gap-2 py-1.5 text-base font-semibold text-dark transition-colors hover:text-accent"
                       @click="closeAll"
-                    >{{ col.heading }}</NuxtLink>
-                    <p v-else class="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">{{ col.heading }}</p>
-                    <ul class="space-y-2">
+                    >
+                      {{ col.heading }}
+                      <svg class="h-4 w-4 shrink-0 text-dark/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6" /></svg>
+                    </NuxtLink>
+                    <p v-else class="py-1.5 text-base font-semibold text-dark">{{ col.heading }}</p>
+
+                    <!-- Sub-links, indented under the category -->
+                    <ul v-if="col.links?.length" class="mt-1 space-y-0.5 border-l border-black/10 pl-4">
                       <li v-for="(link, li) in col.links ?? []" :key="li">
-                        <NuxtLink :to="link.href || '#'" class="block text-sm text-dark" @click="closeAll">
+                        <NuxtLink :to="link.href || '#'" class="block py-2 text-[15px] text-dark/70 transition-colors hover:text-accent" @click="closeAll">
                           {{ link.label }}
                         </NuxtLink>
                       </li>
@@ -231,7 +237,7 @@ function onPhoneClick() {
               <NuxtLink
                 v-else
                 :to="item.href || '#'"
-                class="block py-3 text-sm font-medium uppercase tracking-wide text-dark"
+                class="block py-3 text-lg font-semibold text-dark"
                 @click="closeAll"
               >
                 {{ item.label }}

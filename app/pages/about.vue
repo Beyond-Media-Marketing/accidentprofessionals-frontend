@@ -43,7 +43,6 @@ usePageSeo(() => page.value?.seo)
       :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')"
       :stats="page.heroStats"
       stats-variant="pills"
-      :overlay="false"
     />
 
     <MediaTextSection

@@ -296,7 +296,7 @@ async function submitForm() {
   border-radius: 0;
 }
 @media (max-width: 767px) {
-  .hero { min-height: auto; }
+  .hero { min-height: auto; padding-top: 64px; }
 }
 
 .hero__bg {
@@ -304,6 +304,17 @@ async function submitForm() {
   inset: 0;
   background-size: cover;
   background-position: center top;
+}
+.hero__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(16, 14, 11, 0.72) 0%, rgba(16, 14, 11, 0.4) 55%, rgba(16, 14, 11, 0.12) 100%);
+}
+@media (max-width: 1199px) {
+  .hero__bg::after {
+    background: linear-gradient(180deg, rgba(16, 14, 11, 0.55) 0%, rgba(16, 14, 11, 0.82) 100%);
+  }
 }
 
 .hero__inner {
@@ -573,5 +584,37 @@ async function submitForm() {
   font-size: 14px;
   color: #f87171;
   text-align: center;
+}
+
+/* Mobile overrides — placed last so they win over the base rules above
+   (media queries add no specificity, so source order decides). */
+@media (max-width: 767px) {
+  .hero__inner {
+    padding-top: 18px;
+    padding-bottom: 40px;
+  }
+  /* Two stats per row; an odd third spans the full width below. */
+  .hero__stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 14px;
+    align-items: start;
+    padding-top: 22px;
+  }
+  .hero__stat {
+    align-items: flex-start;
+    text-align: left;
+    gap: 2px;
+  }
+  .hero__stat:nth-child(3):last-child {
+    grid-column: 1 / -1;
+  }
+  .hero__stat-value {
+    font-size: 1.85rem;
+  }
+  .hero__stat-label {
+    font-size: 13px;
+    line-height: 1.35;
+  }
 }
 </style>

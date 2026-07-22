@@ -48,7 +48,6 @@ const caseOptions = [
       :subhead="page.hero?.subhead"
       :align="page.hero?.align"
       :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')"
-      :overlay="false"
     >
       <template #aside>
         <LeadForm

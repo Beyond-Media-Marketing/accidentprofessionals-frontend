@@ -24,15 +24,13 @@ const copyright = computed(() =>
 <template>
   <footer class="relative overflow-hidden text-on-dark">
     <div class="site-container pb-12 pt-16 3xl:pt-20">
-      <div
-        class="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-[1.6fr_1.3fr_1fr_1fr_1.1fr] lg:gap-8"
-      >
+      <div class="grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-[1.7fr_1fr_1fr_1.5fr] lg:gap-x-10">
         <!-- Brand -->
-        <div class="flex flex-col gap-4">
+        <div class="col-span-2 flex flex-col gap-4 lg:col-span-1">
           <NuxtLink to="/" aria-label="Accident Professionals" class="inline-block">
             <img :src="logo" alt="Accident Professionals" height="37" class="h-[37px] w-auto" />
           </NuxtLink>
-          <p class="max-w-[320px] text-sm leading-relaxed text-muted">
+          <p class="max-w-[340px] text-sm leading-relaxed text-muted">
             {{ footer.tagline || settings.tagline }}
           </p>
           <ul class="mt-1 flex gap-2.5">
@@ -50,33 +48,8 @@ const copyright = computed(() =>
           </ul>
         </div>
 
-        <!-- Where to Find Us -->
-        <div class="flex flex-col gap-3">
-          <p class="text-base font-semibold text-cream">{{ footer.findUsHeading || 'Where to Find Us' }}</p>
-          <a
-            v-if="settings.mapEmbedUrl"
-            :href="settings.mapLinkUrl || '#'"
-            target="_blank"
-            rel="noopener"
-            class="block overflow-hidden rounded-lg border border-white/10"
-            aria-label="View on Google Maps"
-          >
-            <iframe
-              :src="settings.mapEmbedUrl"
-              width="100%"
-              height="110"
-              style="border: 0; pointer-events: none"
-              loading="lazy"
-              referrerpolicy="no-referrer-when-downgrade"
-              aria-hidden="true"
-              tabindex="-1"
-            />
-          </a>
-          <p class="text-[13px] leading-relaxed text-muted">{{ settings.address }}</p>
-        </div>
-
-        <!-- Link columns (Case Types, Reach Out) -->
-        <div v-for="(col, ci) in linkColumns" :key="ci" class="flex flex-col gap-3">
+        <!-- Link columns (Case Types, Reach Out) — side by side on mobile -->
+        <div v-for="(col, ci) in linkColumns" :key="ci" class="flex flex-col gap-3.5">
           <p class="text-base font-semibold text-cream">{{ col.heading }}</p>
           <ul class="space-y-2.5">
             <li v-for="(link, li) in col.links ?? []" :key="li">
@@ -90,19 +63,43 @@ const copyright = computed(() =>
           </ul>
         </div>
 
-        <!-- Support -->
-        <div class="flex flex-col gap-2.5">
-          <p class="text-base font-semibold text-cream">{{ footer.supportHeading || 'Support' }}</p>
-          <p v-if="availability[0]" class="text-sm text-muted">{{ availability[0] }}</p>
+        <!-- Contact & Support (merged) -->
+        <div class="col-span-2 flex flex-col gap-4 lg:col-span-1">
+          <p class="text-base font-semibold text-cream">{{ footer.supportHeading || 'Contact Us' }}</p>
+
           <a
             v-if="phone"
             :href="phoneHref"
-            class="text-lg font-semibold text-accent transition-opacity hover:opacity-85"
+            class="inline-flex w-fit items-center gap-2.5 rounded-pill bg-accent px-5 py-2.5 font-primary text-[15px] font-semibold text-dark transition-transform hover:-translate-y-0.5"
             @click="gtmPush({ event: 'phone_click', location: 'footer' })"
           >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.24 1.02l-2.2 2.2z" />
+            </svg>
             {{ phone }}
           </a>
-          <p v-if="availability[1]" class="text-sm text-muted">{{ availability[1] }}</p>
+          <p v-if="availability.length" class="text-[13px] leading-relaxed text-muted">{{ availability.join(' · ') }}</p>
+          <p v-if="settings.address" class="text-[13px] leading-relaxed text-muted">{{ settings.address }}</p>
+
+          <a
+            v-if="settings.mapEmbedUrl"
+            :href="settings.mapLinkUrl || '#'"
+            target="_blank"
+            rel="noopener"
+            class="mt-1 block max-w-[320px] overflow-hidden rounded-lg border border-white/10"
+            aria-label="View on Google Maps"
+          >
+            <iframe
+              :src="settings.mapEmbedUrl"
+              width="100%"
+              height="92"
+              style="border: 0; pointer-events: none"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              aria-hidden="true"
+              tabindex="-1"
+            />
+          </a>
         </div>
       </div>
 

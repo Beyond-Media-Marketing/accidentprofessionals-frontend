@@ -35,7 +35,6 @@ usePageSeo(() => page.value?.seo)
       :align="page.hero?.align || 'center'"
       :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')"
       content-width="wide"
-      :overlay="false"
     />
 
     <ContactFormSection :block="page.formSection" />
