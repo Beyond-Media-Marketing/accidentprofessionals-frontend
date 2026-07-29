@@ -3,7 +3,7 @@ import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { countries } from '../../data/countries'
 import { useDataLayer } from '../../composables/useDataLayer'
-import { useHCaptcha } from '../../composables/useHCaptcha'
+import { useTurnstile } from '../../composables/useTurnstile'
 
 interface ContactForm {
   eyebrow?: string | null
@@ -27,7 +27,7 @@ const props = defineProps<{ block: ContactForm | null | undefined }>()
 const config = useRuntimeConfig()
 const route = useRoute()
 const { push: gtmPush } = useDataLayer()
-const { token: hcaptchaToken, reset: resetHCaptcha } = useHCaptcha('contactus-hcaptcha')
+const { token: turnstileToken, reset: resetTurnstile } = useTurnstile('contactus-turnstile')
 
 const form = reactive({
   firstName: '',
@@ -51,7 +51,7 @@ const canSubmit = computed(
     !!form.firstName.trim() &&
     form.agreed &&
     !submitting.value &&
-    !!hcaptchaToken.value,
+    !!turnstileToken.value,
 )
 
 async function submitForm() {
@@ -63,18 +63,18 @@ async function submitForm() {
   errorMessage.value = ''
   successMessage.value = ''
   try {
-    const res = await fetch('https://api.web3forms.com/submit', {
+    const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        access_key: config.public.web3FormsKey,
+        form_id: 'contact_form',
         subject: props.block?.formSubject || 'New consultation request — Contact Page',
         name: `${form.firstName} ${form.lastName}`.trim(),
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
         message: form.message,
-        page: route.path,
-        ...(hcaptchaToken.value && { 'h-captcha-response': hcaptchaToken.value }),
+        page: document.title,
+        'cf-turnstile-response': turnstileToken.value,
       }),
     })
     const result = await res.json()
@@ -82,14 +82,14 @@ async function submitForm() {
       successMessage.value = "Thank you! We'll be in touch shortly."
       gtmPush({ form_id: 'contact_form', page: route.path })
       Object.assign(form, { firstName: '', lastName: '', email: '', phone: '', message: '', agreed: false })
-      resetHCaptcha()
+      resetTurnstile()
     } else {
       errorMessage.value = 'Something went wrong. Please call us directly.'
-      resetHCaptcha()
+      resetTurnstile()
     }
   } catch {
     errorMessage.value = 'Unable to submit. Please call us directly.'
-    resetHCaptcha()
+    resetTurnstile()
   } finally {
     submitting.value = false
   }
@@ -102,10 +102,6 @@ async function submitForm() {
       <div class="grid grid-cols-1 gap-12 lg:grid-cols-2 3xl:gap-16">
         <!-- ── Left: form ── -->
         <div>
-          <span
-            v-if="block.eyebrow"
-            class="inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em] text-dark/55"
-          ><span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />{{ block.eyebrow }}</span>
           <h2 class="mt-5 font-secondary text-3xl font-bold leading-tight text-dark sm:text-4xl 3xl:text-5xl">
             {{ block.heading }}
           </h2>
@@ -140,7 +136,7 @@ async function submitForm() {
               <textarea id="cf-message" v-model="form.message" placeholder="Leave us a message…" rows="4" />
             </div>
 
-            <div id="contactus-hcaptcha" />
+            <div id="contactus-turnstile" />
 
             <AppCheckbox v-model="form.agreed">
               You agree to our friendly

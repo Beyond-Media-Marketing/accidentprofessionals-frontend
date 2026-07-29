@@ -21,7 +21,9 @@ const categoryQuery = qs.stringify(
       stepsToTake: { populate: { steps: true } },
       faq: { populate: { items: true } },
       ctaBanner: { populate: { caseOptions: true } },
-      services: { populate: { cardIcon: true } },
+      // `hero` is populated (one field) only to detect whether a sub-service has a
+      // built page — stubs with no hero don't get a card link.
+      services: { populate: { cardIcon: true, hero: { fields: ['h1Part1'] } } },
       seo: { populate: '*' },
     },
   },
@@ -103,6 +105,8 @@ const caseTypes = computed(() => {
       icon: strapiMedia(s.cardIcon, '/icons/shield.svg'),
       title: s.title,
       description: s.cardDescription,
+      // Only sub-services that actually have a built page (a hero) get a link.
+      hasPage: !!s.hero,
       link: `/services/${slug}/${s.slug}`,
       linkText: s.cardLinkText,
       linkAnchor: s.cardLinkAnchor,

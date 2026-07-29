@@ -32,10 +32,6 @@ const paragraphs = computed(() =>
         <!-- Left: header + image -->
         <div class="flex flex-col gap-8">
           <div>
-            <span
-              v-if="block.eyebrow"
-              class="inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em] text-dark/55"
-            ><span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />{{ block.eyebrow }}</span>
             <h2
               class="mt-5 font-secondary text-3xl font-bold leading-tight text-dark sm:text-4xl 3xl:text-5xl"
               v-html="renderInlineMarkdown(block.heading)"

@@ -7,11 +7,20 @@ interface Region {
   region?: string | null
   cities?: City[] | null
 }
+interface Cta {
+  label?: string | null
+  href?: string | null
+  variant?: 'primary' | 'dark' | 'ghost' | 'outline' | null
+  external?: boolean | null
+  scrollTo?: string | null
+}
 interface CityAreas {
   eyebrow?: string | null
   heading?: string | null
   headingAccent?: string | null
   regions?: Region[] | null
+  ctaTitle?: string | null
+  cta?: Cta | null
 }
 
 const props = defineProps<{ block: CityAreas | null | undefined }>()
@@ -74,6 +83,25 @@ const shortName = (name?: string | null) => (name ?? '').replace(/,.*$/, '').tri
             </span>
           </span>
         </NuxtLink>
+      </div>
+
+      <!-- "Don't see your city?" CTA — text/link all from the CMS; hidden when unset
+           (e.g. left empty on the Georgia state page). -->
+      <div
+        v-if="block.ctaTitle || block.cta?.label"
+        class="mt-12 flex flex-col items-center gap-4 text-center 3xl:mt-16"
+      >
+        <p v-if="block.ctaTitle" class="font-secondary text-xl font-bold text-white 3xl:text-2xl">{{ block.ctaTitle }}</p>
+        <BaseButton
+          v-if="block.cta?.label"
+          :href="block.cta.href"
+          :variant="block.cta.variant || 'primary'"
+          :external="block.cta.external"
+          :scroll-to="block.cta.scrollTo"
+        >
+          {{ block.cta.label }}
+          <img src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
+        </BaseButton>
       </div>
     </div>
   </section>

@@ -11,7 +11,7 @@ const populate = qs.stringify(
       hero: { populate: { bgImage: true } },
       whyLocal: { populate: { cta: true, image: true } },
       howConnect: { populate: { cta: true, steps: true } },
-      cityAreas: { populate: { regions: { populate: { cities: true } } } },
+      cityAreas: { populate: { regions: { populate: { cities: true } }, cta: true } },
       caseTypes: { populate: { cta: true, features: { populate: { icon: true } } } },
       gaLaw: { populate: { cards: true, images: true } },
       faq: { populate: { items: true } },
@@ -44,6 +44,8 @@ const caseOptions = [
   <div v-if="page">
     <PageHero
       :eyebrow="page.hero?.eyebrow"
+      :heading-accent="page.hero?.headingAccent"
+      :accent-first="false"
       :heading="page.hero?.heading"
       :subhead="page.hero?.subhead"
       :align="page.hero?.align"

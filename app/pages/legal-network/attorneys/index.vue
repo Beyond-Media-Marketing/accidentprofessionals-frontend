@@ -42,6 +42,7 @@ useSeoMeta({
       :eyebrow="hero.eyebrow || 'LEGAL NETWORK'"
       :heading="hero.heading || 'Meet the Attorneys in'"
       :heading-accent="hero.headingAccent || 'Our Network'"
+      :accent-first="false"
       :subhead="hero.subhead || 'Every attorney in the AP network has been reviewed before being included — a growing roster of vetted personal injury attorneys across Georgia.'"
       :align="hero.align || 'center'"
       :bg-image="strapiMedia(hero.bgImage, '/about/hero-bg.png')"

@@ -33,7 +33,7 @@ const defaultsQuery = qs.stringify(
       heroDefaults: { populate: { stats: true } },
       team: true,
       selectedAttorneys: { populate: { photo: true } },
-      cities: { populate: { regions: { populate: { cities: true } } } },
+      cities: { populate: { regions: { populate: { cities: true } }, cta: true } },
       closingCta: { populate: { cta: true } },
     },
   },

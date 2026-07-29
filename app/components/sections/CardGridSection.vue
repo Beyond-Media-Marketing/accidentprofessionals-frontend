@@ -33,9 +33,12 @@ defineProps<{
         <article
           v-for="(c, i) in block.features ?? []"
           :key="i"
-          :class="stacked
-            ? 'flex flex-col rounded-3xl bg-[#F7F2E9] p-6 3xl:p-7'
-            : 'flex gap-5 rounded-3xl border border-black/5 bg-white p-6 shadow-card 3xl:p-7'"
+          :class="[
+            stacked
+              ? 'flex flex-col rounded-3xl bg-[#F7F2E9] p-6 3xl:p-7'
+              : 'flex gap-5 rounded-3xl border border-black/5 bg-white p-6 shadow-card 3xl:p-7',
+            c.linkLabel ? 'relative cursor-pointer transition-shadow hover:shadow-lg' : '',
+          ]"
         >
           <img
             :src="strapiMedia(c.icon, '/icons/shield.svg')"
@@ -49,7 +52,7 @@ defineProps<{
             <NuxtLink
               v-if="c.linkLabel"
               :to="c.linkHref || '#'"
-              class="mt-auto inline-flex items-center gap-2 pt-4 font-primary text-base font-semibold leading-6 tracking-[-0.3125px] text-[#AC8C66] transition-opacity hover:opacity-80"
+              class="mt-auto inline-flex items-center gap-2 pt-4 font-primary text-base font-semibold leading-6 tracking-[-0.3125px] text-[#AC8C66] transition-opacity hover:opacity-80 after:absolute after:inset-0 after:content-['']"
             >
               {{ c.linkLabel }}
               <svg

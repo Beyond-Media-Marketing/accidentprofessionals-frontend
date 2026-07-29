@@ -30,6 +30,8 @@ usePageSeo(() => page.value?.seo)
   <div v-if="page">
     <PageHero
       :eyebrow="page.hero?.eyebrow"
+      :heading-accent="page.hero?.headingAccent"
+      :accent-first="false"
       :heading="page.hero?.heading"
       :subhead="page.hero?.subhead"
       :align="page.hero?.align || 'center'"

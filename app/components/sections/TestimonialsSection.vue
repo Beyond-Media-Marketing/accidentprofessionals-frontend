@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, onMounted, nextTick } from 'vue'
+
 interface Item {
   quote?: string | null
   name?: string | null
@@ -11,6 +13,31 @@ interface Testimonials {
   items?: Item[] | null
 }
 defineProps<{ block: Testimonials | null | undefined }>()
+
+// Prev/next arrows for the scroll-snap track (same pattern as ReviewStepsSection).
+const track = ref<HTMLElement | null>(null)
+const atStart = ref(true)
+const atEnd = ref(false)
+
+function updateArrows() {
+  const el = track.value
+  if (!el) return
+  atStart.value = el.scrollLeft <= 2
+  atEnd.value = el.scrollLeft + el.clientWidth >= el.scrollWidth - 2
+}
+
+function scrollDir(dir: number) {
+  const el = track.value
+  if (!el) return
+  const card = el.querySelector('article')
+  const step = card ? card.getBoundingClientRect().width + 24 : el.clientWidth * 0.8
+  el.scrollBy({ left: dir * step, behavior: 'smooth' })
+}
+
+onMounted(async () => {
+  await nextTick()
+  updateArrows()
+})
 </script>
 
 <template>
@@ -24,7 +51,11 @@ defineProps<{ block: Testimonials | null | undefined }>()
 
     <!-- Horizontal scroll-snap carousel (breaks out of container on the right) -->
     <div class="site-container mt-12 3xl:mt-16">
-      <div class="-mr-6 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div
+        ref="track"
+        class="-mr-6 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        @scroll.passive="updateArrows"
+      >
         <article
           v-for="(t, i) in block.items ?? []"
           :key="i"
@@ -44,6 +75,28 @@ defineProps<{ block: Testimonials | null | undefined }>()
             </div>
           </div>
         </article>
+      </div>
+
+      <!-- Prev / next arrows -->
+      <div class="mt-6 flex justify-end gap-3">
+        <button
+          type="button"
+          class="flex h-12 w-12 items-center justify-center rounded-full border border-dark/15 text-dark transition-colors hover:bg-dark/5 disabled:cursor-not-allowed disabled:opacity-30"
+          :disabled="atStart"
+          aria-label="Previous testimonials"
+          @click="scrollDir(-1)"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+        </button>
+        <button
+          type="button"
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-dark shadow-button transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
+          :disabled="atEnd"
+          aria-label="Next testimonials"
+          @click="scrollDir(1)"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
+        </button>
       </div>
     </div>
   </section>

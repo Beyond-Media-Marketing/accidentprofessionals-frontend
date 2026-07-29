@@ -170,8 +170,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
             ]"
           />
           <div class="max-w-[880px]">
-            <NuxtLink v-if="post.category" :to="`/blogs/${catPathOf(post.category)}`" class="inline-block rounded-full bg-accent/20 px-3 py-1 font-primary text-xs font-semibold uppercase tracking-wide text-accent backdrop-blur-sm">{{ post.category.name }}</NuxtLink>
-            <h1 class="mt-4 font-secondary text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.1] text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">{{ post.title }}</h1>
+            <h1 class="font-secondary text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.1] text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">{{ post.title }}</h1>
             <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-primary text-sm text-white/75">
               <span v-if="date">{{ date }}</span>
               <span>{{ readingTime }} min read</span>

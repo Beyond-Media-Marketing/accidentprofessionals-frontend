@@ -3,7 +3,7 @@ import { ref, reactive, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { countries } from '../../data/countries'
 import { useDataLayer } from '../../composables/useDataLayer'
-import { useHCaptcha } from '../../composables/useHCaptcha'
+import { useTurnstile } from '../../composables/useTurnstile'
 
 interface CaseOption {
   value: string
@@ -40,7 +40,7 @@ const caseOptions = computed<CaseOption[]>(
 const config = useRuntimeConfig()
 const route = useRoute()
 const { push: gtmPush } = useDataLayer()
-const { token: hcaptchaToken, reset: resetHCaptcha } = useHCaptcha('leadform-hcaptcha')
+const { token: turnstileToken, reset: resetTurnstile } = useTurnstile('leadform-turnstile')
 
 const form = reactive({
   name: '',
@@ -60,7 +60,7 @@ const successMessage = ref('')
 const errorMessage = ref('')
 
 const canSubmit = computed(
-  () => !!form.name.trim() && !!form.email.trim() && form.agreed && !submitting.value && !!hcaptchaToken.value,
+  () => !!form.name.trim() && !!form.email.trim() && form.agreed && !submitting.value && !!turnstileToken.value,
 )
 
 async function submitForm() {
@@ -72,19 +72,19 @@ async function submitForm() {
   errorMessage.value = ''
   successMessage.value = ''
   try {
-    const res = await fetch('https://api.web3forms.com/submit', {
+    const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        access_key: config.public.web3FormsKey,
+        form_id: 'lead_form',
         subject: props.formSubject,
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
         case_type: caseLabel(form.caseType),
         message: form.message,
-        service_page: route.path,
-        ...(hcaptchaToken.value && { 'h-captcha-response': hcaptchaToken.value }),
+        page: document.title,
+        'cf-turnstile-response': turnstileToken.value,
       }),
     })
     const result = await res.json()
@@ -92,14 +92,14 @@ async function submitForm() {
       successMessage.value = "Thank you! We'll be in touch shortly."
       gtmPush({ form_id: 'lead_form', case_type: caseLabel(form.caseType), service_page: route.path })
       Object.assign(form, { name: '', email: '', phone: '', caseType: '', message: '', agreed: false })
-      resetHCaptcha()
+      resetTurnstile()
     } else {
       errorMessage.value = 'Something went wrong. Please call us directly.'
-      resetHCaptcha()
+      resetTurnstile()
     }
   } catch {
     errorMessage.value = 'Unable to submit. Please call us directly.'
-    resetHCaptcha()
+    resetTurnstile()
   } finally {
     submitting.value = false
   }
@@ -143,7 +143,7 @@ async function submitForm() {
       <textarea id="lf-desc" v-model="form.message" placeholder="Write details about your accident here…." rows="3" />
     </div>
 
-    <div id="leadform-hcaptcha" />
+    <div id="leadform-turnstile" />
 
     <button type="submit" class="lead-form__submit" :disabled="!canSubmit">
       {{ submitting ? 'Sending…' : ctaLabel }}

@@ -32,14 +32,19 @@ defineProps<{
       </div>
 
       <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3" :class="(heading || subheading) ? 'mt-12 3xl:mt-16' : ''">
-        <article v-for="(a, i) in attorneys" :key="i" class="flex flex-col">
+        <NuxtLink
+          v-for="(a, i) in attorneys"
+          :key="i"
+          :to="`/legal-network/attorneys/${a.slug}`"
+          class="group flex flex-col"
+        >
           <!-- Photo + overlays -->
           <div class="relative overflow-hidden rounded-3xl">
             <div class="aspect-[4/5]">
               <img
                 :src="strapiMedia(a.photo, '/services-page/auto-accidents/image1.webp')"
                 :alt="a.name || 'Attorney'"
-                class="h-full w-full object-cover"
+                class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
                 decoding="async"
               />
@@ -73,15 +78,14 @@ defineProps<{
               <p class="font-primary text-base font-semibold text-dark">{{ a.name }}</p>
               <p class="mt-0.5 font-primary text-sm text-accent">{{ a.firm }}</p>
             </div>
-            <NuxtLink
-              :to="`/legal-network/attorneys/${a.slug}`"
-              class="inline-flex shrink-0 items-center gap-1 font-primary text-sm font-semibold text-accent hover:underline"
+            <span
+              class="inline-flex shrink-0 items-center gap-1 font-primary text-sm font-semibold text-accent group-hover:underline"
             >
               View Profile
-              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
               </svg>
-            </NuxtLink>
+            </span>
           </div>
           <p v-if="a.location" class="mt-2 flex items-center gap-1.5 font-primary text-sm text-muted">
             <svg class="h-4 w-4 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -89,7 +93,7 @@ defineProps<{
             </svg>
             {{ a.location }}
           </p>
-        </article>
+        </NuxtLink>
       </div>
 
       <div v-if="cta?.label" class="mt-12 flex justify-center 3xl:mt-16">

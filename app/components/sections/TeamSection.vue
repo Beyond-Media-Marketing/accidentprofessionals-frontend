@@ -262,6 +262,14 @@ function goTo(n: number) {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: relative;
+}
+/* Stretched link — the "View Profile" link's clickable area covers the whole card. */
+.team__profile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
 }
 .team__photo {
   position: relative;
@@ -274,6 +282,10 @@ function goTo(n: number) {
   height: 100%;
   object-fit: cover;
   object-position: top;
+  transition: transform 0.5s ease;
+}
+.team__card:hover .team__photo img {
+  transform: scale(1.04);
 }
 .team__photo-stats {
   position: absolute;

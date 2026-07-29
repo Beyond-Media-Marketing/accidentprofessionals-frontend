@@ -83,9 +83,6 @@ onBeforeUnmount(() => {
             <div class="step-divider my-4 h-px w-full bg-black/10" />
             <p class="step-desc font-primary text-sm leading-relaxed text-muted">{{ s.description }}</p>
           </div>
-
-          <!-- Loader: desktop + closed only -->
-          <span class="step-loader mt-6 hidden" :class="active !== i ? 'md:inline-block' : ''" aria-hidden="true" />
         </article>
       </div>
     </div>
@@ -96,26 +93,6 @@ onBeforeUnmount(() => {
 .steps-body :deep(strong) {
   color: var(--color-dark);
   font-weight: 600;
-}
-
-/* Spinning gold loader (closed cards, desktop only). */
-.step-loader {
-  height: 28px;
-  width: 28px;
-  border-radius: 9999px;
-  border: 3px solid rgba(243, 175, 0, 0.25);
-  border-top-color: #f3af00;
-  animation: step-spin 0.8s linear infinite;
-}
-@keyframes step-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .step-loader {
-    animation: none;
-  }
 }
 
 /* Active (open) card styling — desktop only; on mobile all cards stay light + open. */

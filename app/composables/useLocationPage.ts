@@ -27,7 +27,7 @@ export async function useLocationPage(type: 'state' | 'city', slug: string) {
       ? {
           ...common,
           heroStats: true,
-          cities: { populate: { regions: { populate: { cities: true } } } },
+          cities: { populate: { regions: { populate: { cities: true } }, cta: true } },
           facts: { populate: { stats: true, image: true } },
         }
       : {

@@ -13,7 +13,6 @@
       <!-- ── LEFT: content ── -->
       <div class="hero__content">
         <Breadcrumb v-if="breadcrumb?.length" :items="breadcrumb" variant="onDark" class="reveal mb-4" />
-        <AppBadge class="reveal">{{ data.badge }}</AppBadge>
 
         <h1 class="hero__h1 reveal reveal-delay-1">
           <template v-if="data.accentFirst">
@@ -92,8 +91,8 @@
             />
           </div>
 
-          <!-- hCaptcha widget — only renders when HCAPTCHA_SITE_KEY is set -->
-          <div id="hero-hcaptcha" />
+          <!-- Cloudflare Turnstile widget — only renders when TURNSTILE_SITE_KEY is set -->
+          <div id="hero-turnstile" />
 
           <button type="submit" class="hero__submit" :disabled="!canSubmit">
             {{ submitting ? "Sending…" : "Get Free Consultation" }}
@@ -190,7 +189,7 @@
 import { computed } from "vue";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
-import { useHCaptcha } from "../../composables/useHCaptcha";
+import { useTurnstile } from "../../composables/useTurnstile";
 
 const props = defineProps({
   data: { type: Object, required: true },
@@ -220,7 +219,7 @@ const dialCode = computed(
   () => countries.find((c) => c.code === form.countryCode)?.dial ?? "+1"
 );
 const { push: gtmPush } = useDataLayer();
-const { token: hcaptchaToken, reset: resetHCaptcha } = useHCaptcha("hero-hcaptcha");
+const { token: turnstileToken, reset: resetTurnstile } = useTurnstile("hero-turnstile");
 const submitting = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
@@ -229,7 +228,7 @@ const canSubmit = computed(() =>
   !!form.name.trim() &&
   form.agreed &&
   !submitting.value &&
-  !!hcaptchaToken.value
+  !!turnstileToken.value
 );
 
 async function submitForm() {
@@ -244,18 +243,18 @@ async function submitForm() {
   submitting.value = true;
   errorMessage.value = "";
   try {
-    const res = await fetch("https://api.web3forms.com/submit", {
+    const res = await fetch("/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        access_key: config.public.web3FormsKey,
+        form_id: "hero_form",
         subject: data.formSubject,
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
         message: form.message,
-        service_page: route.path,
-        ...(hcaptchaToken.value && { "h-captcha-response": hcaptchaToken.value }),
+        page: document.title,
+        "cf-turnstile-response": turnstileToken.value,
       }),
     });
     const result = await res.json();
@@ -268,14 +267,14 @@ async function submitForm() {
       Object.assign(form, {
         name: "", email: "", phone: "", caseType: "", message: "", agreed: false,
       });
-      resetHCaptcha();
+      resetTurnstile();
     } else {
       errorMessage.value = "Something went wrong. Please call us directly.";
-      resetHCaptcha();
+      resetTurnstile();
     }
   } catch {
     errorMessage.value = "Unable to submit. Please call us directly.";
-    resetHCaptcha();
+    resetTurnstile();
   } finally {
     submitting.value = false;
   }
@@ -287,7 +286,9 @@ async function submitForm() {
 <style scoped>
 .hero {
   position: relative;
-  min-height: 100vh;
+  /* Fill the screen on normal displays, but cap it so tall 27"/34" monitors
+     don't stretch the hero into a huge empty box. */
+  min-height: min(100vh, 920px);
   padding-top: 90px;
   overflow: hidden;
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);

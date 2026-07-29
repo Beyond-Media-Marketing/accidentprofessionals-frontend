@@ -1,9 +1,9 @@
 <script setup lang="ts">
-// Closing CTA + footer sharing one continuous textured background (the same
-// footer-bg used on the legacy services pages). The light lead heading sits
-// above the shared dark area.
-// `flat` drops the curved (rounded) top edge — used when the preceding section
-// is already dark and should flow seamlessly into the footer.
+// Closing CTA and footer are two SEPARATE bottom sections: the CTA is a rounded
+// dark card (textured bg), then a cream gap, then the footer as its own dark
+// section — so the CTA doesn't read as part of the footer.
+// `flat` drops the footer's curved (rounded) top edge — used when the preceding
+// section is already dark and should flow seamlessly into the footer.
 defineProps<{ closingCta?: any | null; flat?: boolean }>()
 </script>
 
@@ -19,14 +19,19 @@ defineProps<{ closingCta?: any | null; flat?: boolean }>()
       </div>
     </div>
 
-    <!-- Shared background spanning the CTA + footer -->
-    <div class="relative isolate overflow-hidden bg-dark" :class="flat ? '' : 'rounded-t-[32px] 3xl:rounded-t-[44px]'">
-      <div class="absolute inset-0 -z-10">
-        <img src="/images/footer-bg.webp" alt="" class="h-full w-full object-cover object-top" />
-        <div class="absolute inset-0 bg-dark/55" />
-      </div>
+    <!-- Closing CTA — a floating rounded card, its own section above the footer. -->
+    <div v-if="closingCta" class="px-4 pb-5 sm:px-6 sm:pb-6 lg:px-8 3xl:px-10">
+      <section class="relative isolate overflow-hidden rounded-[32px] bg-dark text-on-dark 3xl:rounded-[44px]">
+        <div class="absolute inset-0 -z-10">
+          <img src="/images/footer-bg.webp" alt="" class="h-full w-full object-cover object-center" />
+          <div class="absolute inset-0 bg-dark/60" />
+        </div>
+        <ClosingCta :block="closingCta" />
+      </section>
+    </div>
 
-      <ClosingCta v-if="closingCta" :block="closingCta" />
+    <!-- Footer — full-width section below the floating card. -->
+    <div class="bg-dark text-on-dark" :class="flat ? '' : 'rounded-t-[32px] 3xl:rounded-t-[44px]'">
       <SiteFooter />
     </div>
   </div>

@@ -27,25 +27,7 @@ defineProps<{ block: ProcessCards | null | undefined }>()
           :key="i"
           class="relative flex flex-col overflow-hidden rounded-3xl bg-[#f3f2ef] p-8 lg:p-10"
         >
-          <!-- Outlined number (same treatment as the services pages) -->
-          <span
-            v-if="c.number"
-            class="process-number pointer-events-none absolute right-3 top-2 select-none font-primary text-[120px] font-bold leading-none lg:text-[140px]"
-            aria-hidden="true"
-          >
-            {{ c.number }}
-          </span>
-
-          <!-- Icon (image already includes its circular background) -->
-          <img
-            v-if="c.icon"
-            :src="c.icon"
-            :alt="c.title || ''"
-            class="relative z-10 h-[72px] w-[72px] object-contain"
-            loading="lazy"
-          />
-
-          <h3 class="relative z-10 mt-8 font-primary text-xl font-semibold leading-snug text-dark 3xl:text-2xl">
+          <h3 class="relative z-10 font-primary text-xl font-semibold leading-snug text-dark 3xl:text-2xl">
             {{ c.title }}
           </h3>
 
@@ -73,11 +55,6 @@ defineProps<{ block: ProcessCards | null | undefined }>()
 </template>
 
 <style scoped>
-/* Outlined number — same treatment as the services-page process section. */
-.process-number {
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(212, 148, 12, 0.2);
-}
 /* Paragraph spacing for the multi-paragraph card body. */
 .process-body :deep(br) {
   content: '';

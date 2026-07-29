@@ -11,11 +11,6 @@
 
         <form class="contact__form" @submit.prevent="submit" novalidate>
           <input
-            type="hidden"
-            name="access_key"
-            :value="config.public.web3FormsKey"
-          />
-          <input
             type="checkbox"
             name="botcheck"
             style="display: none"
@@ -122,7 +117,7 @@
           </label>
 
           <!-- Turnstile widget -->
-          <div id="contact-hcaptcha" />
+          <div id="contact-turnstile" />
 
           <AppButton
             tag="button"
@@ -171,7 +166,7 @@ import { ref, reactive, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { countries } from "../../data/countries";
 import { useDataLayer } from "../../composables/useDataLayer";
-import { useHCaptcha } from "../../composables/useHCaptcha";
+import { useTurnstile } from "../../composables/useTurnstile";
 
 const props = defineProps({ data: { type: Object, required: true } });
 const data = props.data as any;
@@ -202,14 +197,14 @@ const caseOptions = computed<{ value: string; label: string }[]>(
 const caseLabel = (value: string) =>
   caseOptions.value.find((o) => o.value === value)?.label ?? value;
 const { push: gtmPush } = useDataLayer();
-const { token: hcaptchaToken, reset: resetHCaptcha } = useHCaptcha("contact-hcaptcha");
+const { token: turnstileToken, reset: resetTurnstile } = useTurnstile("contact-turnstile");
 
 const canSubmit = computed(() =>
   !!form.name.trim() &&
   !!form.email.trim() &&
   form.agreed &&
   !loading.value &&
-  !!hcaptchaToken.value
+  !!turnstileToken.value
 );
 
 async function submit() {
@@ -219,22 +214,22 @@ async function submit() {
   formError.value = false;
 
   try {
-    const res = await fetch("https://api.web3forms.com/submit", {
+    const res = await fetch("/api/contact", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
       body: JSON.stringify({
-        access_key: config.public.web3FormsKey,
+        form_id: "contact_form",
         subject: data.formSubject,
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
         case_type: caseLabel(form.caseType),
         message: form.message,
-        service_page: route.path,
-        ...(hcaptchaToken.value && { "h-captcha-response": hcaptchaToken.value }),
+        page: document.title,
+        "cf-turnstile-response": turnstileToken.value,
       }),
     });
     const json = await res.json();
@@ -248,10 +243,10 @@ async function submit() {
       Object.assign(form, {
         name: "", email: "", phone: "", caseType: "", message: "", agreed: false,
       });
-      resetHCaptcha();
+      resetTurnstile();
     } else {
       formError.value = true;
-      resetHCaptcha();
+      resetTurnstile();
     }
   } catch {
     formError.value = true;

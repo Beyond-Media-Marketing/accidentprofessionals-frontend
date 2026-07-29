@@ -28,14 +28,6 @@ withDefaults(
 
 <template>
   <div :class="['flex flex-col', align === 'center' ? 'items-center text-center' : 'items-start text-left']">
-    <span
-      v-if="eyebrow"
-      class="mb-4 inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em]"
-      :class="theme === 'dark' ? 'text-white/55' : 'text-dark/55'"
-    >
-      <span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
-      {{ eyebrow }}
-    </span>
 
     <h2
       v-if="heading || headingAccent"

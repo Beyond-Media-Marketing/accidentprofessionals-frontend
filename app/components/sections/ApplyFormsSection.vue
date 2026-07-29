@@ -3,6 +3,7 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { countries } from '../../data/countries'
 import { useDataLayer } from '../../composables/useDataLayer'
+import { useTurnstile } from '../../composables/useTurnstile'
 
 interface AttorneyForm {
   heading?: string | null
@@ -71,23 +72,25 @@ const aDial = computed(() => countries.find((c) => c.code === aForm.countryCode)
 const aSubmitting = ref(false)
 const aSuccess = ref('')
 const aError = ref('')
-const aCanSubmit = computed(() => !!aForm.name.trim() && !!aForm.email.trim() && !!aForm.bar.trim() && aForm.agreed && !aSubmitting.value)
+const { token: aTurnstileToken, reset: aResetTurnstile } = useTurnstile('apply-attorney-turnstile')
+const aCanSubmit = computed(() => !!aForm.name.trim() && !!aForm.email.trim() && !!aForm.bar.trim() && aForm.agreed && !aSubmitting.value && !!aTurnstileToken.value)
 
 async function submitAttorney() {
   if (!aForm.agreed) { aError.value = 'Please agree to the communication standards to continue.'; return }
   aSubmitting.value = true; aError.value = ''; aSuccess.value = ''
   try {
-    const res = await fetch('https://api.web3forms.com/submit', {
+    const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        access_key: config.public.web3FormsKey,
+        form_id: 'attorney_application',
         subject: 'New attorney application — AP Legal Network',
         name: aForm.name, firm: aForm.firm, email: aForm.email,
         phone: `${aDial.value} ${aForm.phone}`,
         georgia_bar_number: aForm.bar, years_practicing: aForm.years,
         practice_areas: aForm.practiceArea, cities_served: aForm.city,
-        languages: aForm.language, why_join: aForm.why, service_page: route.path,
+        languages: aForm.language, why_join: aForm.why, page: document.title,
+        'cf-turnstile-response': aTurnstileToken.value,
       }),
     })
     const result = await res.json()
@@ -95,8 +98,9 @@ async function submitAttorney() {
       aSuccess.value = "Thank you! Your application has been received — we'll be in touch within 2 business days."
       gtmPush({ form_id: 'attorney_application', service_page: route.path })
       Object.assign(aForm, { name: '', firm: '', email: '', phone: '', bar: '', years: '', practiceArea: '', city: '', language: '', why: '', agreed: false })
-    } else { aError.value = 'Something went wrong. Please try again or call us directly.' }
-  } catch { aError.value = 'Unable to submit. Please try again or call us directly.' }
+      aResetTurnstile()
+    } else { aError.value = 'Something went wrong. Please try again or call us directly.'; aResetTurnstile() }
+  } catch { aError.value = 'Unable to submit. Please try again or call us directly.'; aResetTurnstile() }
   finally { aSubmitting.value = false }
 }
 
@@ -106,20 +110,22 @@ const cDial = computed(() => countries.find((c) => c.code === cForm.countryCode)
 const cSubmitting = ref(false)
 const cSuccess = ref('')
 const cError = ref('')
-const cCanSubmit = computed(() => !!cForm.name.trim() && !!cForm.email.trim() && !cSubmitting.value)
+const { token: cTurnstileToken, reset: cResetTurnstile } = useTurnstile('apply-client-turnstile')
+const cCanSubmit = computed(() => !!cForm.name.trim() && !!cForm.email.trim() && !cSubmitting.value && !!cTurnstileToken.value)
 
 async function submitClient() {
   cSubmitting.value = true; cError.value = ''; cSuccess.value = ''
   try {
-    const res = await fetch('https://api.web3forms.com/submit', {
+    const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        access_key: config.public.web3FormsKey,
+        form_id: 'client_match',
         subject: 'New client match request — AP Legal Network',
         name: cForm.name, email: cForm.email,
         phone: `${cDial.value} ${cForm.phone}`,
-        georgia_city: cForm.city, accident_description: cForm.description, service_page: route.path,
+        georgia_city: cForm.city, accident_description: cForm.description, page: document.title,
+        'cf-turnstile-response': cTurnstileToken.value,
       }),
     })
     const result = await res.json()
@@ -127,8 +133,9 @@ async function submitClient() {
       cSuccess.value = "Thank you! We'll match you with a Georgia attorney shortly."
       gtmPush({ form_id: 'client_match', service_page: route.path })
       Object.assign(cForm, { name: '', email: '', phone: '', city: '', description: '' })
-    } else { cError.value = 'Something went wrong. Please try again or call us directly.' }
-  } catch { cError.value = 'Unable to submit. Please try again or call us directly.' }
+      cResetTurnstile()
+    } else { cError.value = 'Something went wrong. Please try again or call us directly.'; cResetTurnstile() }
+  } catch { cError.value = 'Unable to submit. Please try again or call us directly.'; cResetTurnstile() }
   finally { cSubmitting.value = false }
 }
 
@@ -210,6 +217,8 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
               <span>{{ block.attorneyForm?.consentText }}</span>
             </label>
 
+            <div id="apply-attorney-turnstile" />
+
             <button type="submit" class="mt-1 flex w-full items-center justify-center gap-2 rounded-pill bg-accent px-6 py-4 font-primary text-[15px] font-semibold text-dark shadow-button transition-transform hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-60" :disabled="!aCanSubmit">
               {{ aSubmitting ? 'Sending…' : block.attorneyForm?.submitLabel }}
               <img v-if="!aSubmitting" src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
@@ -276,6 +285,8 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
               </div>
               <div><label :class="labelClass">Georgia city *</label><input v-model="cForm.city" :class="fieldClass" placeholder="e.g. Atlanta" required /></div>
               <div><label :class="labelClass">Accident Description</label><textarea v-model="cForm.description" rows="4" :class="fieldClass" placeholder="Briefly describe what happened…" /></div>
+
+              <div id="apply-client-turnstile" />
 
               <button type="submit" class="mt-1 flex w-full items-center justify-center gap-2 rounded-pill bg-accent px-6 py-4 font-primary text-[15px] font-semibold text-dark shadow-button transition-transform hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-60" :disabled="!cCanSubmit">
                 {{ cSubmitting ? 'Sending…' : block.clientForm?.submitLabel }}

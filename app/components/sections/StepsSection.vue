@@ -13,17 +13,13 @@
         <article
           v-for="(step, i) in data.steps"
           :key="i"
-          class="reveal relative flex min-h-[257px] flex-col gap-[26px] overflow-hidden rounded-md bg-cream p-8"
+          class="reveal relative flex flex-col overflow-hidden rounded-md bg-cream p-8"
           :class="`reveal-delay-${i + 1}`"
         >
-          <div class="shrink-0" aria-hidden="true">
-            <img :src="step.icon" :alt="step.title" width="70" height="70" loading="lazy" class="block h-[70px] w-[70px] object-contain" />
-          </div>
           <div class="relative z-[1]">
             <h3 class="mb-2 font-primary text-lg font-semibold leading-[1.55] tracking-[-0.02em] text-dark">{{ step.title }}</h3>
             <p class="text-sm leading-[1.43] tracking-[-0.01em] text-dark opacity-80">{{ step.description }}</p>
           </div>
-          <span class="steps__card-number" aria-hidden="true">{{ step.number }}</span>
         </article>
       </div>
 
@@ -77,17 +73,4 @@ useRevealSection(sectionRef);
   .steps__grid > :nth-child(5) { grid-column: auto; }
 }
 
-.steps__card-number {
-  position: absolute;
-  top: 0;
-  right: 12px;
-  font-size: 120px;
-  font-weight: 700;
-  color: transparent;
-  -webkit-text-stroke: 1.5px rgba(212, 148, 12, 0.2);
-  line-height: 1;
-  font-family: var(--font-primary);
-  user-select: none;
-  pointer-events: none;
-}
 </style>

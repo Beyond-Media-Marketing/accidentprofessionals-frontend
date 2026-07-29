@@ -84,8 +84,13 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    // Server-only secrets (never exposed to the browser).
+    turnstileSecret: process.env.TURNSTILE_SECRET ?? '',
+    web3FormsKeyLeads: process.env.WEB3FORMS_KEY_LEADS ?? '',
+    web3FormsKeyAttorneys: process.env.WEB3FORMS_KEY_ATTORNEYS ?? '',
     public: {
       web3FormsKey: process.env.WEB3FORMS_KEY ?? '',
+      turnstileSiteKey: process.env.TURNSTILE_SITE_KEY ?? '',
       strapiUrl: process.env.STRAPI_URL ?? 'http://localhost:1337',
       siteUrl: process.env.SITE_URL ?? 'http://localhost:3000',
       // NOTE: phone/phoneHref stay here only for the 3 legacy SCSS pages.

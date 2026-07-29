@@ -28,8 +28,10 @@ const props = withDefaults(
     contentWidth?: 'default' | 'wide' | null
     /** Set false when the background image already has its own darkening baked in. */
     overlay?: boolean | null
+    /** true = accent word(s) render *before* the heading (home hook); false = after. */
+    accentFirst?: boolean | null
   }>(),
-  { align: 'left', statsVariant: 'card', contentWidth: 'default', overlay: true },
+  { align: 'left', statsVariant: 'card', contentWidth: 'default', overlay: true, accentFirst: true },
 )
 
 const slots = useSlots()
@@ -59,17 +61,11 @@ const isCenter = computed(() => props.align === 'center')
       >
         <!-- Copy -->
         <div :class="[contentWidth === 'wide' ? 'max-w-[880px] 3xl:max-w-[1040px]' : 'max-w-[640px] 3xl:max-w-[760px]', isCenter ? 'mx-auto text-center' : '']">
-          <span
-            v-if="eyebrow"
-            class="mb-5 inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em] text-white/60"
-          >
-            <span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />
-            {{ eyebrow }}
-          </span>
 
           <h1 class="font-secondary text-4xl font-semibold leading-[1.08] sm:text-5xl lg:text-6xl 3xl:text-7xl">
-            <span v-if="headingAccent" class="block text-accent">{{ headingAccent }}</span>
+            <span v-if="accentFirst && headingAccent" class="block text-accent">{{ headingAccent }}</span>
             <span v-if="heading" class="block text-white">{{ heading }}</span>
+            <span v-if="!accentFirst && headingAccent" class="block text-accent">{{ headingAccent }}</span>
           </h1>
 
           <p

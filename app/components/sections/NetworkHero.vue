@@ -45,10 +45,6 @@ defineProps<{
       <div class="grid items-center gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-14">
         <!-- ===== Left: headline + stats ===== -->
         <div>
-          <span
-            v-if="data.badge"
-            class="mb-6 inline-flex items-center gap-2 font-primary text-[13px] font-medium uppercase tracking-[0.16em] text-white/60"
-          ><span class="h-1.5 w-1.5 rounded-full bg-current" aria-hidden="true" />{{ data.badge }}</span>
 
           <h1 class="font-secondary text-[clamp(2.2rem,5vw,3.5rem)] font-bold leading-[1.08] tracking-[-0.02em]">
             <span v-if="data.heading" class="block text-white">{{ data.heading }}</span>
