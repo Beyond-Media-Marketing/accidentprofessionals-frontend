@@ -66,7 +66,9 @@ watch(
 /* ── Attorney application form ── */
 const aForm = reactive({
   name: '', firm: '', email: '', phone: '', countryCode: 'US',
-  bar: '', years: '', practiceArea: '', city: '', language: '', why: '', agreed: false,
+  bar: '', years: '', why: '', agreed: false,
+  // Multi-select fields — submitted as comma-separated lists.
+  practiceAreas: [] as string[], cities: [] as string[], languages: [] as string[],
 })
 const aDial = computed(() => countries.find((c) => c.code === aForm.countryCode)?.dial ?? '+1')
 const aSubmitting = ref(false)
@@ -92,15 +94,15 @@ async function submitAttorney() {
         name: aForm.name, firm: aForm.firm, email: aForm.email,
         phone: `${aDial.value} ${aForm.phone}`,
         georgia_bar_number: aForm.bar, years_practicing: aForm.years,
-        practice_areas: aForm.practiceArea, cities_served: aForm.city,
-        languages: aForm.language, why_join: aForm.why, page: document.title,
+        practice_areas: aForm.practiceAreas.join(', '), cities_served: aForm.cities.join(', '),
+        languages: aForm.languages.join(', '), why_join: aForm.why, page: document.title,
       }),
     })
     const result = await res.json()
     if (result.success) {
       aSuccess.value = "Thank you! Your application has been received — we'll be in touch within 2 business days."
       gtmPush({ form_id: 'attorney_application', service_page: route.path })
-      Object.assign(aForm, { name: '', firm: '', email: '', phone: '', bar: '', years: '', practiceArea: '', city: '', language: '', why: '', agreed: false })
+      Object.assign(aForm, { name: '', firm: '', email: '', phone: '', bar: '', years: '', why: '', agreed: false, practiceAreas: [], cities: [], languages: [] })
       aResetTurnstile()
     } else { aError.value = 'Something went wrong. Please try again or call us directly.'; aResetTurnstile() }
   } catch { aError.value = 'Unable to submit. Please try again or call us directly.'; aResetTurnstile() }
@@ -190,27 +192,50 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
               <div><label :class="labelClass">Georgia bar number *</label><input v-model="aForm.bar" :class="fieldClass" placeholder="012345" required /></div>
               <div><label :class="labelClass">Years Practicing</label><input v-model="aForm.years" type="number" min="0" :class="fieldClass" placeholder="e.g. 10" /></div>
             </div>
+            <!-- Multi-select chip groups (checkboxes styled as pills) — native
+                 <select multiple> needs cmd/ctrl-click, which users don't discover. -->
             <div>
-              <label :class="labelClass">Practice Areas</label>
-              <select v-model="aForm.practiceArea" class="ap-select" :class="fieldClass">
-                <option value="" disabled>Select</option>
-                <option v-for="o in block.attorneyForm?.practiceAreaOptions ?? []" :key="o" :value="o">{{ o }}</option>
-              </select>
+              <label :class="labelClass">Practice Areas <span class="font-normal text-muted">(select all that apply)</span></label>
+              <div class="flex flex-wrap gap-2">
+                <label
+                  v-for="o in block.attorneyForm?.practiceAreaOptions ?? []"
+                  :key="o"
+                  class="chip"
+                  :class="aForm.practiceAreas.includes(o) ? 'chip--on' : ''"
+                >
+                  <input v-model="aForm.practiceAreas" type="checkbox" :value="o" class="sr-only" />
+                  {{ o }}
+                </label>
+              </div>
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
-                <label :class="labelClass">Cities Served</label>
-                <select v-model="aForm.city" class="ap-select" :class="fieldClass">
-                  <option value="" disabled>Select</option>
-                  <option v-for="o in block.attorneyForm?.cityOptions ?? []" :key="o" :value="o">{{ o }}</option>
-                </select>
+                <label :class="labelClass">Cities Served <span class="font-normal text-muted">(select all that apply)</span></label>
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    v-for="o in block.attorneyForm?.cityOptions ?? []"
+                    :key="o"
+                    class="chip"
+                    :class="aForm.cities.includes(o) ? 'chip--on' : ''"
+                  >
+                    <input v-model="aForm.cities" type="checkbox" :value="o" class="sr-only" />
+                    {{ o }}
+                  </label>
+                </div>
               </div>
               <div>
-                <label :class="labelClass">Languages</label>
-                <select v-model="aForm.language" class="ap-select" :class="fieldClass">
-                  <option value="" disabled>Select</option>
-                  <option v-for="o in block.attorneyForm?.languageOptions ?? []" :key="o" :value="o">{{ o }}</option>
-                </select>
+                <label :class="labelClass">Languages <span class="font-normal text-muted">(select all that apply)</span></label>
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    v-for="o in block.attorneyForm?.languageOptions ?? []"
+                    :key="o"
+                    class="chip"
+                    :class="aForm.languages.includes(o) ? 'chip--on' : ''"
+                  >
+                    <input v-model="aForm.languages" type="checkbox" :value="o" class="sr-only" />
+                    {{ o }}
+                  </label>
+                </div>
               </div>
             </div>
             <div>
@@ -309,13 +334,35 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
 </template>
 
 <style scoped>
-/* Custom dropdown chevron with room from the edge (native arrow sat too close). */
-.ap-select {
-  appearance: none;
-  -webkit-appearance: none;
-  padding-right: 2.75rem;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
+/* Multi-select chips — a checkbox styled as a tappable pill. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--radius-pill);
+  background: var(--color-white);
+  font-family: var(--font-primary);
+  font-size: 13px;
+  color: var(--color-dark);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.chip:hover {
+  border-color: var(--color-accent);
+}
+/* Surface KEYBOARD focus only — :focus-within would leave the ring stuck on the
+   pill after a mouse click, since the hidden checkbox keeps focus. */
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+.chip--on {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-dark);
+  font-weight: 600;
 }
 </style>

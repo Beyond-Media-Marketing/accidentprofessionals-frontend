@@ -41,6 +41,9 @@ export function useTurnstile(containerId: string) {
 
   function renderWidget() {
     const el = document.getElementById(containerId)
+    // The container may not exist yet (section still loading) or may have been
+    // re-created by a v-if / tab switch — in both cases a MutationObserver
+    // (see onMounted) calls this again once the fresh element appears.
     if (!el || !window.turnstile || el.dataset.rendered) return
     el.dataset.rendered = '1'
     widgetId = window.turnstile.render(el, {
@@ -83,16 +86,35 @@ export function useTurnstile(containerId: string) {
     }
   }
 
+  let observer: MutationObserver | null = null
+
   onMounted(() => {
     if (!turnstileSiteKey) return
+
     if (window.turnstile) renderWidget()
     else {
       pendingRenders.push(renderWidget)
       ensureScript()
     }
+
+    // Keep watching the DOM: the container can appear later (a section still
+    // fetching its data) or be re-created (tab switches on the apply forms).
+    // Without this the widget silently never renders and submit stays disabled.
+    observer = new MutationObserver(() => {
+      const el = document.getElementById(containerId)
+      if (el && !el.dataset.rendered) {
+        // Element is new — the old widget instance (if any) is gone with it.
+        widgetId = ''
+        token.value = ''
+        renderWidget()
+      }
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
   })
 
   onUnmounted(() => {
+    observer?.disconnect()
+    observer = null
     if (widgetId && window.turnstile) window.turnstile.remove(widgetId)
   })
 
