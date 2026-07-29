@@ -27,7 +27,7 @@ const props = defineProps<{ block: ContactForm | null | undefined }>()
 const config = useRuntimeConfig()
 const route = useRoute()
 const { push: gtmPush } = useDataLayer()
-const { token: turnstileToken, reset: resetTurnstile } = useTurnstile('contactus-turnstile')
+const { token: turnstileToken, reset: resetTurnstile, verify: verifyTurnstile } = useTurnstile('contactus-turnstile')
 
 const form = reactive({
   firstName: '',
@@ -63,6 +63,12 @@ async function submitForm() {
   errorMessage.value = ''
   successMessage.value = ''
   try {
+    if (!(await verifyTurnstile())) {
+      errorMessage.value = 'Verification failed. Please try again.'
+      resetTurnstile()
+      submitting.value = false
+      return
+    }
     const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -75,7 +81,6 @@ async function submitForm() {
         phone: `${dialCode.value} ${form.phone}`,
         message: form.message,
         page: document.title,
-        'cf-turnstile-response': turnstileToken.value,
       }),
     })
     const result = await res.json()

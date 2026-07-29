@@ -72,13 +72,16 @@ const aDial = computed(() => countries.find((c) => c.code === aForm.countryCode)
 const aSubmitting = ref(false)
 const aSuccess = ref('')
 const aError = ref('')
-const { token: aTurnstileToken, reset: aResetTurnstile } = useTurnstile('apply-attorney-turnstile')
+const { token: aTurnstileToken, reset: aResetTurnstile, verify: aVerifyTurnstile } = useTurnstile('apply-attorney-turnstile')
 const aCanSubmit = computed(() => !!aForm.name.trim() && !!aForm.email.trim() && !!aForm.bar.trim() && aForm.agreed && !aSubmitting.value && !!aTurnstileToken.value)
 
 async function submitAttorney() {
   if (!aForm.agreed) { aError.value = 'Please agree to the communication standards to continue.'; return }
   aSubmitting.value = true; aError.value = ''; aSuccess.value = ''
   try {
+    if (!(await aVerifyTurnstile())) {
+      aError.value = 'Verification failed. Please try again.'; aResetTurnstile(); aSubmitting.value = false; return
+    }
     const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -91,7 +94,6 @@ async function submitAttorney() {
         georgia_bar_number: aForm.bar, years_practicing: aForm.years,
         practice_areas: aForm.practiceArea, cities_served: aForm.city,
         languages: aForm.language, why_join: aForm.why, page: document.title,
-        'cf-turnstile-response': aTurnstileToken.value,
       }),
     })
     const result = await res.json()
@@ -111,12 +113,15 @@ const cDial = computed(() => countries.find((c) => c.code === cForm.countryCode)
 const cSubmitting = ref(false)
 const cSuccess = ref('')
 const cError = ref('')
-const { token: cTurnstileToken, reset: cResetTurnstile } = useTurnstile('apply-client-turnstile')
+const { token: cTurnstileToken, reset: cResetTurnstile, verify: cVerifyTurnstile } = useTurnstile('apply-client-turnstile')
 const cCanSubmit = computed(() => !!cForm.name.trim() && !!cForm.email.trim() && !cSubmitting.value && !!cTurnstileToken.value)
 
 async function submitClient() {
   cSubmitting.value = true; cError.value = ''; cSuccess.value = ''
   try {
+    if (!(await cVerifyTurnstile())) {
+      cError.value = 'Verification failed. Please try again.'; cResetTurnstile(); cSubmitting.value = false; return
+    }
     const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -127,7 +132,6 @@ async function submitClient() {
         name: cForm.name, email: cForm.email,
         phone: `${cDial.value} ${cForm.phone}`,
         georgia_city: cForm.city, accident_description: cForm.description, page: document.title,
-        'cf-turnstile-response': cTurnstileToken.value,
       }),
     })
     const result = await res.json()

@@ -197,7 +197,7 @@ const caseOptions = computed<{ value: string; label: string }[]>(
 const caseLabel = (value: string) =>
   caseOptions.value.find((o) => o.value === value)?.label ?? value;
 const { push: gtmPush } = useDataLayer();
-const { token: turnstileToken, reset: resetTurnstile } = useTurnstile("contact-turnstile");
+const { token: turnstileToken, reset: resetTurnstile, verify: verifyTurnstile } = useTurnstile("contact-turnstile");
 
 const canSubmit = computed(() =>
   !!form.name.trim() &&
@@ -214,6 +214,12 @@ async function submit() {
   formError.value = false;
 
   try {
+    if (!(await verifyTurnstile())) {
+      formError.value = true;
+      resetTurnstile();
+      loading.value = false;
+      return;
+    }
     const res = await fetch("https://api.web3forms.com/submit", {
       method: "POST",
       headers: {
@@ -230,7 +236,6 @@ async function submit() {
         case_type: caseLabel(form.caseType),
         message: form.message,
         page: document.title,
-        "cf-turnstile-response": turnstileToken.value,
       }),
     });
     const json = await res.json();

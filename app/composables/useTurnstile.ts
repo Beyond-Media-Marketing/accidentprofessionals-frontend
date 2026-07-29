@@ -64,6 +64,25 @@ export function useTurnstile(containerId: string) {
     if (widgetId && window.turnstile) window.turnstile.reset(widgetId)
   }
 
+  /**
+   * Verify the current token on our own server before the form is submitted.
+   * Turnstile is kept OUT of the Web3Forms payload — their free plan rejects any
+   * submission carrying a `cf-turnstile-response` field as a Pro feature.
+   * Resolves true when verification passes (or when Turnstile isn't configured).
+   */
+  async function verify(): Promise<boolean> {
+    if (!turnstileSiteKey) return true
+    try {
+      const res = await $fetch<{ ok?: boolean }>('/api/verify-captcha', {
+        method: 'POST',
+        body: { token: token.value },
+      })
+      return res?.ok === true
+    } catch {
+      return false
+    }
+  }
+
   onMounted(() => {
     if (!turnstileSiteKey) return
     if (window.turnstile) renderWidget()
@@ -77,5 +96,5 @@ export function useTurnstile(containerId: string) {
     if (widgetId && window.turnstile) window.turnstile.remove(widgetId)
   })
 
-  return { token, reset }
+  return { token, reset, verify }
 }
