@@ -79,10 +79,11 @@ async function submitAttorney() {
   if (!aForm.agreed) { aError.value = 'Please agree to the communication standards to continue.'; return }
   aSubmitting.value = true; aError.value = ''; aSuccess.value = ''
   try {
-    const res = await fetch('/api/contact', {
+    const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
+        access_key: config.public.web3FormsKeyAttorneys || config.public.web3FormsKey,
         form_id: 'attorney_application',
         subject: 'New attorney application — AP Legal Network',
         name: aForm.name, firm: aForm.firm, email: aForm.email,
@@ -116,10 +117,11 @@ const cCanSubmit = computed(() => !!cForm.name.trim() && !!cForm.email.trim() &&
 async function submitClient() {
   cSubmitting.value = true; cError.value = ''; cSuccess.value = ''
   try {
-    const res = await fetch('/api/contact', {
+    const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
+        access_key: config.public.web3FormsKeyLeads || config.public.web3FormsKey,
         form_id: 'client_match',
         subject: 'New client match request — AP Legal Network',
         name: cForm.name, email: cForm.email,

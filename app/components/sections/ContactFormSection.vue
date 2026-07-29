@@ -63,10 +63,11 @@ async function submitForm() {
   errorMessage.value = ''
   successMessage.value = ''
   try {
-    const res = await fetch('/api/contact', {
+    const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({
+        access_key: config.public.web3FormsKeyLeads || config.public.web3FormsKey,
         form_id: 'contact_form',
         subject: props.block?.formSubject || 'New consultation request — Contact Page',
         name: `${form.firstName} ${form.lastName}`.trim(),

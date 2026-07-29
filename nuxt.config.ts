@@ -97,12 +97,15 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    // Server-only secrets (never exposed to the browser).
+    // Server-only secret (kept for reference; Web3Forms verifies Turnstile itself).
     turnstileSecret: process.env.TURNSTILE_SECRET ?? '',
-    web3FormsKeyLeads: process.env.WEB3FORMS_KEY_LEADS ?? '',
-    web3FormsKeyAttorneys: process.env.WEB3FORMS_KEY_ATTORNEYS ?? '',
     public: {
+      // Web3Forms access keys are PUBLIC by design — the free plan only accepts
+      // submissions from the browser, so the keys must be client-readable.
+      // Routed per form type: attorney applications vs. everything else.
       web3FormsKey: process.env.WEB3FORMS_KEY ?? '',
+      web3FormsKeyLeads: process.env.WEB3FORMS_KEY_LEADS ?? '',
+      web3FormsKeyAttorneys: process.env.WEB3FORMS_KEY_ATTORNEYS ?? '',
       turnstileSiteKey: process.env.TURNSTILE_SITE_KEY ?? '',
       strapiUrl: process.env.STRAPI_URL ?? 'http://localhost:1337',
       siteUrl: process.env.SITE_URL ?? 'http://localhost:3000',
