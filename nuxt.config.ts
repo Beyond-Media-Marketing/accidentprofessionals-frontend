@@ -9,14 +9,27 @@ export default defineNuxtConfig({
   image: {
     // Allow the Strapi API host AND the Strapi Cloud media subdomain
     // (<project>.media.strapiapp.com), where uploaded media is actually served.
+    // NOTE: media stays on *.media.strapiapp.com even behind a custom API domain
+    // (e.g. cms.accidentprofessionals.com), so set STRAPI_MEDIA_URL to keep it
+    // allowlisted — otherwise @nuxt/image refuses every CMS image.
     domains: (() => {
-      try {
-        const host = new URL(process.env.STRAPI_URL ?? 'http://localhost:1337').hostname
-        const media = host.replace(/\.strapiapp\.com$/, '.media.strapiapp.com')
-        return media === host ? [host] : [host, media]
-      } catch {
-        return ['localhost']
+      const hosts = new Set<string>()
+      const add = (raw?: string) => {
+        if (!raw) return
+        try {
+          hosts.add(new URL(raw).hostname)
+        } catch {
+          /* ignore malformed env value */
+        }
       }
+      add(process.env.STRAPI_URL ?? 'http://localhost:1337')
+      add(process.env.STRAPI_MEDIA_URL)
+      // Derive the media subdomain when the API is still on the default Cloud host.
+      const apiHost = [...hosts][0]
+      if (apiHost?.endsWith('.strapiapp.com')) {
+        hosts.add(apiHost.replace(/\.strapiapp\.com$/, '.media.strapiapp.com'))
+      }
+      return hosts.size ? [...hosts] : ['localhost']
     })(),
     format: ['avif', 'webp'],
   },
