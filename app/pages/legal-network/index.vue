@@ -56,11 +56,11 @@ useSeoMeta({ ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
 
 <template>
   <div v-if="page">
-    <NetworkHero :data="page.hero" :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')" />
+    <NetworkHero :data="page.hero" :bg-image="strapiMedia(page.hero?.bgImage, '/about-images/hero-bg.png')" />
 
     <MediaTextSection
       :block="page.betterWay"
-      :image="strapiMedia(page.betterWay?.image, '/about/why-matters.png')"
+      :image="strapiMedia(page.betterWay?.image, '/about-images/why-matters.png')"
       image-alt="Attorney and client shaking hands"
     />
 
@@ -88,8 +88,8 @@ useSeoMeta({ ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
 
     <ApplyFormsSection
       :block="page.applyForms"
-      :attorney-image="strapiMedia(page.applyForms?.attorneyForm?.image, '/about/why-matters.png')"
-      :client-image="strapiMedia(page.applyForms?.clientForm?.image, '/about/problem.png')"
+      :attorney-image="strapiMedia(page.applyForms?.attorneyForm?.image, '/about-images/why-matters.png')"
+      :client-image="strapiMedia(page.applyForms?.clientForm?.image, '/about-images/problem.png')"
     />
 
     <PageBottom />

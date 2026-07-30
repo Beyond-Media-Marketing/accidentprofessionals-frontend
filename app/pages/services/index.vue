@@ -27,6 +27,9 @@ const { data: page } = await useFetch<any>(`${strapiUrl}/api/services-page?${pop
   transform: (r: any) => r?.data ?? null,
 })
 
+// Cities we serve — shared single source (see useCitiesSection).
+const { data: citiesSection } = await useCitiesSection()
+
 usePageSeo(() => page.value?.seo)
 
 const caseOptions = [
@@ -49,7 +52,7 @@ const caseOptions = [
       :heading="page.hero?.heading"
       :subhead="page.hero?.subhead"
       :align="page.hero?.align"
-      :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')"
+      :bg-image="strapiMedia(page.hero?.bgImage, '/about-images/hero-bg.png')"
     >
       <template #aside>
         <LeadForm
@@ -68,7 +71,8 @@ const caseOptions = [
 
     <StepsRowSection :block="page.howConnect" />
 
-    <CityAreasSection :block="page.cityAreas" />
+    <!-- This page's own hand-picked list wins; the shared master is the fallback. -->
+    <CityAreasSection :block="page.cityAreas?.regions?.length ? page.cityAreas : citiesSection" />
 
     <CardGridSection :block="page.caseTypes" />
 

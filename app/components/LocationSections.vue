@@ -55,6 +55,9 @@ const nearbyCities = computed(() => {
 
 const hd = computed(() => props.def?.heroDefaults ?? {})
 
+// Cities we serve — shared single source (see useCitiesSection).
+const { data: citiesSection } = await useCitiesSection()
+
 const heroBreadcrumb = computed(() =>
   props.type === 'city'
     ? [
@@ -68,7 +71,7 @@ const heroBreadcrumb = computed(() =>
 const hero = computed(() => {
   const h = props.loc?.hero ?? {}
   return {
-    heroBg: strapiMedia(h.bgImage, '/about/hero-bg.png'),
+    heroBg: strapiMedia(h.bgImage, '/about-images/hero-bg.png'),
     badge: props.loc?.heroBadge,
     h1Part1: h.h1Part1,
     h1Accent: h.h1Accent,
@@ -113,7 +116,9 @@ const faq = computed(() => {
 <template>
   <div v-if="loc">
     <HeroSection :data="hero" :flat="type === 'state'" :breadcrumb="heroBreadcrumb" />
-    <CityAreasSection v-if="loc.cities" :block="loc.cities" />
+    <!-- This location's own hand-picked list wins; shared master is the fallback
+         (state/city pages currently have none, so they inherit the master). -->
+    <CityAreasSection :block="loc.cities?.regions?.length ? loc.cities : citiesSection" />
     <MediaTextSection
       v-if="loc.whyTrust"
       :block="loc.whyTrust"

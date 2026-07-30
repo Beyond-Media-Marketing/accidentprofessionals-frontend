@@ -42,14 +42,14 @@ usePageSeo(() => page.value?.seo)
       :align="page.hero?.align"
       :primary-cta="page.hero?.primaryCta"
       :secondary-cta="page.hero?.secondaryCta"
-      :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')"
+      :bg-image="strapiMedia(page.hero?.bgImage, '/about-images/hero-bg.png')"
       :stats="page.heroStats"
       stats-variant="pills"
     />
 
     <MediaTextSection
       :block="page.problem"
-      :image="strapiMedia(page.problem?.image, '/about/problem.png')"
+      :image="strapiMedia(page.problem?.image, '/about-images/problem.png')"
       image-alt="Accident victim reviewing their case on the phone"
     />
 
@@ -57,7 +57,7 @@ usePageSeo(() => page.value?.seo)
 
     <MediaTextSection
       :block="page.whyMatters"
-      :image="strapiMedia(page.whyMatters?.image, '/about/why-matters.png')"
+      :image="strapiMedia(page.whyMatters?.image, '/about-images/why-matters.png')"
       image-alt="The Accident Professionals team meeting with a client"
     />
 

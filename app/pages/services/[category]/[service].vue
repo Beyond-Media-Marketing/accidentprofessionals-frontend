@@ -62,7 +62,7 @@ const hd = computed(() => def.value?.heroDefaults ?? {})
 const hero = computed(() => {
   const h = svc.value?.hero ?? {}
   return {
-    heroBg: strapiMedia(h.bgImage, '/about/hero-bg.png'),
+    heroBg: strapiMedia(h.bgImage, '/about-images/hero-bg.png'),
     badge: (svc.value?.title || '').toUpperCase(),
     h1Part1: h.h1Part1,
     h1Accent: h.h1Accent,
@@ -118,6 +118,9 @@ const faq = computed(() => {
 })
 
 // ── SEO ──────────────────────────────────────────────────────────────────────
+// Cities we serve — shared single source (see useCitiesSection).
+const { data: citiesSection } = await useCitiesSection()
+
 usePageSeo(() => svc.value?.seo)
 useFaqJsonLd(() => faq.value.items)
 useSeoMeta({ ogImage: () => hero.value.heroBg })
@@ -171,7 +174,8 @@ useScrollReveal()
     <DamagesSection :block="svc.damages" />
     <TestimonialsSection :block="svc.testimonials" />
     <TeamSection :data="team" />
-    <CityAreasSection :block="def?.cities" />
+    <!-- Service defaults' own hand-picked list wins; shared master is the fallback. -->
+    <CityAreasSection :block="def?.cities?.regions?.length ? def.cities : citiesSection" />
     <FaqSection :data="faq" />
     <PageBottom :closing-cta="def?.closingCta" />
   </div>

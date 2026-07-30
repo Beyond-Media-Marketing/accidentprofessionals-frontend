@@ -35,7 +35,7 @@ usePageSeo(() => page.value?.seo)
       :heading="page.hero?.heading"
       :subhead="page.hero?.subhead"
       :align="page.hero?.align || 'center'"
-      :bg-image="strapiMedia(page.hero?.bgImage, '/about/hero-bg.png')"
+      :bg-image="strapiMedia(page.hero?.bgImage, '/about-images/hero-bg.png')"
       content-width="wide"
     />
 

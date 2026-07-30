@@ -65,7 +65,7 @@ const hd = computed(() => def.value?.heroDefaults ?? {})
 const hero = computed(() => {
   const h = cat.value?.hero ?? {}
   return {
-    heroBg: strapiMedia(h.bgImage, '/about/hero-bg.png'),
+    heroBg: strapiMedia(h.bgImage, '/about-images/hero-bg.png'),
     badge: hd.value.badge,
     h1Part1: h.h1Part1,
     h1Accent: h.h1Accent,

@@ -14,7 +14,6 @@ const populate = qs.stringify(
       whyChooseUs: { populate: { cta: true, bgImage: true, features: { populate: { icon: true } } } },
       practiceAreas: { populate: { cta: true, features: { populate: { icon: true } } } },
       ourProcess: { populate: { cards: { populate: { cta: true } } } },
-      whereToFindUs: { populate: { cities: true, cta: true } },
       faq: { populate: { items: true } },
       closingCta: { populate: { cta: true } },
       seo: { populate: '*' },
@@ -27,6 +26,9 @@ const { data: page } = await useFetch<any>(`${strapiUrl}/api/home-page?${populat
   key: 'home-page',
   transform: (r: any) => r?.data ?? null,
 })
+
+// Cities we serve — shared single source (see useCitiesSection).
+const { data: citiesSection } = await useCitiesSection()
 
 usePageSeo(() => page.value?.seo)
 </script>
@@ -61,10 +63,7 @@ usePageSeo(() => page.value?.seo)
 
     <ProcessCardsSection :block="page.ourProcess" />
 
-    <LocationsSection
-      :block="page.whereToFindUs"
-      :bg-image="strapiMedia(page.whereToFindUs?.bgImage, '/homepage/where-to-find-us-bg.png')"
-    />
+    <CityAreasSection :block="citiesSection" />
 
     <FaqAccordion :block="page.faq" />
 
