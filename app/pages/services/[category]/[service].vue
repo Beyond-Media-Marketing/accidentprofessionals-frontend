@@ -126,7 +126,7 @@ useFaqJsonLd(() => faq.value.items)
 useSeoMeta({ ogImage: () => hero.value.heroBg })
 
 const canonical = computed(
-  () => svc.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/services/${categorySlug}/${serviceSlug}/`,
+  () => svc.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/services/${categorySlug}/${serviceSlug}`,
 )
 useHead({
   script: [
@@ -138,8 +138,8 @@ useHead({
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://accidentprofessionals.com/' },
-            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://accidentprofessionals.com/services/' },
-            { '@type': 'ListItem', position: 3, name: svc.value?.category?.title, item: `https://accidentprofessionals.com/services/${categorySlug}/` },
+            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://accidentprofessionals.com/services' },
+            { '@type': 'ListItem', position: 3, name: svc.value?.category?.title, item: `https://accidentprofessionals.com/services/${categorySlug}` },
             { '@type': 'ListItem', position: 4, name: svc.value?.title, item: canonical.value },
           ],
         }),

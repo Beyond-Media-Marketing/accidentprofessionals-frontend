@@ -35,8 +35,13 @@ export function usePageSeo(seoGetter: () => SeoComponent | null | undefined) {
   const description = computed(
     () => seo.value.metaDescription || defaultSeo.value.metaDescription || settings.value.tagline || '',
   )
-  const canonical = computed(
-    () => seo.value.canonicalUrl || `${siteUrl}${route.path === '/' ? '' : route.path}`,
+  // The site serves URLs WITHOUT a trailing slash (server/middleware/redirects.ts
+  // 301s any slashed form). CMS `canonicalUrl` values were carried over from the old
+  // WordPress site, which used trailing slashes — left as-is they'd point the canonical
+  // at a URL that redirects. Normalise here so one bad paste can't undo it site-wide.
+  const stripTrailingSlash = (u: string) => (u.length > 1 ? u.replace(/\/+$/, '') : u)
+  const canonical = computed(() =>
+    stripTrailingSlash(seo.value.canonicalUrl || `${siteUrl}${route.path === '/' ? '' : route.path}`),
   )
   const ogImage = computed(() =>
     strapiMedia(seo.value.ogImage, strapiMedia(settings.value.defaultOgImage, `${siteUrl}/og-default.png`)),

@@ -176,7 +176,7 @@ usePageSeo(() => cat.value?.seo)
 useFaqJsonLd(() => faq.value.items)
 useSeoMeta({ ogImage: () => hero.value.heroBg })
 
-const canonical = computed(() => cat.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/services/${slug}/`)
+const canonical = computed(() => cat.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/services/${slug}`)
 useHead({
   script: [
     {
@@ -187,7 +187,7 @@ useHead({
           '@type': 'BreadcrumbList',
           itemListElement: [
             { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://accidentprofessionals.com/' },
-            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://accidentprofessionals.com/services/' },
+            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://accidentprofessionals.com/services' },
             { '@type': 'ListItem', position: 3, name: cat.value?.title, item: canonical.value },
           ],
         }),
