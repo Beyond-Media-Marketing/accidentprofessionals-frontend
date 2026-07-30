@@ -9,8 +9,21 @@ const { strapiUrl } = useRuntimeConfig().public;
 const postsQuery = qs.stringify(
   {
     sort: ["publishedDate:desc", "createdAt:desc"],
+    // Cards only need these scalars. Without an explicit `fields` list Strapi
+    // also returns `content`/`contentTwo` — the full article HTML of every post —
+    // which gets serialised into the hydration payload for no reason.
+    fields: [
+      "title",
+      "slug",
+      "excerpt",
+      "publishedDate",
+      "coverUrl",
+      "featured",
+    ],
     populate: {
-      coverImage: true,
+      // `strapiMedia()` only reads `.url`; nothing renders the responsive
+      // `formats` variants, so don't ship them.
+      coverImage: { fields: ["url", "alternativeText"] },
       category: {
         fields: ["name", "slug"],
         populate: { parent: { fields: ["name", "slug"] } },

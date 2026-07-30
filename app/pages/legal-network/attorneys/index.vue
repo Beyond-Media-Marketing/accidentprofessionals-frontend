@@ -7,7 +7,14 @@ definePageMeta({ layout: 'site' })
 const { strapiUrl } = useRuntimeConfig().public
 
 const attorneysQuery = qs.stringify(
-  { sort: ['order:asc'], populate: { photo: true }, pagination: { pageSize: 100 } },
+  {
+    sort: ['order:asc'],
+    // Card fields only — without this Strapi also returns every attorney's full
+    // `about` bio, which is dead weight in the directory's hydration payload.
+    fields: ['name', 'slug', 'firm', 'title', 'location', 'yearsExperience', 'languages', 'practiceAreas', 'featured', 'order'],
+    populate: { photo: { fields: ['url', 'alternativeText'] } },
+    pagination: { pageSize: 100 },
+  },
   { encodeValuesOnly: true },
 )
 const { data: attorneys } = await useFetch<any>(`${strapiUrl}/api/attorneys?${attorneysQuery}`, {

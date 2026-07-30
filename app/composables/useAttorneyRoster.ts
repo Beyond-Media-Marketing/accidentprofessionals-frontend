@@ -14,7 +14,16 @@ import qs from 'qs'
 export function useAttorneyRoster() {
   const { strapiUrl } = useRuntimeConfig().public
   const query = qs.stringify(
-    { sort: ['order:asc'], populate: { photo: true }, pagination: { pageSize: 100 } },
+    {
+      sort: ['order:asc'],
+      // Only what the attorney *cards* render (TeamSection / AttorneyCardsSection).
+      // Omitting `fields` makes Strapi return every scalar — including each
+      // attorney's full `about` richtext bio — on every page that shows the roster.
+      // The profile page fetches the complete record separately.
+      fields: ['name', 'slug', 'firm', 'title', 'location', 'yearsExperience', 'languages', 'practiceAreas', 'featured', 'order'],
+      populate: { photo: { fields: ['url', 'alternativeText'] } },
+      pagination: { pageSize: 100 },
+    },
     { encodeValuesOnly: true },
   )
   return useFetch<any>(`${strapiUrl}/api/attorneys?${query}`, {

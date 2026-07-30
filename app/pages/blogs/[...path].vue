@@ -9,7 +9,13 @@ const { strapiUrl, siteUrl } = useRuntimeConfig().public
 const segs = computed<string[]>(() => (route.params.path as string[]) || [])
 
 const catPopulate = { fields: ['name', 'slug'], populate: { parent: { fields: ['name', 'slug'] } } }
-const cardPopulate = { coverImage: true, category: catPopulate }
+// `strapiMedia()` only reads `.url` — the responsive `formats` variants are never
+// rendered, so keep them out of the card payload.
+const cardPopulate = { coverImage: { fields: ['url', 'alternativeText'] }, category: catPopulate }
+// Scalars a post *card* renders. Strapi returns every scalar when `fields` is
+// omitted — including `content`/`contentTwo` — so listing pages and the related-
+// posts rail would otherwise ship whole articles inside the hydration payload.
+const cardFields = ['title', 'slug', 'excerpt', 'publishedDate', 'coverUrl', 'featured']
 
 const { data } = await useAsyncData(`blogs-${segs.value.join('/')}`, async () => {
   const s = segs.value
@@ -38,10 +44,10 @@ const { data } = await useAsyncData(`blogs-${segs.value.join('/')}`, async () =>
     // A parent category includes its own posts + those of its child categories.
     const childSlugs = catsAll.filter((c: any) => c.parent?.slug === category.slug).map((c: any) => c.slug)
     const slugSet = [category.slug, ...childSlugs]
-    posts = (await $fetch<any>(`${strapiUrl}/api/blog-posts?${qs.stringify({ filters: { category: { slug: { $in: slugSet } } }, sort: ['publishedDate:desc'], populate: cardPopulate, pagination: { pageSize: 100 } }, { encodeValuesOnly: true })}`).catch(() => null))?.data ?? []
+    posts = (await $fetch<any>(`${strapiUrl}/api/blog-posts?${qs.stringify({ filters: { category: { slug: { $in: slugSet } } }, sort: ['publishedDate:desc'], fields: cardFields, populate: cardPopulate, pagination: { pageSize: 100 } }, { encodeValuesOnly: true })}`).catch(() => null))?.data ?? []
   }
   if (mode === 'post' && post) {
-    related = (await $fetch<any>(`${strapiUrl}/api/blog-posts?${qs.stringify({ filters: { category: { slug: { $eq: post.category?.slug } }, slug: { $ne: post.slug } }, sort: ['publishedDate:desc'], populate: cardPopulate, pagination: { pageSize: 3 } }, { encodeValuesOnly: true })}`).catch(() => null))?.data ?? []
+    related = (await $fetch<any>(`${strapiUrl}/api/blog-posts?${qs.stringify({ filters: { category: { slug: { $eq: post.category?.slug } }, slug: { $ne: post.slug } }, sort: ['publishedDate:desc'], fields: cardFields, populate: cardPopulate, pagination: { pageSize: 3 } }, { encodeValuesOnly: true })}`).catch(() => null))?.data ?? []
   }
   return { mode, post, category, posts, related, cats: catsAll }
 })
