@@ -19,8 +19,6 @@ const content = computed(() => page.value?.content || '')
 
 usePageSeo(() => page.value?.seo)
 useHead({ title: computed(() => page.value?.seo?.metaTitle || `${title.value} | Accident Professionals`) })
-// Legal pages are intentionally kept out of the index.
-useSeoMeta({ robots: 'noindex, follow' })
 </script>
 
 <template>
