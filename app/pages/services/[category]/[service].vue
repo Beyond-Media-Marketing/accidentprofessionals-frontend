@@ -164,7 +164,7 @@ useScrollReveal()
     />
     <MediaTextSection
       :block="svc.whatToKnow"
-      :image="strapiMedia(svc.whatToKnow?.image, '/homepage/homepage-hero.png')"
+      :image="strapiMedia(svc.whatToKnow?.image)"
       :image-alt="`${svc.title} in Georgia`"
       highlight-icon="/icons/trusted-network.svg"
     />

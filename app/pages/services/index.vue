@@ -65,7 +65,7 @@ const caseOptions = [
 
     <MediaTextSection
       :block="page.whyLocal"
-      :image="strapiMedia(page.whyLocal?.image, '/homepage/homepage-hero.png')"
+      :image="strapiMedia(page.whyLocal?.image)"
       image-alt="Local Georgia personal injury attorney"
     />
 

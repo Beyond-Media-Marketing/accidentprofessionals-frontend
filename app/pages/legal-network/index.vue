@@ -79,7 +79,7 @@ useSeoMeta({ ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
 
     <LookForSection
       :block="page.lookFor"
-      :image="strapiMedia(page.lookFor?.image, '/homepage/homepage-hero.png')"
+      :image="strapiMedia(page.lookFor?.image)"
     />
 
     <DualCtaBand :block="page.dualCta" />

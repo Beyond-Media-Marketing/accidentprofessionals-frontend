@@ -43,13 +43,13 @@ usePageSeo(() => page.value?.seo)
       :align="page.hero?.align"
       :primary-cta="page.hero?.primaryCta"
       :secondary-cta="page.hero?.secondaryCta"
-      :bg-image="strapiMedia(page.hero?.bgImage, '/homepage/homepage-hero.png')"
+      :bg-image="strapiMedia(page.hero?.bgImage)"
       :stats="page.stats"
     />
 
     <ProcessSection
       :block="page.howWeHelp"
-      :image="strapiMedia(page.howWeHelp?.image, '/homepage/homepage-how-we-help.png')"
+      :image="strapiMedia(page.howWeHelp?.image)"
       image-alt="Accident Professionals team meeting with a client"
       :highlight-icon="strapiMedia(page.howWeHelp?.highlightIcon, '/icons/goal.svg')"
     />

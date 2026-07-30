@@ -52,7 +52,11 @@ const paragraphs = computed<string[]>(() =>
 const socialLabel = (s: any) =>
   s?.label || (s?.platform ? s.platform.charAt(0).toUpperCase() + s.platform.slice(1) : 'Profile')
 
-// Person / Attorney structured data for SEO.
+// Person structured data for SEO.
+// NOTE: use `Person`, not `Attorney`. Schema.org's Attorney inherits from
+// LocalBusiness, which (a) makes `jobTitle`/`worksFor` invalid — they are
+// Person-only properties — and (b) requires a postal `address`. This page
+// describes an individual, not a business location.
 useHead({
   script: [
     {
@@ -60,17 +64,22 @@ useHead({
       innerHTML: computed(() =>
         JSON.stringify({
           '@context': 'https://schema.org',
-          '@type': 'Attorney',
+          '@type': 'Person',
           name: attorney.value?.name,
           jobTitle: attorney.value?.title || undefined,
           worksFor: attorney.value?.firm ? { '@type': 'Organization', name: attorney.value.firm } : undefined,
+          hasOccupation: { '@type': 'Occupation', name: 'Attorney' },
           image: photo.value,
-          areaServed: attorney.value?.location || undefined,
+          // `workLocation` is the Person equivalent of areaServed (which is Organization-only).
+          workLocation: attorney.value?.location ? { '@type': 'Place', name: attorney.value.location } : undefined,
+          address: attorney.value?.locationDetail
+            ? { '@type': 'PostalAddress', streetAddress: attorney.value.locationDetail }
+            : undefined,
           knowsLanguage: attorney.value?.languages || undefined,
           email: attorney.value?.email || undefined,
           telephone: attorney.value?.phone || undefined,
-          sameAs: socials.value.map((s) => s.url),
-          url: `${siteUrl}/legal-network/attorneys/${slug}/`,
+          sameAs: socials.value.length ? socials.value.map((s) => s.url) : undefined,
+          url: `${siteUrl}/legal-network/attorneys/${slug}`,
         }),
       ),
     },
@@ -84,7 +93,7 @@ useHead({
             { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
             { '@type': 'ListItem', position: 2, name: 'Legal Network', item: `${siteUrl}/legal-network` },
             { '@type': 'ListItem', position: 3, name: 'Attorneys', item: `${siteUrl}/legal-network/attorneys` },
-            { '@type': 'ListItem', position: 4, name: attorney.value?.name, item: `${siteUrl}/legal-network/attorneys/${slug}/` },
+            { '@type': 'ListItem', position: 4, name: attorney.value?.name, item: `${siteUrl}/legal-network/attorneys/${slug}` },
           ],
         }),
       ),

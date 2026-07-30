@@ -12,7 +12,7 @@ const link = computed(() => `/blogs/${catPath.value}/${props.post?.slug}`);
 const cover = computed(() =>
   strapiMedia(
     props.post?.coverImage,
-    props.post?.coverUrl || "/homepage/homepage-hero.png"
+    props.post?.coverUrl
   )
 );
 const date = computed(() =>
@@ -40,11 +40,14 @@ const date = computed(() =>
         "
       >
         <img
+          v-if="cover"
           :src="cover"
           :alt="post?.title"
           class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
           loading="lazy"
         />
+        <!-- No cover set in the CMS — neutral placeholder rather than a broken image. -->
+        <div v-else class="h-full w-full bg-dark/10" aria-hidden="true" />
       </div>
       <span
         v-if="post?.category?.name"

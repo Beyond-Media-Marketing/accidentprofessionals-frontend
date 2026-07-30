@@ -60,7 +60,7 @@ if ((mode.value === 'post' && !post.value) || (mode.value === 'category' && !cat
 const catPathOf = (c: any) => (!c?.slug ? '' : c.parent?.slug ? `${c.parent.slug}/${c.slug}` : c.slug)
 
 // ── Post view helpers ──
-const cover = computed(() => strapiMedia(post.value?.coverImage, post.value?.coverUrl || '/homepage/homepage-hero.png'))
+const cover = computed(() => strapiMedia(post.value?.coverImage, post.value?.coverUrl))
 const date = computed(() => post.value?.publishedDate ? new Date(post.value.publishedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '')
 const toc = computed(() => tocFromHtml(`${addHeadingIds(post.value?.content)}${addHeadingIds(post.value?.contentTwo)}`))
 const readingTime = computed(() => {
@@ -154,7 +154,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
       <!-- Cover hero with overlaid content -->
       <section class="relative isolate flex min-h-[62vh] items-end overflow-hidden sm:min-h-[72vh]">
-        <img :src="cover" :alt="post.title" class="absolute inset-0 -z-10 h-full w-full object-cover" loading="eager" />
+        <img v-if="cover" :src="cover" :alt="post.title" class="absolute inset-0 -z-10 h-full w-full object-cover" loading="eager" />
         <div class="absolute inset-0 -z-10 bg-gradient-to-t from-dark via-dark/85 to-dark/70" />
         <div class="absolute inset-0 -z-10 bg-dark/35" />
         <div class="site-container w-full pb-12 pt-40 text-on-dark 3xl:pb-16">

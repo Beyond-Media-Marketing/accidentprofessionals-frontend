@@ -122,7 +122,7 @@ const faq = computed(() => {
     <MediaTextSection
       v-if="loc.whyTrust"
       :block="loc.whyTrust"
-      :image="strapiMedia(loc.whyTrust?.image, '/homepage/homepage-hero.png')"
+      :image="strapiMedia(loc.whyTrust?.image)"
       :image-alt="`${loc.title} personal injury attorney network`"
     />
     <CardGridSection v-if="loc.practiceAreas" :block="loc.practiceAreas" />
