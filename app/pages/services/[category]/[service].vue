@@ -125,6 +125,13 @@ usePageSeo(() => svc.value?.seo)
 useFaqJsonLd(() => faq.value.items)
 useSeoMeta({ ogImage: () => hero.value.heroBg })
 
+// A sub-service with no `hero` isn't built out yet — it renders only the shared
+// boilerplate (team, cities, FAQ) with no H1, which reads as thin/duplicate content.
+// Keep those out of the index until they have real content; it flips back to
+// indexable automatically as soon as a hero is filled in.
+const isBuilt = computed(() => !!svc.value?.hero)
+useSeoMeta({ robots: () => (isBuilt.value ? 'index, follow' : 'noindex, follow') })
+
 const canonical = computed(
   () => svc.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/services/${categorySlug}/${serviceSlug}`,
 )

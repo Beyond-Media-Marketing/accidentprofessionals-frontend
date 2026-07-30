@@ -26,12 +26,15 @@ export default defineSitemapEventHandler(async () => {
   }
 
   // Sub-services → /services/[category]/[service]
+  // `hero` is populated only to detect whether the sub-service is actually built out.
+  // Stubs (no hero) render just the shared boilerplate with no H1, so they're kept
+  // out of the sitemap — matching the service cards, which also don't link to them.
   const services = await get(
-    '/api/services?fields[0]=slug&populate[category][fields][0]=slug&pagination[pageSize]=200',
+    '/api/services?fields[0]=slug&populate[category][fields][0]=slug&populate[hero][fields][0]=h1Part1&pagination[pageSize]=200',
   )
   for (const s of services) {
     const cat = s?.category?.slug
-    if (cat && s?.slug) urls.push({ loc: `/services/${cat}/${s.slug}`, priority: 0.7, changefreq: 'monthly' })
+    if (cat && s?.slug && s?.hero) urls.push({ loc: `/services/${cat}/${s.slug}`, priority: 0.7, changefreq: 'monthly' })
   }
 
   // City pages → /georgia/[city]

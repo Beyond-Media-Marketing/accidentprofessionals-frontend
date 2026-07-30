@@ -66,6 +66,14 @@ const EXACT: Record<string, string> = {
   '/portfolio-v2': '/',
   '/portfolio-v3': '/',
   '/portfolio-v4': '/',
+  // Retired medical-provider map pages + a page from the pre-WordPress site.
+  // These weren't in the WP sitemap, but the old site already 301'd them to the
+  // homepage — matched here so their backlinks keep resolving instead of 404ing.
+  '/chiropractors-map': '/',
+  '/physical-therapy-map': '/',
+  '/mri-and-ct-scans-map': '/',
+  '/injections-pain-management-map': '/',
+  '/page28094491.html': '/',
   // Attorney who is no longer in the network.
   '/james-harmon-groves': '/legal-network/attorneys',
 }
@@ -106,14 +114,16 @@ export default defineEventHandler((event) => {
   const url = getRequestURL(event)
   const { pathname, search } = url
 
-  // Skip framework internals, the API, and anything with a file extension
-  // (/locations.kml, images, etc.) so assets are never touched.
+  // Skip framework internals, the API, and real assets (/locations.kml, images…)
+  // so files are never touched. Paths listed explicitly in EXACT are still handled
+  // even with an extension — legacy pages like /page28094491.html need redirecting.
+  const looksLikeAsset = /\.[a-z0-9]+$/i.test(pathname) && !EXACT[pathname]
   if (
     pathname.startsWith('/_nuxt') ||
     pathname.startsWith('/_ipx') ||
     pathname.startsWith('/api/') ||
     pathname.startsWith('/__') ||
-    /\.[a-z0-9]+$/i.test(pathname)
+    looksLikeAsset
   ) {
     return
   }
