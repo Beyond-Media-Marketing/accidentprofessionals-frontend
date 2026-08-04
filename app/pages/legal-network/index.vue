@@ -50,8 +50,7 @@ const attorneys = computed(() =>
   page.value?.selectedAttorneys?.length ? page.value.selectedAttorneys : (data.value?.attorneys ?? []),
 )
 
-usePageSeo(() => page.value?.seo)
-useSeoMeta({ ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
+usePageSeo(() => page.value?.seo, { ogImage: () => strapiMedia(page.value?.hero?.bgImage) })
 </script>
 
 <template>

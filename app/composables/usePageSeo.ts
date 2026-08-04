@@ -20,7 +20,19 @@ interface SeoComponent {
  * Pass a getter so it stays reactive after the page data resolves:
  *   usePageSeo(() => page.value?.seo)
  */
-export function usePageSeo(seoGetter: () => SeoComponent | null | undefined) {
+export function usePageSeo(
+  seoGetter: () => SeoComponent | null | undefined,
+  opts?: {
+    /**
+     * A page-specific image (usually the hero) to use when the CMS `seo.ogImage`
+     * is empty. Pages used to set this with their own `useSeoMeta({ ogImage })`
+     * *after* calling usePageSeo — but when the hero had no image that getter
+     * returned `undefined` and wiped the tag entirely instead of falling through
+     * to the global default. Routing it through here keeps the fallback chain intact.
+     */
+    ogImage?: () => string | undefined
+  },
+) {
   const route = useRoute()
   const { siteUrl } = useRuntimeConfig().public
   const globals = useGlobals()
@@ -43,8 +55,12 @@ export function usePageSeo(seoGetter: () => SeoComponent | null | undefined) {
   const canonical = computed(() =>
     stripTrailingSlash(seo.value.canonicalUrl || `${siteUrl}${route.path === '/' ? '' : route.path}`),
   )
+  // Priority: page's own CMS ogImage → page hero → global defaultOgImage → bundled file.
   const ogImage = computed(() =>
-    strapiMedia(seo.value.ogImage, strapiMedia(settings.value.defaultOgImage, `${siteUrl}/og-default.png`)),
+    strapiMedia(
+      seo.value.ogImage,
+      opts?.ogImage?.() || strapiMedia(settings.value.defaultOgImage, `${siteUrl}/og-default.png`),
+    ),
   )
   const robots = computed(() => {
     const parts = [seo.value.noindex ? 'noindex' : 'index', seo.value.nofollow ? 'nofollow' : 'follow']

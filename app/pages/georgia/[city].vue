@@ -11,9 +11,8 @@ if (!loc.value) {
   throw createError({ statusCode: 404, statusMessage: 'City not found', fatal: true })
 }
 
-usePageSeo(() => loc.value?.seo)
+usePageSeo(() => loc.value?.seo, { ogImage: () => strapiMedia(loc.value?.hero?.bgImage) })
 useFaqJsonLd(() => (loc.value?.faq?.items ?? []).map((i: any) => ({ question: i.question, answer: i.answer })))
-useSeoMeta({ ogImage: () => strapiMedia(loc.value?.hero?.bgImage) })
 
 const canonical = computed(() => loc.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/georgia/${slug}`)
 useHead({

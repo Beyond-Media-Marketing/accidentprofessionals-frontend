@@ -76,7 +76,12 @@ const readingTime = computed(() => {
 const postUrl = computed(() => `/blogs/${catPathOf(post.value?.category)}/${post.value?.slug}`)
 const canonical = computed(() => post.value?.seo?.canonicalUrl || `${siteUrl}${postUrl.value}/`)
 
-usePageSeo(() => (mode.value === 'post' ? post.value?.seo : category.value?.seo))
+// An article shares with its own cover image; category listings (and posts with
+// no cover) fall through to the global default OG image.
+usePageSeo(
+  () => (mode.value === 'post' ? post.value?.seo : category.value?.seo),
+  { ogImage: () => cover.value },
+)
 useHead(() => ({ title: (mode.value === 'post' ? post.value?.seo?.metaTitle || `${post.value?.title} — AP Blog` : category.value?.seo?.metaTitle || `${category.value?.name} — AP Blog`) }))
 // Breadcrumb trail: Home → Blog → [parent category] → category → post.
 const breadcrumbLd = computed(() => {

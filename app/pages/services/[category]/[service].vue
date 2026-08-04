@@ -121,9 +121,10 @@ const faq = computed(() => {
 // Cities we serve — shared single source (see useCitiesSection).
 const { data: citiesSection } = await useCitiesSection()
 
-usePageSeo(() => svc.value?.seo)
+// Pass the raw hero image, not `hero.heroBg` — that carries a generic local
+// fallback which would always beat the CMS-wide default OG image.
+usePageSeo(() => svc.value?.seo, { ogImage: () => strapiMedia(svc.value?.hero?.bgImage) })
 useFaqJsonLd(() => faq.value.items)
-useSeoMeta({ ogImage: () => hero.value.heroBg })
 
 // A sub-service with no `hero` isn't built out yet — it renders only the shared
 // boilerplate (team, cities, FAQ) with no H1, which reads as thin/duplicate content.

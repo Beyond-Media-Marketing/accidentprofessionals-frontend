@@ -172,9 +172,10 @@ const ctaBanner = computed(() => {
 })
 
 // ── SEO ──────────────────────────────────────────────────────────────────────
-usePageSeo(() => cat.value?.seo)
+// Raw hero image, not `hero.heroBg` — that carries a generic local fallback
+// which would always beat the CMS-wide default OG image.
+usePageSeo(() => cat.value?.seo, { ogImage: () => strapiMedia(cat.value?.hero?.bgImage) })
 useFaqJsonLd(() => faq.value.items)
-useSeoMeta({ ogImage: () => hero.value.heroBg })
 
 const canonical = computed(() => cat.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/services/${slug}`)
 useHead({

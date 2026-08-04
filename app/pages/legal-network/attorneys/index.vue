@@ -36,11 +36,17 @@ const { data: heroData } = await useFetch<any>(`${strapiUrl}/api/legal-network-p
 })
 const hero = computed<any>(() => heroData.value ?? {})
 
-useHead({ title: 'Our Attorney Network — Accident Professionals' })
-useSeoMeta({
-  description:
-    'Browse the vetted personal injury attorneys in the Accident Professionals network. Every attorney is reviewed before being included.',
-})
+// Routed through usePageSeo so this page also gets a canonical, Open Graph and
+// Twitter Card tags, and the global default OG image — it previously emitted a
+// title and description only.
+usePageSeo(
+  () => ({
+    metaTitle: 'Our Attorney Network — Accident Professionals',
+    metaDescription:
+      'Browse the vetted personal injury attorneys in the Accident Professionals network. Every attorney is reviewed before being included.',
+  }),
+  { ogImage: () => strapiMedia(hero.value?.bgImage) },
+)
 </script>
 
 <template>

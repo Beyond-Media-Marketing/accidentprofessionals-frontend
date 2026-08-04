@@ -62,11 +62,14 @@ const rest = computed(() =>
   posts.value.filter((p) => p.slug !== featured.value?.slug)
 );
 
-useHead({ title: "Blog — Accident Professionals" });
-useSeoMeta({
-  description:
+// Routed through usePageSeo so this page also gets a canonical, Open Graph and
+// Twitter Card tags, and the global default OG image — it previously emitted a
+// title and description only.
+usePageSeo(() => ({
+  metaTitle: "Blog — Accident Professionals",
+  metaDescription:
     "Insights, guides, and resources on car accidents, truck accidents, premises liability, and personal injury claims from Accident Professionals.",
-});
+}));
 </script>
 
 <template>
