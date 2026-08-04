@@ -11,7 +11,7 @@ const segs = computed<string[]>(() => (route.params.path as string[]) || [])
 const catPopulate = { fields: ['name', 'slug'], populate: { parent: { fields: ['name', 'slug'] } } }
 // `strapiMedia()` only reads `.url` — the responsive `formats` variants are never
 // rendered, so keep them out of the card payload.
-const cardPopulate = { coverImage: { fields: ['url', 'alternativeText'] }, category: catPopulate }
+const cardPopulate = { coverImage: { fields: ['url', 'alternativeText', 'updatedAt'] }, category: catPopulate }
 // Scalars a post *card* renders. Strapi returns every scalar when `fields` is
 // omitted — including `content`/`contentTwo` — so listing pages and the related-
 // posts rail would otherwise ship whole articles inside the hydration payload.

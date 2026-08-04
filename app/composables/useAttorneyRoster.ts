@@ -21,7 +21,7 @@ export function useAttorneyRoster() {
       // attorney's full `about` richtext bio — on every page that shows the roster.
       // The profile page fetches the complete record separately.
       fields: ['name', 'slug', 'firm', 'title', 'location', 'yearsExperience', 'languages', 'practiceAreas', 'featured', 'order'],
-      populate: { photo: { fields: ['url', 'alternativeText'] } },
+      populate: { photo: { fields: ['url', 'alternativeText', 'updatedAt'] } },
       pagination: { pageSize: 100 },
     },
     { encodeValuesOnly: true },

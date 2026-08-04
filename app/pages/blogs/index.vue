@@ -23,7 +23,7 @@ const postsQuery = qs.stringify(
     populate: {
       // `strapiMedia()` only reads `.url`; nothing renders the responsive
       // `formats` variants, so don't ship them.
-      coverImage: { fields: ["url", "alternativeText"] },
+      coverImage: { fields: ["url", "alternativeText", "updatedAt"] },
       category: {
         fields: ["name", "slug"],
         populate: { parent: { fields: ["name", "slug"] } },

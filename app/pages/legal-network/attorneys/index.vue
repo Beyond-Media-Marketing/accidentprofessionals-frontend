@@ -12,7 +12,7 @@ const attorneysQuery = qs.stringify(
     // Card fields only — without this Strapi also returns every attorney's full
     // `about` bio, which is dead weight in the directory's hydration payload.
     fields: ['name', 'slug', 'firm', 'title', 'location', 'yearsExperience', 'languages', 'practiceAreas', 'featured', 'order'],
-    populate: { photo: { fields: ['url', 'alternativeText'] } },
+    populate: { photo: { fields: ['url', 'alternativeText', 'updatedAt'] } },
     pagination: { pageSize: 100 },
   },
   { encodeValuesOnly: true },
