@@ -10,5 +10,8 @@
       <slot />
     </main>
     <SideCallButton />
+    <!-- Timed lead-capture popup. Renders nothing unless the `lead-popup`
+         single-type is enabled in Strapi. -->
+    <LeadPopupForm />
   </div>
 </template>
