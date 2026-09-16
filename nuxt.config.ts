@@ -47,7 +47,8 @@ export default defineNuxtConfig({
   // Keep the legacy home backup out of the sitemap (duplicate content).
   // Dynamic (Strapi-driven) routes are added via the server source below.
   sitemap: {
-    exclude: ['/home-legacy'],
+    // /forms/* are private rep landing pages — noindex'd and never in the sitemap.
+    exclude: ['/home-legacy', '/forms/**'],
     sources: ['/api/__sitemap__/urls'],
   },
 
@@ -99,6 +100,10 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Server-only secret (kept for reference; Web3Forms verifies Turnstile itself).
     turnstileSecret: process.env.TURNSTILE_SECRET ?? '',
+    // ClickUp — server-only. A personal token (pk_…) carries FULL account access as
+    // the user who generated it and never expires, so it must never reach the client.
+    clickupToken: process.env.CLICKUP_TOKEN ?? '',
+    clickupListId: process.env.CLICKUP_LIST_ID ?? '',
     public: {
       // Web3Forms access keys are PUBLIC by design — the free plan only accepts
       // submissions from the browser, so the keys must be client-readable.
@@ -106,6 +111,9 @@ export default defineNuxtConfig({
       web3FormsKey: process.env.WEB3FORMS_KEY ?? '',
       web3FormsKeyLeads: process.env.WEB3FORMS_KEY_LEADS ?? '',
       web3FormsKeyAttorneys: process.env.WEB3FORMS_KEY_ATTORNEYS ?? '',
+      // Rep call-back form. Point this at a Web3Forms form that delivers to
+      // sales@accidentprofessionals.com; falls back to the general leads key.
+      web3FormsKeyCallback: process.env.WEB3FORMS_KEY_CALLBACK ?? '',
       turnstileSiteKey: process.env.TURNSTILE_SITE_KEY ?? '',
       strapiUrl: process.env.STRAPI_URL ?? 'http://localhost:1337',
       siteUrl: process.env.SITE_URL ?? 'http://localhost:3000',

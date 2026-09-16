@@ -1,4 +1,45 @@
-User-Agent: *
-Disallow:
+# Rep call-back landing pages (/forms/*) are private — they're handed out via
+# direct links only and must not be indexed or used as AI training/grounding data.
+
+User-agent: *
+Disallow: /forms/
+
+# Named AI crawlers. `User-agent: *` above already covers the compliant ones, but
+# several honour only a rule addressed to them specifically.
+User-agent: GPTBot
+Disallow: /forms/
+
+User-agent: ChatGPT-User
+Disallow: /forms/
+
+User-agent: OAI-SearchBot
+Disallow: /forms/
+
+User-agent: ClaudeBot
+Disallow: /forms/
+
+User-agent: Claude-User
+Disallow: /forms/
+
+User-agent: anthropic-ai
+Disallow: /forms/
+
+User-agent: PerplexityBot
+Disallow: /forms/
+
+User-agent: Google-Extended
+Disallow: /forms/
+
+User-agent: Applebot-Extended
+Disallow: /forms/
+
+User-agent: meta-externalagent
+Disallow: /forms/
+
+User-agent: Bytespider
+Disallow: /forms/
+
+User-agent: CCBot
+Disallow: /forms/
 
 Sitemap: https://accidentprofessionals.com/sitemap.xml
