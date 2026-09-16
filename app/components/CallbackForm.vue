@@ -373,6 +373,9 @@ async function submitForm() {
 }
 
 .cb__consent { display: flex; flex-direction: column; gap: 8px; }
+/* AppCheckbox hardcodes white text for the dark hero forms; this page is light. */
+.cb__consent :deep(.app-checkbox__text),
+.cb__consent :deep(.app-checkbox__text a) { color: var(--color-dark); }
 .cb__consent-text {
   font-family: var(--font-primary);
   font-size: 12.5px;
