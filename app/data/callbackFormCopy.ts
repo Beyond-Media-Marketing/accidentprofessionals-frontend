@@ -15,6 +15,9 @@ export interface CallbackCopy {
   namePlaceholder: string
   detailsLabel: string
   detailsPlaceholder: string
+  stateLabel: string
+  statePlaceholder: string
+  accidentDateLabel: string
   bestTimeLabel: string
   bestTimePlaceholder: string
   bestTimeOptions: { value: string; label: string }[]
@@ -53,6 +56,9 @@ export const CALLBACK_COPY: Record<Locale, CallbackCopy> = {
     namePlaceholder: 'Enter text',
     detailsLabel: 'What happened? How can we assist?',
     detailsPlaceholder: 'Enter text',
+    stateLabel: 'State Where the Accident Happened',
+    statePlaceholder: 'Select a state...',
+    accidentDateLabel: 'Date of Accident',
     bestTimeLabel: 'Best Time To Call?',
     bestTimePlaceholder: 'Select option...',
     bestTimeOptions: [
@@ -88,6 +94,9 @@ export const CALLBACK_COPY: Record<Locale, CallbackCopy> = {
     namePlaceholder: 'Escriba aquí',
     detailsLabel: '¿Qué ocurrió? ¿Cómo podemos ayudarle?',
     detailsPlaceholder: 'Escriba aquí',
+    stateLabel: 'Estado donde ocurrió el accidente',
+    statePlaceholder: 'Seleccione un estado...',
+    accidentDateLabel: 'Fecha del accidente',
     bestTimeLabel: '¿Cuál es el mejor momento para llamar?',
     bestTimePlaceholder: 'Seleccione una opción...',
     bestTimeOptions: [

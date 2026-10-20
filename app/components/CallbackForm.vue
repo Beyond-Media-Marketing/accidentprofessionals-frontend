@@ -15,6 +15,8 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { CALLBACK_COPY, BEST_TIME_VALUES, type Locale } from '../data/callbackFormCopy'
+import { US_STATES } from '../data/usStates'
+import { countries } from '../data/countries'
 import { useTurnstile } from '../composables/useTurnstile'
 import { useDataLayer } from '../composables/useDataLayer'
 
@@ -43,6 +45,8 @@ useHead(() => ({ htmlAttrs: { lang: locale.value } }))
 const form = reactive({
   name: '',
   details: '',
+  state: '',
+  accidentDate: '',
   bestTime: '',
   specificTime: '',
   email: '',
@@ -54,6 +58,16 @@ const form = reactive({
 const submitting = ref(false)
 const done = ref(false)
 const errorMessage = ref('')
+
+// The country selector's dial code was being dropped: ClickUp's `phone` field and
+// the sales team both need the full international number, not bare local digits.
+const dialCode = computed(() => countries.find((c) => c.code === form.countryCode)?.dial ?? '+1')
+
+/** Canonical ENGLISH label — the CRM field must hold one consistent vocabulary,
+ *  otherwise Spanish leads store "Lo antes posible" and can't be filtered with the rest. */
+const bestTimeLabelEn = computed(
+  () => CALLBACK_COPY.en.bestTimeOptions.find((o) => o.value === form.bestTime)?.label ?? form.bestTime,
+)
 
 const needsSpecificTime = computed(() => form.bestTime === BEST_TIME_VALUES.specific)
 
@@ -67,6 +81,7 @@ const filledRequired = computed(
   () =>
     !!form.name.trim() &&
     !!form.details.trim() &&
+    !!form.state &&
     !!form.bestTime &&
     !!form.phone.trim() &&
     (!needsSpecificTime.value || !!form.specificTime.trim()),
@@ -115,9 +130,13 @@ async function submitForm() {
       name: form.name,
       email: form.email,
       phone: form.phone,
+      dialCode: dialCode.value,
       details: form.details,
+      state: form.state,
+      accidentDate: form.accidentDate,
       bestTime: form.bestTime,
-      bestTimeLabel: bestTimeLabel.value,
+      bestTimeLabel: bestTimeLabelEn.value,
+      bestTimeLabelLocal: bestTimeLabel.value,
       specificTime: form.specificTime,
       consent: form.consent,
       pageTitle,
@@ -139,8 +158,10 @@ async function submitForm() {
       subject: `New call-back lead — ${rep || 'direct'}`,
       name: form.name,
       ...(form.email.trim() ? { email: form.email.trim() } : {}),
-      phone: form.phone,
+      phone: `${dialCode.value} ${form.phone}`,
       message: form.details,
+      state: form.state,
+      ...(form.accidentDate ? { date_of_accident: form.accidentDate } : {}),
       referred_by: rep || 'direct (no rep link)',
       language: locale.value === 'es' ? 'Spanish' : 'English',
       best_time_to_call: bestTimeLabel.value,
@@ -209,6 +230,24 @@ async function submitForm() {
       <div class="cb__field">
         <label for="cb-details">{{ t.detailsLabel }}<span class="cb__req" aria-hidden="true">*</span></label>
         <textarea id="cb-details" v-model="form.details" rows="4" :placeholder="t.detailsPlaceholder" required />
+      </div>
+
+      <div class="cb__field">
+        <label for="cb-state">{{ t.stateLabel }}<span class="cb__req" aria-hidden="true">*</span></label>
+        <div class="cb__select-wrap">
+          <select id="cb-state" v-model="form.state" required>
+            <option value="" disabled>{{ t.statePlaceholder }}</option>
+            <option v-for="st in US_STATES" :key="st" :value="st">{{ st }}</option>
+          </select>
+          <svg class="cb__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="cb__field">
+        <label for="cb-accident-date">{{ t.accidentDateLabel }} <span class="cb__optional">({{ t.optional }})</span></label>
+        <input id="cb-accident-date" v-model="form.accidentDate" type="date" />
       </div>
 
       <div class="cb__field">

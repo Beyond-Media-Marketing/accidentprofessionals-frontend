@@ -20,6 +20,26 @@ const toTag = (s: string) =>
     .replace(/^-+|-+$/g, '')
     .slice(0, 60)
 
+/**
+ * Split a full name into first / last for the two ClickUp text fields.
+ * First token is the first name, everything after it is the surname — compound
+ * surnames ("De Jongh", "Hernandez-Hernandez") therefore stay intact. A
+ * single-word name yields an empty surname rather than duplicating the value.
+ */
+function splitName(full: string): { first: string; last: string } {
+  const parts = String(full || '').trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return { first: '', last: '' }
+  if (parts.length === 1) return { first: parts[0]!, last: '' }
+  return { first: parts[0]!, last: parts.slice(1).join(' ') }
+}
+
+/** ClickUp `date` fields take epoch MILLISECONDS; a bad string must not be sent. */
+function toEpochMs(value: string): number | null {
+  if (!value) return null
+  const ms = Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(value) ? `${value}T12:00:00Z` : value)
+  return Number.isFinite(ms) ? ms : null
+}
+
 interface LeadBody {
   token?: string
   rep?: string
@@ -27,9 +47,13 @@ interface LeadBody {
   name?: string
   email?: string
   phone?: string
+  dialCode?: string
   details?: string
+  state?: string
+  accidentDate?: string
   bestTime?: string
   bestTimeLabel?: string
+  bestTimeLabelLocal?: string
   specificTime?: string
   consent?: boolean
   pageTitle?: string
@@ -94,13 +118,19 @@ export default defineEventHandler(async (event) => {
 
   const description = [
     `**Name:** ${name}`,
-    `**Phone:** ${phone}`,
+    `**Phone:** ${body.dialCode || '+1'} ${phone}`,
     `**Email:** ${email || '—'}`,
     '',
     `**What happened:**`,
     details,
     '',
-    `**Best time to call:** ${body.bestTimeLabel || body.bestTime || '—'}`,
+    `**State:** ${body.state || '—'}`,
+    `**Date of accident:** ${body.accidentDate || '—'}`,
+    `**Best time to call:** ${body.bestTimeLabel || body.bestTime || '—'}${
+      body.bestTimeLabelLocal && body.bestTimeLabelLocal !== body.bestTimeLabel
+        ? ` (chose: ${body.bestTimeLabelLocal})`
+        : ''
+    }`,
     ...(body.specificTime ? [`**Requested time:** ${body.specificTime}`] : []),
     '',
     `**Referred by:** ${
@@ -126,6 +156,42 @@ export default defineEventHandler(async (event) => {
     if (repIsInactive) tags.push('inactive-rep')
   }
 
+  // ── ClickUp custom fields ────────────────────────────────────────────────
+  // Each value must match its field's type exactly (see server/utils/clickupFields.ts):
+  // wrongly-shaped values are rejected or silently dropped by ClickUp.
+  const { first, last } = splitName(name)
+  const customFields: { id: string; value: any }[] = []
+  const put = (id: string, value: any) => {
+    if (value !== null && value !== undefined && value !== '') customFields.push({ id, value })
+  }
+
+  put(CF.firstName, first)
+  put(CF.lastName, last)
+  put(CF.description, details)
+  put(CF.email, email)
+  put(CF.phone, phoneE164)
+  put(CF.bestTimeToCall, body.bestTimeLabel || body.bestTime || '')
+  put(CF.bestDateTime, body.specificTime || '')
+
+  // Consent: a checkbox plus the timestamp it was given — both are compliance evidence.
+  customFields.push({ id: CF.consentCheckbox, value: true })
+  customFields.push({ id: CF.consentGivenOn, value: Date.now() })
+
+  // ClickUp's `phone` type expects a full international number (E.164).
+  const phoneE164 = `${body.dialCode || '+1'}${phone}`.replace(/[^\d+]/g, '')
+
+  const accidentMs = toEpochMs(String(body.accidentDate || ''))
+  if (accidentMs !== null) customFields.push({ id: CF.dateOfAccident, value: accidentMs })
+
+  // drop_down → the option's uuid, never its label.
+  const stateId = STATE_OPTION_IDS[String(body.state || '')]
+  if (stateId) put(CF.accidentState, stateId)
+
+  // labels → an ARRAY of option uuids. Reps without a confirmed option are left
+  // unset here on purpose; the rep tag still carries the attribution.
+  const originatorId = rep ? ORIGINATOR_OPTION_IDS[rep] : undefined
+  if (originatorId) customFields.push({ id: CF.originator, value: [originatorId] })
+
   const task = await $fetch<{ id?: string; url?: string }>(
     `${CLICKUP_API}/list/${clickupListId}/task`,
     {
@@ -137,6 +203,7 @@ export default defineEventHandler(async (event) => {
         name,
         description,
         tags,
+        custom_fields: customFields,
       },
     },
   ).catch((err: any) => {
