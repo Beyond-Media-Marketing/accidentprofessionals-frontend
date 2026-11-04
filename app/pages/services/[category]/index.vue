@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import qs from 'qs'
-
 definePageMeta({ layout: 'site' })
 
 // Legacy service-category pages (auto-accidents, premises-liability,
@@ -8,52 +6,46 @@ definePageMeta({ layout: 'site' })
 // entirely from Strapi, mapped into the exact shapes the legacy SCSS section
 // components expect.
 const route = useRoute()
-const { strapiUrl } = useRuntimeConfig().public
+const { locale, t } = useI18n()
+const lh = useLocaleHref()
+const { siteUrl } = useRuntimeConfig().public
 const slug = String(route.params.category)
 
-const categoryQuery = qs.stringify(
-  {
-    filters: { slug: { $eq: slug } },
-    populate: {
-      hero: { populate: { bgImage: true, urgencyBullets: true, caseOptions: true } },
-      howItWorks: { populate: { steps: true, image: true } },
-      whyUs: true,
-      stepsToTake: { populate: { steps: true } },
-      faq: { populate: { items: true } },
-      ctaBanner: { populate: { caseOptions: true } },
-      // `hero` is populated (one field) only to detect whether a sub-service has a
-      // built page — stubs with no hero don't get a card link.
-      services: { populate: { cardIcon: true, hero: { fields: ['h1Part1'] } } },
-      seo: { populate: '*' },
-    },
+const categoryQuery = {
+  filters: { slug: { $eq: slug } },
+  populate: {
+    hero: { populate: { bgImage: true, urgencyBullets: true, caseOptions: true } },
+    howItWorks: { populate: { steps: true, image: true } },
+    whyUs: true,
+    stepsToTake: { populate: { steps: true } },
+    faq: { populate: { items: true } },
+    ctaBanner: { populate: { caseOptions: true } },
+    // `hero` is populated (one field) only to detect whether a sub-service has a
+    // built page — stubs with no hero don't get a card link.
+    services: { populate: { cardIcon: true, hero: { fields: ['h1Part1'] } } },
+    seo: { populate: '*' },
   },
-  { encodeValuesOnly: true },
-)
+}
 
-const defaultsQuery = qs.stringify(
-  {
-    populate: {
-      heroDefaults: { populate: { stats: true } },
-      whyUsFeatures: true,
-      team: true,
-      selectedAttorneys: { populate: { photo: true } },
-    },
+const defaultsQuery = {
+  populate: {
+    heroDefaults: { populate: { stats: true } },
+    whyUsFeatures: true,
+    team: true,
+    selectedAttorneys: { populate: { photo: true } },
   },
-  { encodeValuesOnly: true },
-)
+}
 
 // Full attorney roster — the source of truth when no attorneys are curated.
 const { data: roster } = await useAttorneyRoster()
 
-const { data: cat } = await useFetch<any>(`${strapiUrl}/api/service-categories?${categoryQuery}`, {
-  key: `service-category-${slug}`,
-  transform: (r: any) => r?.data?.[0] ?? null,
-})
+const { data: cat } = await useAsyncData(`service-category-${slug}-${locale.value}`, () =>
+  strapiGet('service-categories', categoryQuery, locale.value).then((r) => r?.data?.[0] ?? null),
+)
 
-const { data: def } = await useFetch<any>(`${strapiUrl}/api/service-defaults?${defaultsQuery}`, {
-  key: 'service-defaults',
-  transform: (r: any) => r?.data ?? null,
-})
+const { data: def } = await useAsyncData(`service-defaults-${locale.value}`, () =>
+  strapiGet('service-defaults', defaultsQuery, locale.value).then((r) => r?.data ?? null),
+)
 
 if (!cat.value) {
   throw createError({ statusCode: 404, statusMessage: 'Service category not found', fatal: true })
@@ -90,7 +82,7 @@ const howItWorks = computed(() => {
     heading: w.heading,
     subheading: w.subheading,
     image: strapiMedia(w.image, '/services-page/auto-accidents/image1.webp'),
-    imageAlt: 'Accident Professionals attorney consultation',
+    imageAlt: t('alt.attorneyConsultation'),
     steps: (w.steps ?? []).map((s: any) => ({ number: s.number, title: s.title, description: s.description })),
   }
 })
@@ -100,7 +92,7 @@ const caseTypes = computed(() => {
   return {
     heading: cat.value?.caseTypesHeading,
     subheading: cat.value?.caseTypesSubheading,
-    cta: 'Get Free Consultation',
+    cta: t('cta.freeConsultation'),
     cases: services.map((s: any) => ({
       icon: strapiMedia(s.cardIcon, '/icons/shield.svg'),
       title: s.title,
@@ -132,7 +124,7 @@ const whyUs = computed(() => {
 })
 
 const team = computed(() => ({
-  heading: def.value?.team?.heading ?? 'Our Attorneys',
+  heading: def.value?.team?.heading ?? t('team.heading'),
   subheading: def.value?.team?.subheading ?? '',
   attorneys: def.value?.selectedAttorneys?.length ? def.value.selectedAttorneys : (roster.value ?? []),
 }))
@@ -142,7 +134,7 @@ const steps = computed(() => {
   return {
     heading: s.heading,
     subheading: s.subheading,
-    cta: 'Get Free Consultation',
+    cta: t('cta.freeConsultation'),
     steps: (s.steps ?? []).map((x: any) => ({ number: x.number, icon: x.icon, title: x.title, description: x.description })),
   }
 })
@@ -177,7 +169,7 @@ const ctaBanner = computed(() => {
 usePageSeo(() => cat.value?.seo, { ogImage: () => strapiMedia(cat.value?.hero?.bgImage) })
 useFaqJsonLd(() => faq.value.items)
 
-const canonical = computed(() => cat.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/services/${slug}`)
+const canonical = computed(() => `${siteUrl}${lh(`/services/${slug}`)}`)
 useHead({
   script: [
     {
@@ -187,8 +179,8 @@ useHead({
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://accidentprofessionals.com/' },
-            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://accidentprofessionals.com/services' },
+            { '@type': 'ListItem', position: 1, name: t('nav.home'), item: `${siteUrl}${lh('/')}` },
+            { '@type': 'ListItem', position: 2, name: t('nav.services'), item: `${siteUrl}${lh('/services')}` },
             { '@type': 'ListItem', position: 3, name: cat.value?.title, item: canonical.value },
           ],
         }),
@@ -204,7 +196,7 @@ useScrollReveal()
   <div v-if="cat">
     <HeroSection
       :data="hero"
-      :breadcrumb="[{ label: 'Home', to: '/' }, { label: 'Services', to: '/services' }, { label: cat?.title }]"
+      :breadcrumb="[{ label: $t('nav.home'), to: '/' }, { label: $t('nav.services'), to: '/services' }, { label: cat?.title }]"
     />
     <HowItWorksSection :data="howItWorks" />
     <CaseTypesSection :data="caseTypes" />

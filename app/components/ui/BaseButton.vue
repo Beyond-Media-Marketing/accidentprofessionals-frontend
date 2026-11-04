@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * Reusable CTA button driven by a Strapi `shared.cta` object (or explicit props).
- * Renders a NuxtLink (internal), <a> (external / anchor), or <button> (scrollTo).
+ * Renders an AppLink (internal, locale-aware), <a> (external / anchor), or <button> (scrollTo).
  */
 const props = withDefaults(
   defineProps<{
@@ -54,7 +54,7 @@ function onScroll(e: Event) {
   >
     <slot>{{ label }}</slot>
   </a>
-  <NuxtLink v-else :to="href || '#'" :class="classes">
+  <AppLink v-else :to="href || '#'" :class="classes">
     <slot>{{ label }}</slot>
-  </NuxtLink>
+  </AppLink>
 </template>

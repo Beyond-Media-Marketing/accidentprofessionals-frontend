@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import qs from 'qs'
 import { computed } from 'vue'
 
 definePageMeta({ layout: 'site' })
 
-const { strapiUrl } = useRuntimeConfig().public
+const { locale, t } = useI18n()
 
-const query = qs.stringify({ populate: { seo: { populate: '*' } } }, { encodeValuesOnly: true })
-const { data: page } = await useFetch<any>(`${strapiUrl}/api/privacy-policy?${query}`, {
-  key: 'privacy-policy',
-  transform: (r: any) => r?.data ?? null,
-  default: () => null,
-})
+const { data: page } = await useAsyncData(
+  `privacy-policy-${locale.value}`,
+  () => strapiGet('privacy-policy', { populate: { seo: { populate: '*' } } }, locale.value).then((r) => r?.data ?? null),
+  { default: () => null },
+)
 
-const title = computed(() => page.value?.title || 'Privacy Policy')
+const title = computed(() => page.value?.title || t('nav.privacy'))
 const lastUpdated = computed(() => page.value?.lastUpdated || '')
 const content = computed(() => page.value?.content || '')
 
@@ -26,7 +24,7 @@ useHead({ title: computed(() => page.value?.seo?.metaTitle || `${title.value} | 
     <!-- Header -->
     <section class="bg-cream pb-10 pt-16 md:pt-20 3xl:pt-24">
       <div class="mx-auto w-full max-w-[880px] px-6 sm:px-8">
-        <p class="font-primary text-xs font-semibold uppercase tracking-[0.14em] text-accent">Legal</p>
+        <p class="font-primary text-xs font-semibold uppercase tracking-[0.14em] text-accent">{{ $t('privacy.eyebrow') }}</p>
         <h1 class="mt-3 font-secondary text-[clamp(2rem,4.4vw,3rem)] font-bold leading-[1.08] text-dark">
           {{ title }}
         </h1>

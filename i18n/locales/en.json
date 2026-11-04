@@ -1,0 +1,194 @@
+{
+  "lang": {
+    "label": "Language",
+    "switch": "Choose language"
+  },
+  "header": {
+    "home": "Accident Professionals — Home",
+    "primaryNav": "Primary",
+    "mobileNav": "Mobile",
+    "toggleMenu": "Toggle menu",
+    "hero": "Hero"
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "blog": "Blog",
+    "legalNetwork": "Legal Network",
+    "attorneys": "Attorneys",
+    "georgia": "Georgia",
+    "contact": "Contact",
+    "contactUs": "Contact Us",
+    "privacy": "Privacy Policy"
+  },
+  "cta": {
+    "freeConsultation": "Get Free Consultation",
+    "getFreeConsultation": "Get a Free Consultation",
+    "callNow": "Call Us Now",
+    "readMore": "Read More"
+  },
+  "hero": {
+    "clientsHelped": "1,200+ Clients Helped"
+  },
+  "team": {
+    "heading": "Our Attorneys"
+  },
+  "faq": {
+    "heading": "Frequently Asked Questions"
+  },
+  "location": {
+    "nearbyHeading": "We Also Serve These Cities Near **{city}**",
+    "getHelpIn": "Get Help in {city}"
+  },
+  "attorney": {
+    "attorney": "Attorney",
+    "practiceAreas": "Practice Areas",
+    "experience": "Experience",
+    "languages": "Languages",
+    "location": "Location",
+    "years": "{n} Years",
+    "viewProfile": "View Profile",
+    "yearsPlus": "{n}+ Years"
+  },
+  "profile": {
+    "title": "{name} — AP Legal Network",
+    "credentials": "Education & Credentials",
+    "social": "Profile",
+    "ctaHeading": "Get a Free",
+    "ctaHeadingAccent": "Consultation!",
+    "ctaBody": "We'll guide you through every step, providing the support and expertise you need to secure the justice and compensation you deserve."
+  },
+  "directory": {
+    "eyebrow": "LEGAL NETWORK",
+    "heading": "Meet the Attorneys in",
+    "headingAccent": "Our Network",
+    "subhead": "Every attorney in the AP network has been reviewed before being included — a growing roster of vetted personal injury attorneys across Georgia.",
+    "metaTitle": "Our Attorney Network — Accident Professionals",
+    "metaDescription": "Browse the vetted personal injury attorneys in the Accident Professionals network. Every attorney is reviewed before being included."
+  },
+  "blog": {
+    "heading": "The Accident Professionals",
+    "headingAccent": "Blog",
+    "intro": "Straight-talking guides on what to do after an accident, how claims really work, and how to protect your rights in Georgia.",
+    "allPosts": "All Posts",
+    "empty": "No posts yet — check back soon.",
+    "emptyCategory": "No posts in this category yet.",
+    "readArticle": "Read article",
+    "minRead": "{n} min read",
+    "onThisPage": "On this page",
+    "related": "Related articles",
+    "titleSuffix": "AP Blog",
+    "metaTitle": "Blog — Accident Professionals",
+    "metaDescription": "Insights, guides, and resources on car accidents, truck accidents, premises liability, and personal injury claims from Accident Professionals."
+  },
+  "privacy": {
+    "eyebrow": "Legal"
+  },
+  "caseTypes": {
+    "car": "Car Accidents",
+    "truck": "Truck Accidents",
+    "rideshare": "Rideshare Accidents",
+    "slipFall": "Slip & Fall",
+    "workplace": "Workplace Injuries",
+    "motorcycle": "Motorcycle Accidents",
+    "other": "Other / Not sure"
+  },
+  "form": {
+    "name": "Name",
+    "fullName": "Full name",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "emailAddress": "Email address",
+    "emailPlaceholder": "you{'@'}example.com",
+    "optional": "(optional)",
+    "phone": "Phone number",
+    "phoneNumber": "Phone Number",
+    "countryCode": "Country code",
+    "caseType": "Case type",
+    "select": "Select",
+    "description": "Description",
+    "descriptionPlaceholder": "Write details about your accident here…",
+    "briefPlaceholder": "Briefly describe what happened…",
+    "message": "Message",
+    "messagePlaceholder": "Leave us a message…",
+    "submitConsultation": "Submit Consultation Request",
+    "sending": "Sending…",
+    "agreePrefix": "You agree to our friendly",
+    "privacyPolicy": "privacy policy",
+    "agreeSuffix": ".",
+    "agreeRequired": "Please agree to the privacy policy to continue.",
+    "nameRequired": "Please enter your name.",
+    "verifyFailed": "Verification failed. Please try again.",
+    "success": "Thank you! We'll be in touch shortly.",
+    "errorCall": "Something went wrong. Please call us directly.",
+    "errorSubmit": "Unable to submit. Please call us directly.",
+    "errorRetry": "Something went wrong. Please try again.",
+    "errorRetryCall": "Something went wrong. Please try again or call us directly.",
+    "errorSubmitRetry": "Unable to submit. Please try again or call us directly.",
+    "fiveStars": "5 stars"
+  },
+  "apply": {
+    "firm": "Firm name",
+    "bar": "Georgia bar number",
+    "years": "Years Practicing",
+    "yearsPlaceholder": "e.g. 10",
+    "cities": "Cities Served",
+    "selectAll": "(select all that apply)",
+    "why": "Why Join AP",
+    "whyPlaceholder": "Tell us why you want to be part of the AP network…",
+    "city": "Georgia city",
+    "cityPlaceholder": "e.g. Atlanta",
+    "description": "Accident Description",
+    "agreeRequired": "Please agree to the communication standards to continue.",
+    "attorneySuccess": "Thank you! Your application has been received — we'll be in touch within 2 business days.",
+    "clientSuccess": "Thank you! We'll match you with a Georgia attorney shortly."
+  },
+  "popup": {
+    "eyebrow": "Free Case Review",
+    "heading": "Injured in an Accident?",
+    "subheading": "Tell us what happened and a vetted Georgia attorney will review your case at no cost.",
+    "submit": "Get My Free Case Review",
+    "success": "Thank you — we'll be in touch shortly.",
+    "details": "Accident / injury details",
+    "close": "Close"
+  },
+  "contact": {
+    "trust": "Available 24/7 · No upfront fees · Multilingual support"
+  },
+  "footer": {
+    "builtBy": "Designed & Built by",
+    "viewMap": "View on Google Maps"
+  },
+  "error": {
+    "notFound": "Page not found",
+    "notFoundBody": "The page you're looking for may have moved or no longer exists. Let's get you back on track.",
+    "generic": "Something went wrong",
+    "genericBody": "An unexpected error occurred. Please try again in a moment.",
+    "backHome": "Back to Home",
+    "jumpTo": "Or jump to"
+  },
+  "alt": {
+    "attorneyConsultation": "Accident Professionals attorney consultation",
+    "attorneyHandshake": "Attorney and client shaking hands",
+    "attorneyNetwork": "AP attorney network",
+    "cityNetwork": "{city} personal injury attorney network",
+    "consultation": "Personal injury consultation",
+    "localAttorney": "Local Georgia personal injury attorney",
+    "officeMap": "Office location map",
+    "serviceInGeorgia": "{service} in Georgia",
+    "teamMeeting": "Accident Professionals team meeting with a client",
+    "victimPhone": "Accident victim reviewing their case on the phone"
+  },
+  "aria": {
+    "breadcrumb": "Breadcrumb",
+    "contactCta": "Contact call to action",
+    "attorneyPages": "Attorney pages",
+    "previous": "Previous",
+    "next": "Next",
+    "goTo": "Go to {n}",
+    "prevTestimonials": "Previous testimonials",
+    "nextTestimonials": "Next testimonials",
+    "stars": "{n} stars"
+  }
+}

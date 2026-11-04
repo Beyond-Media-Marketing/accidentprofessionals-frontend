@@ -32,7 +32,7 @@ defineProps<{
       </div>
 
       <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3" :class="(heading || subheading) ? 'mt-12 3xl:mt-16' : ''">
-        <NuxtLink
+        <AppLink
           v-for="(a, i) in attorneys"
           :key="i"
           :to="`/legal-network/attorneys/${a.slug}`"
@@ -43,7 +43,7 @@ defineProps<{
             <div class="aspect-[4/5]">
               <img
                 :src="strapiMedia(a.photo, '/services-page/auto-accidents/image1.webp')"
-                :alt="a.name || 'Attorney'"
+                :alt="a.name || $t('attorney.attorney')"
                 class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
                 decoding="async"
@@ -62,12 +62,12 @@ defineProps<{
             <!-- Stats strip -->
             <div class="absolute inset-x-0 bottom-0 grid grid-cols-2 gap-px bg-white/10">
               <div class="bg-black/55 px-4 py-3 backdrop-blur-sm">
-                <p class="font-secondary text-lg font-bold leading-none text-white">{{ a.yearsExperience }} Years</p>
-                <p class="mt-1 font-primary text-[11px] text-accent">Experience</p>
+                <p class="font-secondary text-lg font-bold leading-none text-white">{{ $t('attorney.years', { n: a.yearsExperience }) }}</p>
+                <p class="mt-1 font-primary text-[11px] text-accent">{{ $t('attorney.experience') }}</p>
               </div>
               <div class="bg-black/55 px-4 py-3 backdrop-blur-sm">
                 <p class="font-secondary text-lg font-bold leading-none text-white">{{ a.languages }}</p>
-                <p class="mt-1 font-primary text-[11px] text-white/60">Languages</p>
+                <p class="mt-1 font-primary text-[11px] text-white/60">{{ $t('attorney.languages') }}</p>
               </div>
             </div>
           </div>
@@ -81,7 +81,7 @@ defineProps<{
             <span
               class="inline-flex shrink-0 items-center gap-1 font-primary text-sm font-semibold text-accent group-hover:underline"
             >
-              View Profile
+              {{ $t('attorney.viewProfile') }}
               <svg class="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
               </svg>
@@ -93,7 +93,7 @@ defineProps<{
             </svg>
             {{ a.location }}
           </p>
-        </NuxtLink>
+        </AppLink>
       </div>
 
       <div v-if="cta?.label" class="mt-12 flex justify-center 3xl:mt-16">

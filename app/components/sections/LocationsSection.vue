@@ -43,10 +43,10 @@ defineProps<{
         <!-- Right: city list — wrapping horizontal flex on mobile, 2-col grid from sm up -->
         <div class="grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-8 sm:gap-y-8 lg:pt-2">
           <template v-for="(city, i) in block.cities ?? []" :key="i">
-            <NuxtLink v-if="city.href" :to="city.href" class="group flex items-center gap-3">
+            <AppLink v-if="city.href" :to="city.href" class="group flex items-center gap-3">
               <img src="/icons/location-pin.png" alt="" class="h-11 w-11 shrink-0" loading="lazy" />
               <span class="font-primary text-base text-white transition-colors group-hover:text-accent">{{ city.name }}</span>
-            </NuxtLink>
+            </AppLink>
             <div v-else class="flex items-center gap-3">
               <img src="/icons/location-pin.png" alt="" class="h-11 w-11 shrink-0" loading="lazy" />
               <span class="font-primary text-base text-white">{{ city.name }}</span>

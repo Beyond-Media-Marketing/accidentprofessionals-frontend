@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 const props = defineProps<{ html?: string | null }>()
-// Ensure every <h2> has an id so the table-of-contents anchors resolve.
-const rendered = computed(() => addHeadingIds(props.html))
+const { locale } = useI18n()
+// Ensure every <h2> has an id so the table-of-contents anchors resolve, and keep
+// internal links inside the current language (/es/…) on the Spanish site.
+const rendered = computed(() => localizeHtmlLinks(addHeadingIds(props.html), locale.value))
 </script>
 
 <template>

@@ -1,27 +1,21 @@
 <script setup lang="ts">
-import qs from 'qs'
-
 definePageMeta({ layout: 'site' })
 
-const { strapiUrl } = useRuntimeConfig().public
+const { locale } = useI18n()
 
-const populate = qs.stringify(
-  {
-    populate: {
-      hero: { populate: { bgImage: true } },
-      formSection: { populate: { mapImage: true } },
-      reachUs: { populate: { cta: true, features: { populate: { icon: true } } } },
-      closingCta: { populate: { cta: true } },
-      seo: { populate: '*' },
-    },
+const query = {
+  populate: {
+    hero: { populate: { bgImage: true } },
+    formSection: { populate: { mapImage: true } },
+    reachUs: { populate: { cta: true, features: { populate: { icon: true } } } },
+    closingCta: { populate: { cta: true } },
+    seo: { populate: '*' },
   },
-  { encodeValuesOnly: true },
-)
+}
 
-const { data: page } = await useFetch<any>(`${strapiUrl}/api/contact-page?${populate}`, {
-  key: 'contact-page',
-  transform: (r: any) => r?.data ?? null,
-})
+const { data: page } = await useAsyncData(`contact-page-${locale.value}`, () =>
+  strapiGet('contact-page', query, locale.value).then((r) => r?.data ?? null),
+)
 
 usePageSeo(() => page.value?.seo)
 </script>

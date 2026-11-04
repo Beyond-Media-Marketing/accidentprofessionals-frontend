@@ -8,9 +8,12 @@ export function renderInlineMarkdown(input?: string | null): string {
   if (!input) return ''
   let s = input.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
+  // Internal links stay in the visitor's language (/es/… on the Spanish site).
+  const locale = tryUseNuxtApp()?.$i18n?.locale?.value ?? 'en'
+
   // Links: [label](href) — open external (http) links in a new tab.
   s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, href) => {
-    const safeHref = String(href).replace(/"/g, '%22')
+    const safeHref = localizeHref(String(href), locale).replace(/"/g, '%22')
     const external = /^https?:\/\//i.test(href)
     const attrs = external ? ' target="_blank" rel="noopener"' : ''
     return `<a href="${safeHref}"${attrs}>${label}</a>`

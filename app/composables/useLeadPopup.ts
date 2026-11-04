@@ -6,10 +6,10 @@
  * able to break a page it's mounted on.
  */
 export function useLeadPopup() {
-  const { strapiUrl } = useRuntimeConfig().public
+  const { locale } = useNuxtApp().$i18n
   return useAsyncData(
-    'lead-popup',
-    () => $fetch<any>(`${strapiUrl}/api/lead-popup`).then((r: any) => r?.data ?? null).catch(() => null),
+    `lead-popup-${locale.value}`,
+    () => strapiGet('lead-popup', {}, locale.value).then((r) => r?.data ?? null),
     { default: () => null },
   )
 }

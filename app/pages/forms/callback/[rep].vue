@@ -9,6 +9,8 @@
  * so a new rep/affiliate/store can be handed a working link with no deploy.
  */
 definePageMeta({ layout: 'form' })
+// Not localized — the call-back form has its own EN/ES toggle, so there is no /es/forms/* route.
+defineI18nRoute(false)
 
 const route = useRoute()
 const rep = computed(() => String(route.params.rep || '').toLowerCase())

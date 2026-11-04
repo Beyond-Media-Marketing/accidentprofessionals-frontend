@@ -4,6 +4,9 @@
  * The @nuxtjs/sitemap module auto-discovers static pages; this endpoint adds the
  * content-driven routes (service categories + sub-services, city pages, attorney
  * profiles). Wired in via `sitemap.sources` in nuxt.config.
+ *
+ * Every URL is flagged `_i18nTransform`, so the sitemap module also emits its
+ * /es/ twin with hreflang alternates (slugs are shared across languages).
  */
 export default defineSitemapEventHandler(async () => {
   const strapiUrl = process.env.STRAPI_URL ?? 'http://localhost:1337'
@@ -17,7 +20,7 @@ export default defineSitemapEventHandler(async () => {
     }
   }
 
-  const urls: { loc: string; priority?: number; changefreq?: string }[] = []
+  const urls: { loc: string; priority?: number; changefreq?: string; _i18nTransform?: boolean }[] = []
 
   // Service categories → /services/[category]
   const categories = await get('/api/service-categories?fields[0]=slug&pagination[pageSize]=100')
@@ -68,5 +71,5 @@ export default defineSitemapEventHandler(async () => {
     if (p?.category?.slug && p?.slug) urls.push({ loc: `/blogs/${catPath(p.category)}/${p.slug}`, priority: 0.6, changefreq: 'weekly' })
   }
 
-  return urls
+  return urls.map((u) => ({ ...u, _i18nTransform: true }))
 })

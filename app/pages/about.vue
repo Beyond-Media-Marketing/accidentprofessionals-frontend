@@ -1,32 +1,26 @@
 <script setup lang="ts">
-import qs from 'qs'
-
 definePageMeta({ layout: 'site' })
 
-const { strapiUrl } = useRuntimeConfig().public
+const { locale } = useI18n()
 
-const populate = qs.stringify(
-  {
-    populate: {
-      hero: { populate: { primaryCta: true, secondaryCta: true, bgImage: true } },
-      heroStats: true,
-      problem: { populate: { cta: true, image: true } },
-      whatWeDo: { populate: { cta: true, steps: true } },
-      whyMatters: { populate: { cta: true, image: true } },
-      whoWeWork: { populate: { cards: { populate: { cta: true } } } },
-      areasServe: { populate: { cities: true, cta: true } },
-      faq: { populate: { items: true } },
-      closingCta: { populate: { cta: true } },
-      seo: { populate: '*' },
-    },
+const query = {
+  populate: {
+    hero: { populate: { primaryCta: true, secondaryCta: true, bgImage: true } },
+    heroStats: true,
+    problem: { populate: { cta: true, image: true } },
+    whatWeDo: { populate: { cta: true, steps: true } },
+    whyMatters: { populate: { cta: true, image: true } },
+    whoWeWork: { populate: { cards: { populate: { cta: true } } } },
+    areasServe: { populate: { cities: true, cta: true } },
+    faq: { populate: { items: true } },
+    closingCta: { populate: { cta: true } },
+    seo: { populate: '*' },
   },
-  { encodeValuesOnly: true },
-)
+}
 
-const { data: page } = await useFetch<any>(`${strapiUrl}/api/about-page?${populate}`, {
-  key: 'about-page',
-  transform: (r: any) => r?.data ?? null,
-})
+const { data: page } = await useAsyncData(`about-page-${locale.value}`, () =>
+  strapiGet('about-page', query, locale.value).then((r) => r?.data ?? null),
+)
 
 usePageSeo(() => page.value?.seo)
 </script>
@@ -50,7 +44,7 @@ usePageSeo(() => page.value?.seo)
     <MediaTextSection
       :block="page.problem"
       :image="strapiMedia(page.problem?.image, '/about-images/problem.png')"
-      image-alt="Accident victim reviewing their case on the phone"
+      :image-alt="$t('alt.victimPhone')"
     />
 
     <StepsRowSection :block="page.whatWeDo" />
@@ -58,7 +52,7 @@ usePageSeo(() => page.value?.seo)
     <MediaTextSection
       :block="page.whyMatters"
       :image="strapiMedia(page.whyMatters?.image, '/about-images/why-matters.png')"
-      image-alt="The Accident Professionals team meeting with a client"
+      :image-alt="$t('alt.teamMeeting')"
     />
 
     <ProcessCardsSection :block="page.whoWeWork" />

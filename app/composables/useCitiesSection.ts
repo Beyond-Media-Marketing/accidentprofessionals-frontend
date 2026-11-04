@@ -1,5 +1,3 @@
-import qs from 'qs'
-
 /**
  * The cities-we-serve block, fetched ONCE from the shared `cities-section`
  * single-type and cached per request.
@@ -13,19 +11,12 @@ import qs from 'qs'
  * given Strapi environment.
  */
 export function useCitiesSection() {
-  const { strapiUrl } = useRuntimeConfig().public
-
-  const query = qs.stringify(
-    { populate: { regions: { populate: { cities: true } }, cta: true } },
-    { encodeValuesOnly: true },
-  )
+  const { locale } = useNuxtApp().$i18n
+  const query = { populate: { regions: { populate: { cities: true } }, cta: true } }
 
   return useAsyncData(
-    'cities-section',
-    () =>
-      $fetch<any>(`${strapiUrl}/api/cities-section?${query}`)
-        .then((r: any) => r?.data ?? null)
-        .catch(() => null),
+    `cities-section-${locale.value}`,
+    () => strapiGet('cities-section', query, locale.value).then((r) => r?.data ?? null),
     { default: () => null },
   )
 }

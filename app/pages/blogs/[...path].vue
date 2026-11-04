@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import qs from 'qs'
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 definePageMeta({ layout: 'site' })
 
 const route = useRoute()
-const { strapiUrl, siteUrl } = useRuntimeConfig().public
+const { siteUrl } = useRuntimeConfig().public
+const { locale, t } = useI18n()
+const lh = useLocaleHref()
 const segs = computed<string[]>(() => (route.params.path as string[]) || [])
 
 const catPopulate = { fields: ['name', 'slug'], populate: { parent: { fields: ['name', 'slug'] } } }
@@ -17,16 +18,17 @@ const cardPopulate = { coverImage: { fields: ['url', 'alternativeText', 'updated
 // posts rail would otherwise ship whole articles inside the hydration payload.
 const cardFields = ['title', 'slug', 'excerpt', 'publishedDate', 'coverUrl', 'featured']
 
-const { data } = await useAsyncData(`blogs-${segs.value.join('/')}`, async () => {
+const lang = locale.value
+const { data } = await useAsyncData(`blogs-${segs.value.join('/')}-${lang}`, async () => {
   const s = segs.value
   const last = s[s.length - 1]
 
   const getCat = async (slug: string) =>
-    (await $fetch<any>(`${strapiUrl}/api/blog-categories?${qs.stringify({ filters: { slug: { $eq: slug } }, populate: { parent: { fields: ['name', 'slug'] }, seo: { populate: '*' } } }, { encodeValuesOnly: true })}`).catch(() => null))?.data?.[0] ?? null
+    (await strapiGet('blog-categories', { filters: { slug: { $eq: slug } }, populate: { parent: { fields: ['name', 'slug'] }, seo: { populate: '*' } } }, lang))?.data?.[0] ?? null
   const getPost = async (slug: string) =>
-    (await $fetch<any>(`${strapiUrl}/api/blog-posts?${qs.stringify({ filters: { slug: { $eq: slug } }, populate: { coverImage: true, category: catPopulate, midCta: { populate: { cta: true } }, endCta: { populate: { cta: true } }, faq: { populate: { items: true } }, seo: { populate: '*' } } }, { encodeValuesOnly: true })}`).catch(() => null))?.data?.[0] ?? null
+    (await strapiGet('blog-posts', { filters: { slug: { $eq: slug } }, populate: { coverImage: true, category: catPopulate, midCta: { populate: { cta: true } }, endCta: { populate: { cta: true } }, faq: { populate: { items: true } }, seo: { populate: '*' } } }, lang))?.data?.[0] ?? null
 
-  const catsAll = (await $fetch<any>(`${strapiUrl}/api/blog-categories?${qs.stringify({ sort: ['order:asc', 'name:asc'], populate: { parent: { fields: ['slug'] } }, pagination: { pageSize: 100 } }, { encodeValuesOnly: true })}`).catch(() => null))?.data ?? []
+  const catsAll = (await strapiGet<any[]>('blog-categories', { sort: ['order:asc', 'name:asc'], populate: { parent: { fields: ['slug'] } }, pagination: { pageSize: 100 } }, lang))?.data ?? []
 
   let mode = 'post', post: any = null, category: any = null
   if (s.length === 1) {
@@ -44,10 +46,10 @@ const { data } = await useAsyncData(`blogs-${segs.value.join('/')}`, async () =>
     // A parent category includes its own posts + those of its child categories.
     const childSlugs = catsAll.filter((c: any) => c.parent?.slug === category.slug).map((c: any) => c.slug)
     const slugSet = [category.slug, ...childSlugs]
-    posts = (await $fetch<any>(`${strapiUrl}/api/blog-posts?${qs.stringify({ filters: { category: { slug: { $in: slugSet } } }, sort: ['publishedDate:desc'], fields: cardFields, populate: cardPopulate, pagination: { pageSize: 100 } }, { encodeValuesOnly: true })}`).catch(() => null))?.data ?? []
+    posts = (await strapiGet<any[]>('blog-posts', { filters: { category: { slug: { $in: slugSet } } }, sort: ['publishedDate:desc'], fields: cardFields, populate: cardPopulate, pagination: { pageSize: 100 } }, lang))?.data ?? []
   }
   if (mode === 'post' && post) {
-    related = (await $fetch<any>(`${strapiUrl}/api/blog-posts?${qs.stringify({ filters: { category: { slug: { $eq: post.category?.slug } }, slug: { $ne: post.slug } }, sort: ['publishedDate:desc'], fields: cardFields, populate: cardPopulate, pagination: { pageSize: 3 } }, { encodeValuesOnly: true })}`).catch(() => null))?.data ?? []
+    related = (await strapiGet<any[]>('blog-posts', { filters: { category: { slug: { $eq: post.category?.slug } }, slug: { $ne: post.slug } }, sort: ['publishedDate:desc'], fields: cardFields, populate: cardPopulate, pagination: { pageSize: 3 } }, lang))?.data ?? []
   }
   return { mode, post, category, posts, related, cats: catsAll }
 })
@@ -67,14 +69,14 @@ const catPathOf = (c: any) => (!c?.slug ? '' : c.parent?.slug ? `${c.parent.slug
 
 // ── Post view helpers ──
 const cover = computed(() => strapiMedia(post.value?.coverImage, post.value?.coverUrl))
-const date = computed(() => post.value?.publishedDate ? new Date(post.value.publishedDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '')
+const date = computed(() => post.value?.publishedDate ? new Date(post.value.publishedDate).toLocaleDateString(locale.value === 'es' ? 'es-US' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : '')
 const toc = computed(() => tocFromHtml(`${addHeadingIds(post.value?.content)}${addHeadingIds(post.value?.contentTwo)}`))
 const readingTime = computed(() => {
   const text = `${post.value?.content || ''} ${post.value?.contentTwo || ''}`.replace(/<[^>]+>/g, ' ')
   return Math.max(1, Math.round((text.split(/\s+/).filter(Boolean).length) / 200))
 })
 const postUrl = computed(() => `/blogs/${catPathOf(post.value?.category)}/${post.value?.slug}`)
-const canonical = computed(() => post.value?.seo?.canonicalUrl || `${siteUrl}${postUrl.value}/`)
+const canonical = computed(() => (locale.value === 'en' && post.value?.seo?.canonicalUrl) || `${siteUrl}${lh(postUrl.value)}`)
 
 // An article shares with its own cover image; category listings (and posts with
 // no cover) fall through to the global default OG image.
@@ -82,23 +84,23 @@ usePageSeo(
   () => (mode.value === 'post' ? post.value?.seo : category.value?.seo),
   { ogImage: () => cover.value },
 )
-useHead(() => ({ title: (mode.value === 'post' ? post.value?.seo?.metaTitle || `${post.value?.title} — AP Blog` : category.value?.seo?.metaTitle || `${category.value?.name} — AP Blog`) }))
+useHead(() => ({ title: (mode.value === 'post' ? post.value?.seo?.metaTitle || `${post.value?.title} — ${t('blog.titleSuffix')}` : category.value?.seo?.metaTitle || `${category.value?.name} — ${t('blog.titleSuffix')}`) }))
 // Breadcrumb trail: Home → Blog → [parent category] → category → post.
 const breadcrumbLd = computed(() => {
   const cat = post.value?.category
   const items: any[] = [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: `${siteUrl}/blogs` },
+    { '@type': 'ListItem', position: 1, name: t('nav.home'), item: `${siteUrl}${lh('/')}` },
+    { '@type': 'ListItem', position: 2, name: t('nav.blog'), item: `${siteUrl}${lh('/blogs')}` },
   ]
-  if (cat?.parent?.slug) items.push({ '@type': 'ListItem', position: items.length + 1, name: cat.parent.name, item: `${siteUrl}/blogs/${cat.parent.slug}` })
-  if (cat?.slug) items.push({ '@type': 'ListItem', position: items.length + 1, name: cat.name, item: `${siteUrl}/blogs/${catPathOf(cat)}` })
+  if (cat?.parent?.slug) items.push({ '@type': 'ListItem', position: items.length + 1, name: cat.parent.name, item: `${siteUrl}${lh(`/blogs/${cat.parent.slug}`)}` })
+  if (cat?.slug) items.push({ '@type': 'ListItem', position: items.length + 1, name: cat.name, item: `${siteUrl}${lh(`/blogs/${catPathOf(cat)}`)}` })
   items.push({ '@type': 'ListItem', position: items.length + 1, name: post.value?.title, item: canonical.value })
   return { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items }
 })
 
 useHead({
   script: computed(() => mode.value !== 'post' || !post.value ? [] : [
-    { type: 'application/ld+json', innerHTML: JSON.stringify({ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.value.title, image: cover.value, datePublished: post.value.publishedDate, dateModified: post.value.updatedAt || post.value.publishedDate, author: { '@type': 'Organization', name: post.value.author || 'Accident Professionals' }, publisher: { '@type': 'Organization', name: 'Accident Professionals' }, mainEntityOfPage: canonical.value }) },
+    { type: 'application/ld+json', innerHTML: JSON.stringify({ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: post.value.title, inLanguage: locale.value === 'es' ? 'es-US' : 'en-US', image: cover.value, datePublished: post.value.publishedDate, dateModified: post.value.updatedAt || post.value.publishedDate, author: { '@type': 'Organization', name: post.value.author || 'Accident Professionals' }, publisher: { '@type': 'Organization', name: 'Accident Professionals' }, mainEntityOfPage: canonical.value }) },
     { type: 'application/ld+json', innerHTML: JSON.stringify(breadcrumbLd.value) },
   ]) as any,
 })
@@ -134,8 +136,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
             class="mb-5 flex justify-center"
             variant="onDark"
             :items="[
-              { label: 'Home', to: '/' },
-              { label: 'Blog', to: '/blogs' },
+              { label: $t('nav.home'), to: '/' },
+              { label: $t('nav.blog'), to: '/blogs' },
               ...(category.parent ? [{ label: category.parent.name, to: `/blogs/${category.parent.slug}` }] : []),
               { label: category.name },
             ]"
@@ -148,13 +150,13 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
       <section class="section bg-cream">
         <div class="site-container">
           <div class="mb-10 flex flex-wrap justify-center gap-2.5 3xl:mb-14">
-            <NuxtLink to="/blogs" class="rounded-pill border border-dark/10 bg-white px-5 py-2.5 font-primary text-sm font-semibold text-dark transition-colors hover:border-accent hover:text-accent">All Posts</NuxtLink>
-            <NuxtLink v-for="c in cats.filter((x:any) => !x.parent)" :key="c.slug" :to="`/blogs/${c.slug}`" class="rounded-pill px-5 py-2.5 font-primary text-sm font-semibold transition-colors" :class="c.slug === category.slug || c.slug === category.parent?.slug ? 'bg-dark text-white' : 'border border-dark/10 bg-white text-dark hover:border-accent hover:text-accent'">{{ c.name }}</NuxtLink>
+            <AppLink to="/blogs" class="rounded-pill border border-dark/10 bg-white px-5 py-2.5 font-primary text-sm font-semibold text-dark transition-colors hover:border-accent hover:text-accent">{{ $t('blog.allPosts') }}</AppLink>
+            <AppLink v-for="c in cats.filter((x:any) => !x.parent)" :key="c.slug" :to="`/blogs/${c.slug}`" class="rounded-pill px-5 py-2.5 font-primary text-sm font-semibold transition-colors" :class="c.slug === category.slug || c.slug === category.parent?.slug ? 'bg-dark text-white' : 'border border-dark/10 bg-white text-dark hover:border-accent hover:text-accent'">{{ c.name }}</AppLink>
           </div>
           <div v-if="posts.length" class="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
             <BlogCard v-for="p in posts" :key="p.slug" :post="p" />
           </div>
-          <p v-else class="py-16 text-center font-primary text-muted">No posts in this category yet.</p>
+          <p v-else class="py-16 text-center font-primary text-muted">{{ $t('blog.emptyCategory') }}</p>
         </div>
       </section>
     </template>
@@ -173,8 +175,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
             class="mb-5"
             variant="onDark"
             :items="[
-              { label: 'Home', to: '/' },
-              { label: 'Blog', to: '/blogs' },
+              { label: $t('nav.home'), to: '/' },
+              { label: $t('nav.blog'), to: '/blogs' },
               ...(post.category?.parent ? [{ label: post.category.parent.name, to: `/blogs/${post.category.parent.slug}` }] : []),
               ...(post.category ? [{ label: post.category.name, to: `/blogs/${catPathOf(post.category)}` }] : []),
               { label: post.title },
@@ -184,7 +186,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
             <h1 class="font-secondary text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.1] text-white [text-shadow:0_2px_24px_rgba(0,0,0,0.35)]">{{ post.title }}</h1>
             <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 font-primary text-sm text-white/75">
               <span v-if="date">{{ date }}</span>
-              <span>{{ readingTime }} min read</span>
+              <span>{{ $t('blog.minRead', { n: readingTime }) }}</span>
             </div>
           </div>
         </div>
@@ -201,7 +203,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
               <BlogCtaBlock :block="post.endCta" dark />
 
               <div v-if="post.faq?.items?.length" class="mt-12">
-                <h2 class="mb-6 font-secondary text-2xl font-bold text-dark 3xl:text-3xl">{{ post.faq.heading || 'Frequently Asked Questions' }}</h2>
+                <h2 class="mb-6 font-secondary text-2xl font-bold text-dark 3xl:text-3xl">{{ post.faq.heading || $t('faq.heading') }}</h2>
                 <div class="flex flex-col gap-3">
                   <details v-for="(item, i) in post.faq.items" :key="i" class="group overflow-hidden rounded-2xl bg-white">
                     <summary class="flex cursor-pointer items-center justify-between gap-4 px-6 py-5 font-primary text-base font-semibold text-dark marker:content-none">
@@ -216,7 +218,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
             <aside v-if="toc.length" class="hidden lg:block">
               <div class="sticky top-24">
-                <p class="mb-4 font-primary text-xs font-semibold uppercase tracking-wider text-muted">On this page</p>
+                <p class="mb-4 font-primary text-xs font-semibold uppercase tracking-wider text-muted">{{ $t('blog.onThisPage') }}</p>
                 <nav class="flex flex-col gap-2.5 border-l border-dark/10 pl-4">
                   <a v-for="h in toc" :key="h.id" :href="`#${h.id}`" class="font-primary text-sm leading-snug transition-colors" :class="activeId === h.id ? 'font-semibold text-accent' : 'text-muted hover:text-dark'">{{ h.text }}</a>
                 </nav>
@@ -228,7 +230,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
       <section v-if="related.length" class="section bg-white">
         <div class="site-container">
-          <h2 class="mb-10 font-secondary text-2xl font-bold text-dark sm:text-3xl 3xl:mb-12">Related articles</h2>
+          <h2 class="mb-10 font-secondary text-2xl font-bold text-dark sm:text-3xl 3xl:mb-12">{{ $t('blog.related') }}</h2>
           <div class="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">
             <BlogCard v-for="p in related" :key="p.slug" :post="p" />
           </div>

@@ -19,7 +19,7 @@
 
           <div class="contact__field">
             <label for="cf-name" class="contact__label"
-              >Full name <span class="contact__req">*</span></label
+              >{{ $t("form.fullName") }} <span class="contact__req">*</span></label
             >
             <input
               id="cf-name"
@@ -27,14 +27,14 @@
               type="text"
               name="name"
               class="contact__input"
-              placeholder="Full name"
+              :placeholder="$t('form.fullName')"
               required
             />
           </div>
 
           <div class="contact__field">
             <label for="cf-email" class="contact__label"
-              >Email <span class="contact__req">*</span></label
+              >{{ $t("form.email") }} <span class="contact__req">*</span></label
             >
             <input
               id="cf-email"
@@ -42,13 +42,13 @@
               type="email"
               name="email"
               class="contact__input"
-              placeholder="you@company.com"
+              :placeholder="$t('form.emailPlaceholder')"
               required
             />
           </div>
 
           <div class="contact__field">
-            <label for="cf-phone" class="contact__label">Phone number</label>
+            <label for="cf-phone" class="contact__label">{{ $t("form.phone") }}</label>
             <AppPhoneInput
               v-model:phone="form.phone"
               v-model:code="form.countryCode"
@@ -58,7 +58,7 @@
           </div>
 
           <div class="contact__field">
-            <label for="cf-case" class="contact__label">Case type</label>
+            <label for="cf-case" class="contact__label">{{ $t("form.caseType") }}</label>
             <div class="contact__select-wrap">
               <select
                 id="cf-case"
@@ -66,7 +66,7 @@
                 name="case_type"
                 class="contact__input contact__input--select"
               >
-                <option value="" disabled>Select</option>
+                <option value="" disabled>{{ $t("form.select") }}</option>
                 <option
                   v-for="opt in data.caseOptions"
                   :key="opt.value"
@@ -91,13 +91,13 @@
           </div>
 
           <div class="contact__field">
-            <label for="cf-desc" class="contact__label">Description</label>
+            <label for="cf-desc" class="contact__label">{{ $t("form.description") }}</label>
             <textarea
               id="cf-desc"
               v-model="form.message"
               name="message"
               class="contact__input contact__input--textarea"
-              placeholder="Write details about your accident here...."
+              :placeholder="$t('form.descriptionPlaceholder')"
             />
           </div>
 
@@ -109,10 +109,10 @@
               class="contact__checkbox"
             />
             <span
-              >You agree to our friendly
-              <a href="/privacy-policy" class="contact__privacy-link"
-                >privacy policy</a
-              >.</span
+              >{{ $t("form.agreePrefix") }}
+              <AppLink to="/privacy-policy" class="contact__privacy-link"
+                >{{ $t("form.privacyPolicy") }}</AppLink
+              >{{ $t("form.agreeSuffix") }}</span
             >
           </label>
 
@@ -125,7 +125,7 @@
             class="contact__submit"
             :disabled="!canSubmit"
           >
-            {{ loading ? "Sending…" : data.cta }}
+            {{ loading ? $t("form.sending") : data.cta }}
             <img
               v-if="!loading"
               src="/services-page/auto-accidents/arrow-black.svg"
@@ -136,15 +136,15 @@
           </AppButton>
 
           <p v-if="success" class="contact__success" role="status">
-            Thank you! We'll be in touch shortly.
+            {{ $t("form.success") }}
           </p>
           <p v-if="formError" class="contact__error" role="alert">
-            Something went wrong. Please try again.
+            {{ $t("form.errorRetry") }}
           </p>
         </form>
 
         <p class="contact__trust">
-          Available 24/7 · No upfront fees · Multilingual support
+          {{ $t("contact.trust") }}
         </p>
       </div>
 
@@ -152,7 +152,7 @@
       <div class="contact__right reveal reveal-delay-2">
         <img
           src="/services-page/auto-accidents/image-end.webp"
-          alt="Attorney consultation"
+          :alt="$t('alt.attorneyConsultation')"
           class="contact__image"
           loading="lazy"
         />
@@ -170,6 +170,7 @@ import { useTurnstile } from "../../composables/useTurnstile";
 
 const props = defineProps({ data: { type: Object, required: true } });
 const data = props.data as any;
+const { language, subject } = useFormLanguage();
 const config = useRuntimeConfig();
 const route = useRoute();
 const sectionRef = ref<HTMLElement | null>(null);
@@ -229,13 +230,14 @@ async function submit() {
       body: JSON.stringify({
         access_key: config.public.web3FormsKeyLeads || config.public.web3FormsKey,
         form_id: "contact_form",
-        subject: data.formSubject,
+        subject: subject(data.formSubject),
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
         case_type: caseLabel(form.caseType),
         message: form.message,
         page: document.title,
+        language: language.value,
       }),
     });
     const json = await res.json();
@@ -256,7 +258,7 @@ async function submit() {
     }
   } catch {
     formError.value = true;
-    resetHCaptcha();
+    resetTurnstile();
   } finally {
     loading.value = false;
   }

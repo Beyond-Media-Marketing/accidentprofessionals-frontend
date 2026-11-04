@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import qs from 'qs'
 import { computed } from 'vue'
 
 definePageMeta({ layout: 'site' })
 
 const route = useRoute()
 const slug = String(route.params.slug)
-const { strapiUrl, siteUrl } = useRuntimeConfig().public
+const { siteUrl } = useRuntimeConfig().public
+const { locale, t } = useI18n()
+const lh = useLocaleHref()
 
-const query = qs.stringify(
-  { filters: { slug: { $eq: slug } }, populate: { photo: true, socials: true, credentials: true, seo: { populate: '*' } } },
-  { encodeValuesOnly: true },
+const query = { filters: { slug: { $eq: slug } }, populate: { photo: true, socials: true, credentials: true, seo: { populate: '*' } } }
+
+const { data: attorney } = await useAsyncData(`attorney-${slug}-${locale.value}`, () =>
+  strapiGet('attorneys', query, locale.value).then((r) => r?.data?.[0] ?? null),
 )
-
-const { data: attorney } = await useFetch<any>(`${strapiUrl}/api/attorneys?${query}`, {
-  key: `attorney-${slug}`,
-  transform: (r: any) => r?.data?.[0] ?? null,
-})
 
 if (!attorney.value) {
   throw createError({ statusCode: 404, statusMessage: 'Attorney not found', fatal: true })
@@ -24,20 +21,17 @@ if (!attorney.value) {
 
 // Shared profile labels + CTA come from the CMS (legal-network-page). Falls back
 // to sensible defaults until the `attorneyProfile` field is deployed to Cloud.
-const profileQuery = qs.stringify(
-  { populate: { attorneyProfile: { populate: { requestCta: true } } } },
-  { encodeValuesOnly: true },
+const profileQuery = { populate: { attorneyProfile: { populate: { requestCta: true } } } }
+const { data: profileData } = await useAsyncData(
+  `attorney-profile-labels-${locale.value}`,
+  () => strapiGet('legal-network-page', profileQuery, locale.value).then((r) => r?.data?.attorneyProfile ?? null),
+  { default: () => null },
 )
-const { data: profileData } = await useFetch<any>(`${strapiUrl}/api/legal-network-page?${profileQuery}`, {
-  key: 'attorney-profile-labels',
-  transform: (r: any) => r?.data?.attorneyProfile ?? null,
-  default: () => null,
-})
 const profile = computed<any>(() => profileData.value ?? {})
 
 usePageSeo(() => attorney.value?.seo)
 useHead({
-  title: computed(() => attorney.value?.seo?.metaTitle || `${attorney.value?.name} — AP Legal Network`),
+  title: computed(() => attorney.value?.seo?.metaTitle || t('profile.title', { name: attorney.value?.name })),
 })
 
 const firstName = computed(() => attorney.value?.name?.split(' ')?.[0] ?? '')
@@ -50,7 +44,7 @@ const paragraphs = computed<string[]>(() =>
 )
 
 const socialLabel = (s: any) =>
-  s?.label || (s?.platform ? s.platform.charAt(0).toUpperCase() + s.platform.slice(1) : 'Profile')
+  s?.label || (s?.platform ? s.platform.charAt(0).toUpperCase() + s.platform.slice(1) : t('profile.social'))
 
 // Person structured data for SEO.
 // NOTE: use `Person`, not `Attorney`. Schema.org's Attorney inherits from
@@ -79,7 +73,7 @@ useHead({
           email: attorney.value?.email || undefined,
           telephone: attorney.value?.phone || undefined,
           sameAs: socials.value.length ? socials.value.map((s) => s.url) : undefined,
-          url: `${siteUrl}/legal-network/attorneys/${slug}`,
+          url: `${siteUrl}${lh(`/legal-network/attorneys/${slug}`)}`,
         }),
       ),
     },
@@ -90,10 +84,10 @@ useHead({
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
-            { '@type': 'ListItem', position: 2, name: 'Legal Network', item: `${siteUrl}/legal-network` },
-            { '@type': 'ListItem', position: 3, name: 'Attorneys', item: `${siteUrl}/legal-network/attorneys` },
-            { '@type': 'ListItem', position: 4, name: attorney.value?.name, item: `${siteUrl}/legal-network/attorneys/${slug}` },
+            { '@type': 'ListItem', position: 1, name: t('nav.home'), item: `${siteUrl}${lh('/')}` },
+            { '@type': 'ListItem', position: 2, name: t('nav.legalNetwork'), item: `${siteUrl}${lh('/legal-network')}` },
+            { '@type': 'ListItem', position: 3, name: t('nav.attorneys'), item: `${siteUrl}${lh('/legal-network/attorneys')}` },
+            { '@type': 'ListItem', position: 4, name: attorney.value?.name, item: `${siteUrl}${lh(`/legal-network/attorneys/${slug}`)}` },
           ],
         }),
       ),
@@ -110,9 +104,9 @@ useHead({
         <Breadcrumb
           class="mb-6"
           :items="[
-            { label: 'Home', to: '/' },
-            { label: 'Legal Network', to: '/legal-network' },
-            { label: 'Attorneys', to: '/legal-network/attorneys' },
+            { label: $t('nav.home'), to: '/' },
+            { label: $t('nav.legalNetwork'), to: '/legal-network' },
+            { label: $t('nav.attorneys'), to: '/legal-network/attorneys' },
             { label: attorney.name },
           ]"
         />
@@ -138,7 +132,7 @@ useHead({
                 :key="i"
                 class="font-secondary text-sm font-bold leading-snug text-white"
               >{{ t }}</p>
-              <p class="mt-1 font-primary text-[11px] uppercase tracking-wide text-accent">Practice Areas</p>
+              <p class="mt-1 font-primary text-[11px] uppercase tracking-wide text-accent">{{ $t('attorney.practiceAreas') }}</p>
             </div>
 
             <!-- years of experience — middle, inset from the edge -->
@@ -146,8 +140,8 @@ useHead({
               v-if="attorney.yearsExperience"
               class="absolute right-6 top-[46%] rounded-2xl bg-[#969696]/[0.19] px-4 py-3 text-left backdrop-blur-[50px] lg:right-10"
             >
-              <p class="font-secondary text-xl font-bold leading-none text-white">{{ attorney.yearsExperience }} Years</p>
-              <p class="mt-1 font-primary text-[11px] uppercase tracking-wide text-accent">Experience</p>
+              <p class="font-secondary text-xl font-bold leading-none text-white">{{ $t('attorney.years', { n: attorney.yearsExperience }) }}</p>
+              <p class="mt-1 font-primary text-[11px] uppercase tracking-wide text-accent">{{ $t('attorney.experience') }}</p>
             </div>
 
             <!-- languages — lower, back at the right edge -->
@@ -156,7 +150,7 @@ useHead({
               class="absolute bottom-8 right-3 rounded-2xl bg-[#969696]/[0.19] px-4 py-3 text-left backdrop-blur-[50px] lg:-right-4"
             >
               <p class="font-secondary text-base font-bold leading-tight text-white">{{ attorney.languages }}</p>
-              <p class="mt-1 font-primary text-[11px] uppercase tracking-wide text-accent">Languages</p>
+              <p class="mt-1 font-primary text-[11px] uppercase tracking-wide text-accent">{{ $t('attorney.languages') }}</p>
             </div>
           </div>
 
@@ -192,7 +186,7 @@ useHead({
     <section v-if="credentials.length" class="bg-white py-10 md:py-12 3xl:py-16">
       <div class="site-container">
         <h2 class="font-secondary text-2xl font-bold text-dark 3xl:text-3xl">
-          {{ profile.credentialsHeading || 'Education & Credentials' }}
+          {{ profile.credentialsHeading || $t('profile.credentials') }}
         </h2>
 
         <div
@@ -225,11 +219,10 @@ useHead({
           <!-- Left: pitch + contact rows -->
           <div>
             <h2 class="font-secondary text-[clamp(2rem,3.6vw,3rem)] font-bold leading-[1.1]">
-              Get a Free <span class="text-accent">Consultation!</span>
+              {{ $t('profile.ctaHeading') }} <span class="text-accent">{{ $t('profile.ctaHeadingAccent') }}</span>
             </h2>
             <p class="mt-4 max-w-md font-primary text-[15px] leading-relaxed text-white/70">
-              We'll guide you through every step, providing the support and expertise you need to secure the justice and
-              compensation you deserve.
+              {{ $t('profile.ctaBody') }}
             </p>
 
             <div class="mt-9 flex flex-col gap-5">
@@ -281,7 +274,7 @@ useHead({
           <div>
             <LeadForm
               :form-subject="`Consultation request for ${attorney.name} — Accident Professionals`"
-              cta-label="Get Free Consultation"
+              :cta-label="$t('cta.freeConsultation')"
             />
           </div>
         </div>

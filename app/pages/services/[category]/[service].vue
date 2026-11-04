@@ -1,56 +1,48 @@
 <script setup lang="ts">
-import qs from 'qs'
-
 definePageMeta({ layout: 'site' })
 
 const route = useRoute()
-const { strapiUrl } = useRuntimeConfig().public
+const { locale, t } = useI18n()
+const lh = useLocaleHref()
+const { siteUrl } = useRuntimeConfig().public
 const categorySlug = String(route.params.category)
 const serviceSlug = String(route.params.service)
 
-const serviceQuery = qs.stringify(
-  {
-    filters: { slug: { $eq: serviceSlug }, category: { slug: { $eq: categorySlug } } },
-    populate: {
-      hero: { populate: { bgImage: true, urgencyBullets: true, caseOptions: true } },
-      whatToKnow: { populate: { cta: true, image: true } },
-      howItWorks: { populate: { steps: true, image: true } },
-      typesOfCases: { populate: { cta: true, features: { populate: { icon: true } } } },
-      stepsToTake: { populate: { steps: true } },
-      damages: { populate: { tabs: { populate: { items: true } }, cta: true } },
-      testimonials: { populate: { items: true } },
-      faq: { populate: { items: true } },
-      category: true,
-      seo: { populate: '*' },
-    },
+const serviceQuery = {
+  filters: { slug: { $eq: serviceSlug }, category: { slug: { $eq: categorySlug } } },
+  populate: {
+    hero: { populate: { bgImage: true, urgencyBullets: true, caseOptions: true } },
+    whatToKnow: { populate: { cta: true, image: true } },
+    howItWorks: { populate: { steps: true, image: true } },
+    typesOfCases: { populate: { cta: true, features: { populate: { icon: true } } } },
+    stepsToTake: { populate: { steps: true } },
+    damages: { populate: { tabs: { populate: { items: true } }, cta: true } },
+    testimonials: { populate: { items: true } },
+    faq: { populate: { items: true } },
+    category: true,
+    seo: { populate: '*' },
   },
-  { encodeValuesOnly: true },
-)
+}
 
-const defaultsQuery = qs.stringify(
-  {
-    populate: {
-      heroDefaults: { populate: { stats: true } },
-      team: true,
-      selectedAttorneys: { populate: { photo: true } },
-      cities: { populate: { regions: { populate: { cities: true } }, cta: true } },
-      closingCta: { populate: { cta: true } },
-    },
+const defaultsQuery = {
+  populate: {
+    heroDefaults: { populate: { stats: true } },
+    team: true,
+    selectedAttorneys: { populate: { photo: true } },
+    cities: { populate: { regions: { populate: { cities: true } }, cta: true } },
+    closingCta: { populate: { cta: true } },
   },
-  { encodeValuesOnly: true },
-)
+}
 
 // Full attorney roster — the source of truth when no attorneys are curated.
 const { data: roster } = await useAttorneyRoster()
 
-const { data: svc } = await useFetch<any>(`${strapiUrl}/api/services?${serviceQuery}`, {
-  key: `service-${categorySlug}-${serviceSlug}`,
-  transform: (r: any) => r?.data?.[0] ?? null,
-})
-const { data: def } = await useFetch<any>(`${strapiUrl}/api/service-defaults?${defaultsQuery}`, {
-  key: 'service-defaults-sub',
-  transform: (r: any) => r?.data ?? null,
-})
+const { data: svc } = await useAsyncData(`service-${categorySlug}-${serviceSlug}-${locale.value}`, () =>
+  strapiGet('services', serviceQuery, locale.value).then((r) => r?.data?.[0] ?? null),
+)
+const { data: def } = await useAsyncData(`service-defaults-sub-${locale.value}`, () =>
+  strapiGet('service-defaults', defaultsQuery, locale.value).then((r) => r?.data ?? null),
+)
 
 if (!svc.value) {
   throw createError({ statusCode: 404, statusMessage: 'Service not found', fatal: true })
@@ -63,7 +55,7 @@ const hero = computed(() => {
   const h = svc.value?.hero ?? {}
   return {
     heroBg: strapiMedia(h.bgImage, '/about-images/hero-bg.png'),
-    badge: (svc.value?.title || '').toUpperCase(),
+    badge: (svc.value?.title || '').toLocaleUpperCase(locale.value),
     h1Part1: h.h1Part1,
     h1Accent: h.h1Accent,
     h1Subtitle: h.h1Subtitle,
@@ -97,13 +89,13 @@ const stepsToTake = computed(() => {
   return {
     heading: s.heading,
     subheading: s.subheading,
-    cta: 'Get Free Consultation',
+    cta: t('cta.freeConsultation'),
     steps: (s.steps ?? []).map((x: any) => ({ number: x.number, icon: x.icon, title: x.title, description: x.description })),
   }
 })
 
 const team = computed(() => ({
-  heading: def.value?.team?.heading ?? 'Our Attorneys',
+  heading: def.value?.team?.heading ?? t('team.heading'),
   subheading: def.value?.team?.subheading ?? '',
   attorneys: def.value?.selectedAttorneys?.length ? def.value.selectedAttorneys : (roster.value ?? []),
 }))
@@ -133,9 +125,7 @@ useFaqJsonLd(() => faq.value.items)
 const isBuilt = computed(() => !!svc.value?.hero)
 useSeoMeta({ robots: () => (isBuilt.value ? 'index, follow' : 'noindex, follow') })
 
-const canonical = computed(
-  () => svc.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/services/${categorySlug}/${serviceSlug}`,
-)
+const canonical = computed(() => `${siteUrl}${lh(`/services/${categorySlug}/${serviceSlug}`)}`)
 useHead({
   script: [
     {
@@ -145,9 +135,9 @@ useHead({
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://accidentprofessionals.com/' },
-            { '@type': 'ListItem', position: 2, name: 'Services', item: 'https://accidentprofessionals.com/services' },
-            { '@type': 'ListItem', position: 3, name: svc.value?.category?.title, item: `https://accidentprofessionals.com/services/${categorySlug}` },
+            { '@type': 'ListItem', position: 1, name: t('nav.home'), item: `${siteUrl}${lh('/')}` },
+            { '@type': 'ListItem', position: 2, name: t('nav.services'), item: `${siteUrl}${lh('/services')}` },
+            { '@type': 'ListItem', position: 3, name: svc.value?.category?.title, item: `${siteUrl}${lh(`/services/${categorySlug}`)}` },
             { '@type': 'ListItem', position: 4, name: svc.value?.title, item: canonical.value },
           ],
         }),
@@ -164,8 +154,8 @@ useScrollReveal()
     <HeroSection
       :data="hero"
       :breadcrumb="[
-        { label: 'Home', to: '/' },
-        { label: 'Services', to: '/services' },
+        { label: $t('nav.home'), to: '/' },
+        { label: $t('nav.services'), to: '/services' },
         { label: svc?.category?.title, to: `/services/${categorySlug}` },
         { label: svc?.title },
       ]"
@@ -173,7 +163,7 @@ useScrollReveal()
     <MediaTextSection
       :block="svc.whatToKnow"
       :image="strapiMedia(svc.whatToKnow?.image)"
-      :image-alt="`${svc.title} in Georgia`"
+      :image-alt="$t('alt.serviceInGeorgia', { service: svc.title })"
       highlight-icon="/icons/trusted-network.svg"
     />
     <HowItWorksSection :data="howItWorks" />

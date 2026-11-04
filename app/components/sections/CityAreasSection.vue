@@ -66,7 +66,7 @@ const shortName = (name?: string | null) => (name ?? '').replace(/,.*$/, '').tri
 
       <!-- City cards -->
       <div class="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 3xl:mt-10">
-        <NuxtLink
+        <AppLink
           v-for="(city, i) in activeCities"
           :key="i"
           :to="city.href || '#'"
@@ -76,13 +76,13 @@ const shortName = (name?: string | null) => (name ?? '').replace(/,.*$/, '').tri
           <span class="min-w-0">
             <span class="block font-secondary text-lg font-semibold text-white">{{ city.name }}</span>
             <span class="mt-0.5 hidden items-center gap-1.5 font-primary text-sm font-semibold text-accent sm:inline-flex">
-              Get Help in {{ shortName(city.name) }}
+              {{ $t('location.getHelpIn', { city: shortName(city.name) }) }}
               <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
             </span>
           </span>
-        </NuxtLink>
+        </AppLink>
       </div>
 
       <!-- "Don't see your city?" CTA — text/link all from the CMS; hidden when unset

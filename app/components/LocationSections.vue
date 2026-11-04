@@ -5,6 +5,7 @@ import { computed } from 'vue'
 // renders when present — a fixed order that works for both the Georgia state
 // page and city pages (e.g. Atlanta).
 const props = defineProps<{ loc: any; def: any; type?: 'state' | 'city'; allCities?: any[] }>()
+const { t } = useI18n()
 
 // ── "Where to Find Us" nearby cities ────────────────────────────────────────
 // Auto-generated from the full city list: a stable shuffle seeded by the current
@@ -48,7 +49,7 @@ const nearbyCities = computed(() => {
   // only the city list is regenerated.
   return {
     ...(manual || {}),
-    heading: manual?.heading || `We Also Serve These Cities Near **${props.loc?.title}**`,
+    heading: manual?.heading || t('location.nearbyHeading', { city: props.loc?.title }),
     cities: picked.map((c: any) => ({ name: `${c.title}, GA`, href: `/georgia/${c.slug}` })),
   }
 })
@@ -61,11 +62,11 @@ const { data: citiesSection } = await useCitiesSection()
 const heroBreadcrumb = computed(() =>
   props.type === 'city'
     ? [
-        { label: 'Home', to: '/' },
-        { label: 'Georgia', to: '/georgia' },
+        { label: t('nav.home'), to: '/' },
+        { label: t('nav.georgia'), to: '/georgia' },
         { label: props.loc?.title },
       ]
-    : [{ label: 'Home', to: '/' }, { label: props.loc?.title || 'Georgia' }],
+    : [{ label: t('nav.home'), to: '/' }, { label: props.loc?.title || t('nav.georgia') }],
 )
 
 const hero = computed(() => {
@@ -84,7 +85,7 @@ const hero = computed(() => {
     cta: hd.value.ctaLabel,
     stats: (props.loc?.heroStats ?? []).map((s: any) => ({ value: s.value, label: s.label })),
     urgencyBullets: (h.urgencyBullets ?? []).map((b: any) => b.text),
-    clientCount: hd.value.clientCount || '1,200+ Clients Helped',
+    clientCount: hd.value.clientCount || t('hero.clientsHelped'),
     caseOptions: (h.caseOptions ?? []).map((o: any) => ({ value: o.value, label: o.label })),
     routeCaseTypeMap: {},
     formSubject: h.formSubject,
@@ -97,7 +98,7 @@ const stepsToTake = computed(() => {
   return {
     heading: s.heading,
     subheading: s.subheading,
-    cta: 'Get Free Consultation',
+    cta: t('cta.freeConsultation'),
     steps: (s.steps ?? []).map((x: any) => ({ number: x.number, icon: x.icon, title: x.title, description: x.description })),
   }
 })
@@ -123,7 +124,7 @@ const faq = computed(() => {
       v-if="loc.whyTrust"
       :block="loc.whyTrust"
       :image="strapiMedia(loc.whyTrust?.image)"
-      :image-alt="`${loc.title} personal injury attorney network`"
+      :image-alt="$t('alt.cityNetwork', { city: loc.title })"
     />
     <CardGridSection v-if="loc.practiceAreas" :block="loc.practiceAreas" />
     <WhyChooseSection v-if="loc.whyChoose" :block="loc.whyChoose" />

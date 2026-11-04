@@ -4,6 +4,9 @@ import { computed } from 'vue'
 definePageMeta({ layout: 'site' })
 
 const route = useRoute()
+const { t } = useI18n()
+const lh = useLocaleHref()
+const { siteUrl } = useRuntimeConfig().public
 const slug = String(route.params.city)
 const { loc, def, cities } = await useLocationPage('city', slug)
 
@@ -14,7 +17,7 @@ if (!loc.value) {
 usePageSeo(() => loc.value?.seo, { ogImage: () => strapiMedia(loc.value?.hero?.bgImage) })
 useFaqJsonLd(() => (loc.value?.faq?.items ?? []).map((i: any) => ({ question: i.question, answer: i.answer })))
 
-const canonical = computed(() => loc.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/georgia/${slug}`)
+const canonical = computed(() => `${siteUrl}${lh(`/georgia/${slug}`)}`)
 useHead({
   script: [
     {
@@ -24,8 +27,8 @@ useHead({
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://accidentprofessionals.com/' },
-            { '@type': 'ListItem', position: 2, name: 'Georgia', item: 'https://accidentprofessionals.com/georgia' },
+            { '@type': 'ListItem', position: 1, name: t('nav.home'), item: `${siteUrl}${lh('/')}` },
+            { '@type': 'ListItem', position: 2, name: t('nav.georgia'), item: `${siteUrl}${lh('/georgia')}` },
             { '@type': 'ListItem', position: 3, name: loc.value?.title, item: canonical.value },
           ],
         }),

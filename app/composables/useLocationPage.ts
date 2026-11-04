@@ -1,4 +1,3 @@
-import qs from 'qs'
 import { computed } from 'vue'
 
 /**
@@ -11,7 +10,7 @@ import { computed } from 'vue'
  * Nuxt composable (useFetch) before calling another.
  */
 export async function useLocationPage(type: 'state' | 'city', slug: string) {
-  const { strapiUrl } = useRuntimeConfig().public
+  const { locale } = useNuxtApp().$i18n
   const endpoint = type === 'state' ? 'state-pages' : 'city-pages'
 
   const common = {
@@ -40,27 +39,19 @@ export async function useLocationPage(type: 'state' | 'city', slug: string) {
           nearbyCities: { populate: { cities: true } },
         }
 
-  const locationQuery = qs.stringify(
-    { filters: { slug: { $eq: slug } }, populate },
-    { encodeValuesOnly: true },
-  )
-  const defaultsQuery = qs.stringify(
-    { populate: { heroDefaults: true, closingCta: { populate: { cta: true } } } },
-    { encodeValuesOnly: true },
-  )
+  const locationQuery = { filters: { slug: { $eq: slug } }, populate }
+  const defaultsQuery = { populate: { heroDefaults: true, closingCta: { populate: { cta: true } } } }
 
   // Lightweight list of every city (title + slug) — used to auto-generate each
   // city's "Where to Find Us" nearby-cities list. Only needed on city pages.
-  const citiesQuery = qs.stringify(
-    { fields: ['title', 'slug'], sort: ['title:asc'], pagination: { pageSize: 200 } },
-    { encodeValuesOnly: true },
-  )
+  const citiesQuery = { fields: ['title', 'slug'], sort: ['title:asc'], pagination: { pageSize: 200 } }
 
-  const { data } = await useAsyncData(`${type}-page-${slug}`, async () => {
+  const lang = locale.value
+  const { data } = await useAsyncData(`${type}-page-${slug}-${lang}`, async () => {
     const [locRes, defRes, citiesRes] = await Promise.all([
-      $fetch<any>(`${strapiUrl}/api/${endpoint}?${locationQuery}`),
-      $fetch<any>(`${strapiUrl}/api/service-defaults?${defaultsQuery}`),
-      type === 'city' ? $fetch<any>(`${strapiUrl}/api/city-pages?${citiesQuery}`) : Promise.resolve(null),
+      strapiGet(endpoint, locationQuery, lang),
+      strapiGet('service-defaults', defaultsQuery, lang),
+      type === 'city' ? strapiGet('city-pages', citiesQuery, lang) : Promise.resolve(null),
     ])
     return {
       loc: locRes?.data?.[0] ?? null,

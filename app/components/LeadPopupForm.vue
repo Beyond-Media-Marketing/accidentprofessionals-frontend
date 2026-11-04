@@ -19,6 +19,8 @@ const STORAGE_KEY = 'ap_lead_popup_seen'
 
 const config = useRuntimeConfig()
 const route = useRoute()
+const { t } = useI18n()
+const { language, subject } = useFormLanguage()
 const { push: gtmPush } = useDataLayer()
 // Deliberately NOT awaited: a top-level await here would turn this into an async
 // component inside the layout. `schedule()` runs on mount and again via watch(cfg)
@@ -42,14 +44,12 @@ const form = reactive({
 
 // ── Copy (CMS with sensible fallbacks) ───────────────────────────────────────
 const text = computed(() => ({
-  eyebrow: cfg.value?.eyebrow || 'Free Case Review',
-  heading: cfg.value?.heading || 'Injured in an Accident?',
+  eyebrow: cfg.value?.eyebrow || t('popup.eyebrow'),
+  heading: cfg.value?.heading || t('popup.heading'),
   headingAccent: cfg.value?.headingAccent || '',
-  subheading:
-    cfg.value?.subheading ||
-    'Tell us what happened and a vetted Georgia attorney will review your case at no cost.',
-  submitLabel: cfg.value?.submitLabel || 'Get My Free Case Review',
-  success: cfg.value?.successMessage || "Thank you — we'll be in touch shortly.",
+  subheading: cfg.value?.subheading || t('popup.subheading'),
+  submitLabel: cfg.value?.submitLabel || t('popup.submit'),
+  success: cfg.value?.successMessage || t('popup.success'),
   disclaimer: cfg.value?.disclaimer || '',
 }))
 
@@ -90,7 +90,8 @@ function markSeen() {
 function isExcluded(): boolean {
   const raw = cfg.value?.excludePaths
   const paths: string[] = Array.isArray(raw) ? raw : []
-  const here = route.path.replace(/\/+$/, '') || '/'
+  // Excluded paths are written without a locale — match /es/contact-us too.
+  const here = route.path.replace(/^\/es(?=\/|$)/, '').replace(/\/+$/, '') || '/'
   return paths.some((p) => String(p).replace(/\/+$/, '') === here)
 }
 
@@ -177,7 +178,7 @@ async function submitForm() {
   successMessage.value = ''
   try {
     if (!(await verifyTurnstile())) {
-      errorMessage.value = 'Verification failed. Please try again.'
+      errorMessage.value = t('form.verifyFailed')
       resetTurnstile()
       return
     }
@@ -187,13 +188,14 @@ async function submitForm() {
       body: JSON.stringify({
         access_key: config.public.web3FormsKeyLeads || config.public.web3FormsKey,
         form_id: 'popup_form',
-        subject: 'New popup lead — Accident Professionals',
+        subject: subject('New popup lead — Accident Professionals'),
         name: form.name,
         email: form.email,
         phone: form.phone,
         message: form.details,
         // Which page the lead came from, by title (not URL) — as specified.
         page: document.title,
+        language: language.value,
       }),
     })
     const result = await res.json()
@@ -204,11 +206,11 @@ async function submitForm() {
       resetTurnstile()
       setTimeout(() => close('submitted'), 2500)
     } else {
-      errorMessage.value = 'Something went wrong. Please call us directly.'
+      errorMessage.value = t('form.errorCall')
       resetTurnstile()
     }
   } catch {
-    errorMessage.value = 'Unable to submit. Please call us directly.'
+    errorMessage.value = t('form.errorSubmit')
     resetTurnstile()
   } finally {
     submitting.value = false
@@ -232,7 +234,7 @@ async function submitForm() {
           aria-labelledby="lp-heading"
           aria-describedby="lp-subheading"
         >
-          <button type="button" class="lp-close" aria-label="Close" @click="close('close-button')">
+          <button type="button" class="lp-close" :aria-label="$t('popup.close')" @click="close('close-button')">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -249,12 +251,12 @@ async function submitForm() {
 
           <form class="lp-form" novalidate @submit.prevent="submitForm">
             <div class="lp-field">
-              <label for="lp-name">Name <span aria-hidden="true">*</span></label>
-              <input id="lp-name" v-model="form.name" type="text" placeholder="Full name" autocomplete="name" required />
+              <label for="lp-name">{{ $t('form.name') }} <span aria-hidden="true">*</span></label>
+              <input id="lp-name" v-model="form.name" type="text" :placeholder="$t('form.fullName')" autocomplete="name" required />
             </div>
 
             <div class="lp-field">
-              <label for="lp-phone">Phone number <span aria-hidden="true">*</span></label>
+              <label for="lp-phone">{{ $t('form.phone') }} <span aria-hidden="true">*</span></label>
               <AppPhoneInput
                 v-model:phone="form.phone"
                 v-model:code="form.countryCode"
@@ -264,19 +266,19 @@ async function submitForm() {
             </div>
 
             <div class="lp-field">
-              <label for="lp-email">Email address</label>
-              <input id="lp-email" v-model="form.email" type="email" placeholder="email@email.com" autocomplete="email" />
+              <label for="lp-email">{{ $t('form.emailAddress') }}</label>
+              <input id="lp-email" v-model="form.email" type="email" :placeholder="$t('form.emailPlaceholder')" autocomplete="email" />
             </div>
 
             <div class="lp-field">
-              <label for="lp-details">Accident / injury details</label>
-              <textarea id="lp-details" v-model="form.details" rows="3" placeholder="Briefly describe what happened…" />
+              <label for="lp-details">{{ $t('popup.details') }}</label>
+              <textarea id="lp-details" v-model="form.details" rows="3" :placeholder="$t('form.briefPlaceholder')" />
             </div>
 
             <div id="leadpopup-turnstile" class="lp-turnstile" />
 
             <button type="submit" class="lp-submit" :disabled="!canSubmit">
-              {{ submitting ? 'Sending…' : text.submitLabel }}
+              {{ submitting ? $t('form.sending') : text.submitLabel }}
             </button>
 
             <p v-if="text.disclaimer" class="lp-disclaimer">{{ text.disclaimer }}</p>

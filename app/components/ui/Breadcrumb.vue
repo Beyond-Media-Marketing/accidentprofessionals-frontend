@@ -18,17 +18,17 @@ const crumbs = computed(() => (props.items || []).filter((c) => c?.label))
 <template>
   <nav
     v-if="crumbs.length"
-    aria-label="Breadcrumb"
+    :aria-label="$t('aria.breadcrumb')"
     class="font-primary text-sm"
     :class="variant === 'onDark' ? 'text-white/55' : 'text-dark/45'"
   >
     <ol class="flex flex-wrap items-center">
       <li v-for="(c, i) in crumbs" :key="i" class="flex items-center">
-        <NuxtLink
+        <AppLink
           v-if="c.to && i < crumbs.length - 1"
           :to="c.to"
           class="transition-colors hover:text-accent"
-        >{{ c.label }}</NuxtLink>
+        >{{ c.label }}</AppLink>
         <span v-else :class="variant === 'onDark' ? 'text-white/90' : 'text-dark/70'">{{ c.label }}</span>
         <span v-if="i < crumbs.length - 1" class="px-2 opacity-50" aria-hidden="true">/</span>
       </li>

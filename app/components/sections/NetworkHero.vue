@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const lh = useLocaleHref()
+
 interface Cta {
   label?: string | null
   href?: string | null
@@ -97,7 +99,7 @@ defineProps<{
 
             <a
               v-if="card.cta?.label"
-              :href="card.cta.href || '#apply'"
+              :href="lh(card.cta.href) || '#apply'"
               class="mt-5 flex w-full items-center justify-center gap-2 rounded-pill px-5 py-3 font-primary text-sm font-semibold transition-all"
               :class="card.variant === 'client'
                 ? 'bg-accent text-dark shadow-button hover:-translate-y-px'

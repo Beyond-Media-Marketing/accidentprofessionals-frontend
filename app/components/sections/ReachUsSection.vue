@@ -55,7 +55,7 @@ defineProps<{ block: ReachUs | null | undefined }>()
           <p v-if="card.value" class="mt-4 font-secondary text-lg font-bold text-black">{{ card.value }}</p>
 
           <div v-if="card.linkLabel" class="mt-auto pt-10">
-            <NuxtLink
+            <AppLink
               :to="card.linkHref || '#'"
               class="inline-flex w-fit items-center gap-2 rounded-full bg-accent px-6 py-3 font-primary text-sm font-semibold text-dark transition-transform hover:-translate-y-0.5"
             >
@@ -64,7 +64,7 @@ defineProps<{ block: ReachUs | null | undefined }>()
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
               </svg>
-            </NuxtLink>
+            </AppLink>
           </div>
         </article>
       </div>

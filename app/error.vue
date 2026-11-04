@@ -3,23 +3,24 @@ import { computed } from 'vue'
 
 const props = defineProps<{ error: { statusCode?: number; statusMessage?: string; message?: string } }>()
 
+const { t } = useI18n()
+const lh = useLocaleHref()
+
 const is404 = computed(() => props.error?.statusCode === 404)
 const code = computed(() => props.error?.statusCode || 500)
-const heading = computed(() => (is404.value ? 'Page not found' : 'Something went wrong'))
+const heading = computed(() => (is404.value ? t('error.notFound') : t('error.generic')))
 const message = computed(() =>
-  is404.value
-    ? "The page you're looking for may have moved or no longer exists. Let's get you back on track."
-    : props.error?.statusMessage || 'An unexpected error occurred. Please try again in a moment.',
+  is404.value ? t('error.notFoundBody') : props.error?.statusMessage || t('error.genericBody'),
 )
 
-const quickLinks = [
-  { label: 'Services', href: '/services' },
-  { label: 'Legal Network', href: '/legal-network' },
-  { label: 'Blog', href: '/blogs' },
-  { label: 'Contact', href: '/contact-us' },
-]
+const quickLinks = computed(() => [
+  { label: t('nav.services'), href: lh('/services') },
+  { label: t('nav.legalNetwork'), href: lh('/legal-network') },
+  { label: t('nav.blog'), href: lh('/blogs') },
+  { label: t('nav.contact'), href: lh('/contact-us') },
+])
 
-const goHome = () => clearError({ redirect: '/' })
+const goHome = () => clearError({ redirect: lh('/') })
 
 useHead({
   title: computed(() => `${code.value} — ${heading.value} | Accident Professionals`),
@@ -37,7 +38,7 @@ useHead({
 
     <!-- Top bar -->
     <header class="px-6 pt-8 sm:px-10">
-      <a href="/" aria-label="Accident Professionals" class="inline-block">
+      <a :href="lh('/')" aria-label="Accident Professionals" class="inline-block">
         <img src="/brand/footer-logo.png" alt="Accident Professionals" class="h-[34px] w-auto" />
       </a>
     </header>
@@ -59,20 +60,20 @@ useHead({
             class="inline-flex h-[52px] items-center justify-center gap-2 rounded-pill bg-accent px-7 font-primary text-[15px] font-semibold text-dark transition-transform hover:-translate-y-px"
             @click="goHome"
           >
-            Back to Home
+            {{ $t('error.backHome') }}
             <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
           </button>
           <a
-            href="/contact-us"
+            :href="lh('/contact-us')"
             class="inline-flex h-[52px] items-center justify-center rounded-pill border border-white/25 px-7 font-primary text-[15px] font-semibold text-white transition-colors hover:border-accent hover:text-accent"
           >
-            Get a Free Consultation
+            {{ $t('cta.getFreeConsultation') }}
           </a>
         </div>
 
         <!-- Quick links -->
         <div class="mt-12 border-t border-white/10 pt-6">
-          <p class="font-primary text-xs uppercase tracking-wide text-white/40">Or jump to</p>
+          <p class="font-primary text-xs uppercase tracking-wide text-white/40">{{ $t('error.jumpTo') }}</p>
           <ul class="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2">
             <li v-for="l in quickLinks" :key="l.href">
               <a :href="l.href" class="font-primary text-sm text-white/70 transition-colors hover:text-accent">{{ l.label }}</a>

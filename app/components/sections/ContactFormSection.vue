@@ -24,6 +24,9 @@ interface ContactForm {
 
 const props = defineProps<{ block: ContactForm | null | undefined }>()
 
+const { t } = useI18n()
+const { language, subject } = useFormLanguage()
+
 const config = useRuntimeConfig()
 const route = useRoute()
 const { push: gtmPush } = useDataLayer()
@@ -56,7 +59,7 @@ const canSubmit = computed(
 
 async function submitForm() {
   if (!form.agreed) {
-    errorMessage.value = 'Please agree to the privacy policy to continue.'
+    errorMessage.value = t('form.agreeRequired')
     return
   }
   submitting.value = true
@@ -64,7 +67,7 @@ async function submitForm() {
   successMessage.value = ''
   try {
     if (!(await verifyTurnstile())) {
-      errorMessage.value = 'Verification failed. Please try again.'
+      errorMessage.value = t('form.verifyFailed')
       resetTurnstile()
       submitting.value = false
       return
@@ -75,26 +78,27 @@ async function submitForm() {
       body: JSON.stringify({
         access_key: config.public.web3FormsKeyLeads || config.public.web3FormsKey,
         form_id: 'contact_form',
-        subject: props.block?.formSubject || 'New consultation request — Contact Page',
+        subject: subject(props.block?.formSubject || 'New consultation request — Contact Page'),
         name: `${form.firstName} ${form.lastName}`.trim(),
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
         message: form.message,
         page: document.title,
+        language: language.value,
       }),
     })
     const result = await res.json()
     if (result.success) {
-      successMessage.value = "Thank you! We'll be in touch shortly."
+      successMessage.value = t('form.success')
       gtmPush({ form_id: 'contact_form', page: route.path })
       Object.assign(form, { firstName: '', lastName: '', email: '', phone: '', message: '', agreed: false })
       resetTurnstile()
     } else {
-      errorMessage.value = 'Something went wrong. Please call us directly.'
+      errorMessage.value = t('form.errorCall')
       resetTurnstile()
     }
   } catch {
-    errorMessage.value = 'Unable to submit. Please call us directly.'
+    errorMessage.value = t('form.errorSubmit')
     resetTurnstile()
   } finally {
     submitting.value = false
@@ -118,39 +122,39 @@ async function submitForm() {
           <form class="contact-form mt-8" novalidate @submit.prevent="submitForm">
             <div class="contact-form__row">
               <div class="contact-form__field">
-                <label for="cf-first">First name <span>*</span></label>
-                <input id="cf-first" v-model="form.firstName" type="text" placeholder="First name" autocomplete="given-name" required />
+                <label for="cf-first">{{ $t('form.firstName') }} <span>*</span></label>
+                <input id="cf-first" v-model="form.firstName" type="text" :placeholder="$t('form.firstName')" autocomplete="given-name" required />
               </div>
               <div class="contact-form__field">
-                <label for="cf-last">Last name <span>*</span></label>
-                <input id="cf-last" v-model="form.lastName" type="text" placeholder="Last name" autocomplete="family-name" />
+                <label for="cf-last">{{ $t('form.lastName') }} <span>*</span></label>
+                <input id="cf-last" v-model="form.lastName" type="text" :placeholder="$t('form.lastName')" autocomplete="family-name" />
               </div>
             </div>
 
             <div class="contact-form__field">
-              <label for="cf-email">Email <span class="contact-form__optional">(optional)</span></label>
-              <input id="cf-email" v-model="form.email" type="email" placeholder="you@company.com" autocomplete="email" />
+              <label for="cf-email">{{ $t('form.email') }} <span class="contact-form__optional">{{ $t('form.optional') }}</span></label>
+              <input id="cf-email" v-model="form.email" type="email" :placeholder="$t('form.emailPlaceholder')" autocomplete="email" />
             </div>
 
             <div class="contact-form__field">
-              <label for="cf-phone">Phone number <span>*</span></label>
+              <label for="cf-phone">{{ $t('form.phone') }} <span>*</span></label>
               <AppPhoneInput v-model:phone="form.phone" v-model:code="form.countryCode" variant="contact" input-id="cf-phone" />
             </div>
 
             <div class="contact-form__field">
-              <label for="cf-message">Message <span>*</span></label>
-              <textarea id="cf-message" v-model="form.message" placeholder="Leave us a message…" rows="4" />
+              <label for="cf-message">{{ $t('form.message') }} <span>*</span></label>
+              <textarea id="cf-message" v-model="form.message" :placeholder="$t('form.messagePlaceholder')" rows="4" />
             </div>
 
             <div id="contactus-turnstile" />
 
             <AppCheckbox v-model="form.agreed">
-              You agree to our friendly
-              <NuxtLink to="/privacy-policy">privacy policy</NuxtLink>.
+              {{ $t('form.agreePrefix') }}
+              <AppLink to="/privacy-policy">{{ $t('form.privacyPolicy') }}</AppLink>{{ $t('form.agreeSuffix') }}
             </AppCheckbox>
 
             <button type="submit" class="contact-form__submit" :disabled="!canSubmit">
-              {{ submitting ? 'Sending…' : (block.submitLabel || 'Submit Consultation Request') }}
+              {{ submitting ? $t('form.sending') : (block.submitLabel || $t('form.submitConsultation')) }}
               <svg v-if="!submitting" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="5" y1="12" x2="19" y2="12" />
                 <polyline points="12 5 19 12 12 19" />
@@ -173,7 +177,7 @@ async function submitForm() {
                   <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></svg>
                 </span>
                 <span>
-                  <span class="block font-primary text-sm font-semibold text-dark">Email</span>
+                  <span class="block font-primary text-sm font-semibold text-dark">{{ $t('form.email') }}</span>
                   <a :href="`mailto:${block.email}`" class="font-primary text-base font-semibold text-accent">{{ block.email }}</a>
                 </span>
               </li>
@@ -193,7 +197,7 @@ async function submitForm() {
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92Z" /></svg>
               </span>
               <span>
-                <span class="block font-primary text-sm font-semibold text-dark">{{ block.phoneLabel || 'Phone Number' }}</span>
+                <span class="block font-primary text-sm font-semibold text-dark">{{ block.phoneLabel || $t('form.phoneNumber') }}</span>
                 <a :href="`tel:${block.phone.replace(/[^+\d]/g, '')}`" class="font-primary text-base font-semibold text-accent">{{ block.phone }}</a>
                 <span v-if="block.phoneNote" class="mt-1 block font-primary text-sm text-muted">{{ block.phoneNote }}</span>
               </span>
@@ -204,13 +208,13 @@ async function submitForm() {
           <iframe
             v-if="block.mapEmbedUrl"
             :src="block.mapEmbedUrl"
-            title="Office location map"
+            :title="$t('alt.officeMap')"
             class="h-64 w-full rounded-3xl border-0 md:h-72 lg:h-full lg:min-h-[260px]"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
           />
           <div v-else-if="mapImg" class="overflow-hidden rounded-3xl">
-            <img :src="mapImg" alt="Office location map" class="h-64 w-full object-cover md:h-72 lg:h-full" loading="lazy" decoding="async" />
+            <img :src="mapImg" :alt="$t('alt.officeMap')" class="h-64 w-full object-cover md:h-72 lg:h-full" loading="lazy" decoding="async" />
           </div>
         </div>
       </div>

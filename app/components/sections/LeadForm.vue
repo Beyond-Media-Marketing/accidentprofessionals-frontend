@@ -19,23 +19,15 @@ const props = withDefaults(
   }>(),
   {
     formSubject: 'New consultation request — Accident Professionals',
-    clientCount: '1,200+ Clients Helped',
-    ctaLabel: 'Get Free Consultation',
   },
 )
 
-const caseOptions = computed<CaseOption[]>(
-  () =>
-    props.caseOptions ?? [
-      { value: 'car', label: 'Car Accidents' },
-      { value: 'truck', label: 'Truck Accidents' },
-      { value: 'rideshare', label: 'Rideshare Accidents' },
-      { value: 'slip-fall', label: 'Slip & Fall' },
-      { value: 'workplace', label: 'Workplace Injuries' },
-      { value: 'motorcycle', label: 'Motorcycle Accidents' },
-      { value: 'other', label: 'Other / Not sure' },
-    ],
-)
+const { t } = useI18n()
+const { language, subject } = useFormLanguage()
+const clientCount = computed(() => props.clientCount || t('hero.clientsHelped'))
+const ctaLabel = computed(() => props.ctaLabel || t('cta.freeConsultation'))
+
+const caseOptions = computed<CaseOption[]>(() => props.caseOptions ?? defaultCaseOptions(t))
 
 const config = useRuntimeConfig()
 const route = useRoute()
@@ -65,7 +57,7 @@ const canSubmit = computed(
 
 async function submitForm() {
   if (!form.agreed) {
-    errorMessage.value = 'Please agree to the privacy policy to continue.'
+    errorMessage.value = t('form.agreeRequired')
     return
   }
   submitting.value = true
@@ -73,7 +65,7 @@ async function submitForm() {
   successMessage.value = ''
   try {
     if (!(await verifyTurnstile())) {
-      errorMessage.value = 'Verification failed. Please try again.'
+      errorMessage.value = t('form.verifyFailed')
       resetTurnstile()
       submitting.value = false
       return
@@ -84,27 +76,28 @@ async function submitForm() {
       body: JSON.stringify({
         access_key: config.public.web3FormsKeyLeads || config.public.web3FormsKey,
         form_id: 'lead_form',
-        subject: props.formSubject,
+        subject: subject(props.formSubject),
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
         case_type: caseLabel(form.caseType),
         message: form.message,
         page: document.title,
+        language: language.value,
       }),
     })
     const result = await res.json()
     if (result.success) {
-      successMessage.value = "Thank you! We'll be in touch shortly."
+      successMessage.value = t('form.success')
       gtmPush({ form_id: 'lead_form', case_type: caseLabel(form.caseType), service_page: route.path })
       Object.assign(form, { name: '', email: '', phone: '', caseType: '', message: '', agreed: false })
       resetTurnstile()
     } else {
-      errorMessage.value = 'Something went wrong. Please call us directly.'
+      errorMessage.value = t('form.errorCall')
       resetTurnstile()
     }
   } catch {
-    errorMessage.value = 'Unable to submit. Please call us directly.'
+    errorMessage.value = t('form.errorSubmit')
     resetTurnstile()
   } finally {
     submitting.value = false
@@ -116,25 +109,25 @@ async function submitForm() {
   <form class="lead-form" novalidate @submit.prevent="submitForm">
     <div class="lead-form__row">
       <div class="lead-form__field">
-        <label for="lf-name">Name</label>
-        <input id="lf-name" v-model="form.name" type="text" placeholder="Full Name" autocomplete="name" required />
+        <label for="lf-name">{{ $t('form.name') }}</label>
+        <input id="lf-name" v-model="form.name" type="text" :placeholder="$t('form.fullName')" autocomplete="name" required />
       </div>
       <div class="lead-form__field">
-        <label for="lf-email">Email</label>
-        <input id="lf-email" v-model="form.email" type="email" placeholder="email@email.com" autocomplete="email" required />
+        <label for="lf-email">{{ $t('form.email') }}</label>
+        <input id="lf-email" v-model="form.email" type="email" :placeholder="$t('form.emailPlaceholder')" autocomplete="email" required />
       </div>
     </div>
 
     <div class="lead-form__row">
       <div class="lead-form__field">
-        <label for="lf-phone">Phone number</label>
+        <label for="lf-phone">{{ $t('form.phone') }}</label>
         <AppPhoneInput v-model:phone="form.phone" v-model:code="form.countryCode" variant="hero" input-id="lf-phone" />
       </div>
       <div class="lead-form__field">
-        <label for="lf-case">Case type</label>
+        <label for="lf-case">{{ $t('form.caseType') }}</label>
         <div class="lead-form__select-wrap">
           <select id="lf-case" v-model="form.caseType">
-            <option value="" disabled selected>Select</option>
+            <option value="" disabled selected>{{ $t('form.select') }}</option>
             <option v-for="opt in caseOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
           </select>
           <svg class="lead-form__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -145,20 +138,20 @@ async function submitForm() {
     </div>
 
     <div class="lead-form__field">
-      <label for="lf-desc">Description</label>
-      <textarea id="lf-desc" v-model="form.message" placeholder="Write details about your accident here…." rows="3" />
+      <label for="lf-desc">{{ $t('form.description') }}</label>
+      <textarea id="lf-desc" v-model="form.message" :placeholder="$t('form.descriptionPlaceholder')" rows="3" />
     </div>
 
     <div id="leadform-turnstile" />
 
     <button type="submit" class="lead-form__submit" :disabled="!canSubmit">
-      {{ submitting ? 'Sending…' : ctaLabel }}
+      {{ submitting ? $t('form.sending') : ctaLabel }}
       <img v-if="!submitting" src="/icons/arrow-next.svg" alt="" width="18" height="18" />
     </button>
 
     <AppCheckbox v-model="form.agreed">
-      You agree to our friendly
-      <NuxtLink to="/privacy-policy">privacy policy</NuxtLink>.
+      {{ $t('form.agreePrefix') }}
+      <AppLink to="/privacy-policy">{{ $t('form.privacyPolicy') }}</AppLink>{{ $t('form.agreeSuffix') }}
     </AppCheckbox>
 
     <div class="lead-form__divider" aria-hidden="true" />
@@ -172,7 +165,7 @@ async function submitForm() {
       </div>
       <div class="lead-form__proof-text">
         <p class="lead-form__client-count">{{ clientCount }}</p>
-        <div class="lead-form__stars" aria-label="5 stars" role="img">
+        <div class="lead-form__stars" :aria-label="$t('form.fiveStars')" role="img">
           <img v-for="n in 5" :key="n" src="/services-page/auto-accidents/star.svg" alt="" width="14" height="14" />
         </div>
       </div>

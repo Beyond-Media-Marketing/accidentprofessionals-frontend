@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-cream" aria-label="Contact call to action">
+  <section class="bg-cream" :aria-label="$t('aria.contactCta')">
     <div class="site-container pb-12 md:pb-20">
       <div class="reveal relative flex min-h-[233px] items-center justify-center overflow-hidden rounded-xl px-8 py-11">
         <div

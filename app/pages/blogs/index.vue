@@ -1,54 +1,45 @@
 <script setup lang="ts">
-import qs from "qs";
 import { computed } from "vue";
 
 definePageMeta({ layout: "site" });
 
-const { strapiUrl } = useRuntimeConfig().public;
+const { locale, t } = useI18n();
 
-const postsQuery = qs.stringify(
-  {
-    sort: ["publishedDate:desc", "createdAt:desc"],
-    // Cards only need these scalars. Without an explicit `fields` list Strapi
-    // also returns `content`/`contentTwo` — the full article HTML of every post —
-    // which gets serialised into the hydration payload for no reason.
-    fields: [
-      "title",
-      "slug",
-      "excerpt",
-      "publishedDate",
-      "coverUrl",
-      "featured",
-    ],
-    populate: {
-      // `strapiMedia()` only reads `.url`; nothing renders the responsive
-      // `formats` variants, so don't ship them.
-      coverImage: { fields: ["url", "alternativeText", "updatedAt"] },
-      category: {
-        fields: ["name", "slug"],
-        populate: { parent: { fields: ["name", "slug"] } },
-      },
+const postsQuery = {
+  sort: ["publishedDate:desc", "createdAt:desc"],
+  // Cards only need these scalars. Without an explicit `fields` list Strapi
+  // also returns `content`/`contentTwo` — the full article HTML of every post —
+  // which gets serialised into the hydration payload for no reason.
+  fields: [
+    "title",
+    "slug",
+    "excerpt",
+    "publishedDate",
+    "coverUrl",
+    "featured",
+  ],
+  populate: {
+    // `strapiMedia()` only reads `.url`; nothing renders the responsive
+    // `formats` variants, so don't ship them.
+    coverImage: { fields: ["url", "alternativeText", "updatedAt"] },
+    category: {
+      fields: ["name", "slug"],
+      populate: { parent: { fields: ["name", "slug"] } },
     },
-    pagination: { pageSize: 100 },
   },
-  { encodeValuesOnly: true }
-);
-const catsQuery = qs.stringify(
-  {
-    sort: ["order:asc", "name:asc"],
-    fields: ["name", "slug"],
-    filters: { parent: { id: { $null: true } } },
-    pagination: { pageSize: 100 },
-  },
-  { encodeValuesOnly: true }
-);
+  pagination: { pageSize: 100 },
+};
+const catsQuery = {
+  sort: ["order:asc", "name:asc"],
+  fields: ["name", "slug"],
+  filters: { parent: { id: { $null: true } } },
+  pagination: { pageSize: 100 },
+};
 
-const { data } = await useAsyncData("blogs-index", async () => {
+const { data } = await useAsyncData(`blogs-index-${locale.value}`, async () => {
   const [postsRes, catsRes] = await Promise.all([
-    $fetch<any>(`${strapiUrl}/api/blog-posts?${postsQuery}`).catch(() => null),
-    $fetch<any>(`${strapiUrl}/api/blog-categories?${catsQuery}`).catch(
-      () => null
-    ),
+    strapiGet("blog-posts", postsQuery, locale.value),
+    strapiGet("blog-categories", catsQuery, locale.value),
   ]);
   return { posts: postsRes?.data ?? [], categories: catsRes?.data ?? [] };
 });
@@ -66,9 +57,8 @@ const rest = computed(() =>
 // Twitter Card tags, and the global default OG image — it previously emitted a
 // title and description only.
 usePageSeo(() => ({
-  metaTitle: "Blog — Accident Professionals",
-  metaDescription:
-    "Insights, guides, and resources on car accidents, truck accidents, premises liability, and personal injury claims from Accident Professionals.",
+  metaTitle: t("blog.metaTitle"),
+  metaDescription: t("blog.metaDescription"),
 }));
 </script>
 
@@ -80,13 +70,12 @@ usePageSeo(() => ({
         <h1
           class="font-secondary text-[clamp(2.2rem,5vw,3.5rem)] font-bold leading-[1.08]"
         >
-          The Accident Professionals <span class="text-accent">Blog</span>
+          {{ $t("blog.heading") }} <span class="text-accent">{{ $t("blog.headingAccent") }}</span>
         </h1>
         <p
           class="mx-auto mt-5 max-w-[640px] font-primary text-[15px] leading-[1.7] text-white/70 3xl:text-base"
         >
-          Straight-talking guides on what to do after an accident, how claims
-          really work, and how to protect your rights in Georgia.
+          {{ $t("blog.intro") }}
         </p>
       </div>
     </section>
@@ -100,14 +89,14 @@ usePageSeo(() => ({
         >
           <span
             class="rounded-pill bg-dark px-5 py-2.5 font-primary text-sm font-semibold text-white"
-            >All Posts</span
+            >{{ $t("blog.allPosts") }}</span
           >
-          <NuxtLink
+          <AppLink
             v-for="c in categories"
             :key="c.slug"
             :to="`/blogs/${c.slug}`"
             class="rounded-pill border border-dark/10 bg-white px-5 py-2.5 font-primary text-sm font-semibold text-dark transition-colors hover:border-accent hover:text-accent"
-            >{{ c.name }}</NuxtLink
+            >{{ c.name }}</AppLink
           >
         </div>
 
@@ -127,7 +116,7 @@ usePageSeo(() => ({
         </template>
 
         <p v-else class="py-16 text-center font-primary text-muted">
-          No posts yet — check back soon.
+          {{ $t("blog.empty") }}
         </p>
       </div>
     </section>

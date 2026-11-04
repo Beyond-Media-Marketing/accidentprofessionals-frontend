@@ -36,6 +36,7 @@ export function usePageSeo(
   const route = useRoute()
   const { siteUrl } = useRuntimeConfig().public
   const globals = useGlobals()
+  const { locale } = useNuxtApp().$i18n
 
   const seo = computed(() => seoGetter() ?? {})
   const settings = computed(() => globals.value.settings ?? {})
@@ -52,8 +53,23 @@ export function usePageSeo(
   // WordPress site, which used trailing slashes — left as-is they'd point the canonical
   // at a URL that redirects. Normalise here so one bad paste can't undo it site-wide.
   const stripTrailingSlash = (u: string) => (u.length > 1 ? u.replace(/\/+$/, '') : u)
+  // Spanish entries are copies of the English ones, so a CMS canonicalUrl there
+  // still points at the English page — which would tell Google the Spanish page
+  // is a duplicate. Move it under /es so each language canonicalises to itself.
+  const localizeUrl = (u: string) => {
+    if (locale.value === 'en') return u
+    try {
+      const url = new URL(u, siteUrl)
+      url.pathname = localizeHref(url.pathname, locale.value)
+      return url.toString()
+    } catch {
+      return u
+    }
+  }
   const canonical = computed(() =>
-    stripTrailingSlash(seo.value.canonicalUrl || `${siteUrl}${route.path === '/' ? '' : route.path}`),
+    stripTrailingSlash(
+      seo.value.canonicalUrl ? localizeUrl(seo.value.canonicalUrl) : `${siteUrl}${route.path === '/' ? '' : route.path}`,
+    ),
   )
   // Priority: page's own CMS ogImage → page hero → global defaultOgImage → bundled file.
   const ogImage = computed(() =>
@@ -98,6 +114,7 @@ export function usePageSeo(
             name: title.value,
             description: description.value,
             url: canonical.value,
+            inLanguage: locale.value === 'es' ? 'es-US' : 'en-US',
           }),
         ),
       },

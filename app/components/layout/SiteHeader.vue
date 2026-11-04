@@ -2,6 +2,7 @@
 import { useDataLayer } from '../../composables/useDataLayer'
 
 const globals = useGlobals()
+const lh = useLocaleHref()
 const { push: gtmPush } = useDataLayer()
 
 const settings = computed(() => globals.value.settings ?? {})
@@ -49,12 +50,12 @@ function onPhoneClick() {
   <header class="sticky top-0 z-50 w-full border-b border-black/5 bg-white" @keydown.escape="closeAll">
     <div class="site-container flex h-[80px] items-center gap-8 3xl:h-[92px]">
       <!-- Logo -->
-      <NuxtLink to="/" class="flex-shrink-0" aria-label="Accident Professionals — Home" @click="closeAll">
+      <AppLink to="/" class="flex-shrink-0" :aria-label="$t('header.home')" @click="closeAll">
         <img :src="logo" alt="Accident Professionals" height="37" class="h-[37px] w-auto" />
-      </NuxtLink>
+      </AppLink>
 
       <!-- Desktop nav -->
-      <nav class="hidden flex-1 items-center justify-center lg:flex" aria-label="Primary">
+      <nav class="hidden flex-1 items-center justify-center lg:flex" :aria-label="$t('header.primaryNav')">
         <ul class="flex items-center gap-7">
           <li
             v-for="(item, i) in items"
@@ -86,13 +87,13 @@ function onPhoneClick() {
             </button>
 
             <!-- Plain link -->
-            <NuxtLink
+            <AppLink
               v-else
               :to="item.href || '#'"
               class="whitespace-nowrap text-[13px] font-medium uppercase tracking-wide text-dark transition-colors hover:text-accent"
             >
               {{ item.label }}
-            </NuxtLink>
+            </AppLink>
 
             <!-- Mega-menu panel -->
             <Transition name="mega">
@@ -106,7 +107,7 @@ function onPhoneClick() {
                 >
                   <div v-for="(col, ci) in item.columns ?? []" :key="ci" class="px-3 py-2">
                     <!-- Category = clickable title (hover accent + reveal arrow), divider below -->
-                    <NuxtLink
+                    <AppLink
                       v-if="col.href"
                       :to="col.href"
                       class="group/head mb-2.5 flex items-center justify-between gap-3 border-b border-black/5 pb-2.5"
@@ -120,20 +121,20 @@ function onPhoneClick() {
                       >
                         <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
                       </svg>
-                    </NuxtLink>
+                    </AppLink>
                     <p v-else class="mb-2.5 text-[12px] font-semibold uppercase tracking-wide text-muted">
                       {{ col.heading }}
                     </p>
 
                     <ul class="space-y-0.5">
                       <li v-for="(link, li) in col.links ?? []" :key="li">
-                        <NuxtLink
+                        <AppLink
                           :to="link.href || '#'"
                           class="group/link flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium text-dark/70 transition-colors hover:bg-cream hover:text-dark"
                         >
                           <span class="h-1.5 w-1.5 shrink-0 rounded-full bg-dark/15 transition-colors group-hover/link:bg-accent" />
                           <span class="whitespace-nowrap">{{ link.label }}</span>
-                        </NuxtLink>
+                        </AppLink>
                       </li>
                     </ul>
                   </div>
@@ -146,6 +147,7 @@ function onPhoneClick() {
 
       <!-- Desktop contact + CTA -->
       <div class="ml-auto hidden items-center gap-5 lg:flex">
+        <LanguageSwitch />
         <a
           v-if="phone"
           :href="phoneHref"
@@ -156,7 +158,7 @@ function onPhoneClick() {
         </a>
         <a
           v-if="cta"
-          :href="cta.href || '#contact-section'"
+          :href="lh(cta.href) || '#contact-section'"
           class="inline-flex h-[50px] items-center justify-center whitespace-nowrap rounded-pill bg-accent px-6 text-base font-semibold text-dark transition-transform hover:-translate-y-px"
         >
           {{ cta.label }}
@@ -172,7 +174,7 @@ function onPhoneClick() {
           type="button"
           class="flex h-10 w-10 items-center justify-center rounded-md text-dark"
           :aria-expanded="mobileOpen"
-          aria-label="Toggle menu"
+          :aria-label="$t('header.toggleMenu')"
           @click="mobileOpen = !mobileOpen"
         >
           <svg v-if="!mobileOpen" class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -188,7 +190,7 @@ function onPhoneClick() {
     <!-- Mobile drawer -->
     <Transition name="drawer">
       <div v-if="mobileOpen" class="lg:hidden">
-        <nav class="max-h-[calc(100vh-80px)] overflow-y-auto border-t border-black/5 bg-white px-6 py-4" aria-label="Mobile">
+        <nav class="max-h-[calc(100vh-80px)] overflow-y-auto border-t border-black/5 bg-white px-6 py-4" :aria-label="$t('header.mobileNav')">
           <ul class="divide-y divide-black/5">
             <li v-for="(item, i) in items" :key="i" class="py-1">
               <!-- Mega item → accordion -->
@@ -211,7 +213,7 @@ function onPhoneClick() {
                 <div v-if="mobileExpanded === i" class="pb-3 pl-1">
                   <div v-for="(col, ci) in item.columns ?? []" :key="ci" class="mb-5 last:mb-1">
                     <!-- Category title (clickable → category page) -->
-                    <NuxtLink
+                    <AppLink
                       v-if="col.href"
                       :to="col.href"
                       class="flex items-center justify-between gap-2 py-1.5 text-base font-semibold text-dark transition-colors hover:text-accent"
@@ -219,35 +221,40 @@ function onPhoneClick() {
                     >
                       {{ col.heading }}
                       <svg class="h-4 w-4 shrink-0 text-dark/30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 6l6 6-6 6" /></svg>
-                    </NuxtLink>
+                    </AppLink>
                     <p v-else class="py-1.5 text-base font-semibold text-dark">{{ col.heading }}</p>
 
                     <!-- Sub-links, indented under the category -->
                     <ul v-if="col.links?.length" class="mt-1 space-y-0.5 border-l border-black/10 pl-4">
                       <li v-for="(link, li) in col.links ?? []" :key="li">
-                        <NuxtLink :to="link.href || '#'" class="block py-2 text-[15px] text-dark/70 transition-colors hover:text-accent" @click="closeAll">
+                        <AppLink :to="link.href || '#'" class="block py-2 text-[15px] text-dark/70 transition-colors hover:text-accent" @click="closeAll">
                           {{ link.label }}
-                        </NuxtLink>
+                        </AppLink>
                       </li>
                     </ul>
                   </div>
                 </div>
               </template>
               <!-- Plain link -->
-              <NuxtLink
+              <AppLink
                 v-else
                 :to="item.href || '#'"
                 class="block py-3 text-lg font-semibold text-dark"
                 @click="closeAll"
               >
                 {{ item.label }}
-              </NuxtLink>
+              </AppLink>
             </li>
           </ul>
 
+          <!-- Language toggle lives in the drawer on mobile — the bar has no room. -->
+          <div class="mt-4 flex items-center justify-between border-t border-black/5 pt-4">
+            <span class="text-sm font-medium text-dark/60">{{ $t('lang.label') }}</span>
+            <LanguageSwitch />
+          </div>
           <a
             v-if="cta"
-            :href="cta.href || '#contact-section'"
+            :href="lh(cta.href) || '#contact-section'"
             class="mt-4 inline-flex h-[50px] w-full items-center justify-center rounded-pill bg-accent px-6 text-base font-semibold text-dark"
             @click="closeAll"
           >

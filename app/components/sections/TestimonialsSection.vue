@@ -68,7 +68,7 @@ onMounted(async () => {
               <p class="font-primary text-sm font-bold text-dark">{{ t.name }}</p>
               <p class="font-primary text-xs text-[#616161]">{{ t.location }}</p>
             </div>
-            <div class="flex shrink-0 gap-0.5 text-accent" :aria-label="`${t.rating || 5} stars`" role="img">
+            <div class="flex shrink-0 gap-0.5 text-accent" :aria-label="$t('aria.stars', { n: t.rating || 5 })" role="img">
               <svg v-for="n in (t.rating || 5)" :key="n" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14l-5-4.87 6.91-1.01L12 2z" />
               </svg>
@@ -83,7 +83,7 @@ onMounted(async () => {
           type="button"
           class="flex h-12 w-12 items-center justify-center rounded-full border border-dark/15 text-dark transition-colors hover:bg-dark/5 disabled:cursor-not-allowed disabled:opacity-30"
           :disabled="atStart"
-          aria-label="Previous testimonials"
+          :aria-label="$t('aria.prevTestimonials')"
           @click="scrollDir(-1)"
         >
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
@@ -92,7 +92,7 @@ onMounted(async () => {
           type="button"
           class="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-dark shadow-button transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
           :disabled="atEnd"
-          aria-label="Next testimonials"
+          :aria-label="$t('aria.nextTestimonials')"
           @click="scrollDir(1)"
         >
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg>

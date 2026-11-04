@@ -6,7 +6,9 @@
  *
  * Rules are applied in order and resolved to ONE final destination before
  * redirecting, so we never emit a redirect chain (Google/SEMrush penalise those):
- *   1. strip the /es/ language prefix (no Spanish site exists yet)
+ *   1. set aside the /es/ language prefix — the rules below run on the rest of
+ *      the path, and the prefix is put back, so old Spanish URLs land on the
+ *      matching page of the Spanish site (/es/car-accident → /es/services/…)
  *   2. fix the legacy blog category typo (car-acccidents → car-accidents)
  *   3. apply the explicit old→new map
  *   4. normalise the trailing slash (old site used them, new site doesn't)
@@ -81,11 +83,9 @@ for (const slug of ATTORNEYS) EXACT[`/${slug}`] = `/legal-network/attorneys/${sl
 
 /** Resolve an incoming path to its final destination (or null if it's already correct). */
 function resolve(pathname: string): string | null {
-  let p = pathname
-
-  // 1. Drop the /es language prefix — no Spanish site yet, so serve the English page.
-  if (p === '/es' || p === '/es/') p = '/'
-  else if (p.startsWith('/es/')) p = p.slice(3)
+  // 1. Set the /es language prefix aside; it's re-applied to the final path.
+  const lang = /^\/es(?=\/|$)/.test(pathname) ? '/es' : ''
+  let p = pathname.slice(lang.length) || '/'
 
   // 2. Legacy blog category typo (triple-c). Covers nested categories too.
   if (p.startsWith('/blogs/car-acccidents')) {
@@ -107,7 +107,8 @@ function resolve(pathname: string): string | null {
     else if (CITY_SLUGS[slug]) p = `/georgia/${CITY_SLUGS[slug]}`
   }
 
-  return p === pathname ? null : p
+  const target = lang ? `${lang}${p === '/' ? '' : p}` : p
+  return target === pathname ? null : target
 }
 
 export default defineEventHandler((event) => {

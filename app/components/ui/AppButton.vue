@@ -1,8 +1,8 @@
 <template>
   <component
     :is="tag"
-    :href="href"
-    :to="to"
+    :href="lh(href)"
+    :to="lh(to)"
     :type="tag === 'button' ? type : undefined"
     class="app-btn"
     :class="[`app-btn--${variant}`, { 'app-btn--sm': size === 'sm' }]"
@@ -12,6 +12,9 @@
 </template>
 
 <script setup lang="ts">
+// Internal hrefs stay in the visitor's language (/es/… on the Spanish site).
+const lh = useLocaleHref()
+
 defineProps({
   variant: { type: String, default: 'primary' },
   size: { type: String, default: 'md' },

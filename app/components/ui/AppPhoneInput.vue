@@ -9,7 +9,7 @@
         :value="code"
         @change="onCodeChange"
         class="app-phone__select"
-        aria-label="Country code"
+        :aria-label="$t('form.countryCode')"
       >
         <option
           v-for="country in countries"

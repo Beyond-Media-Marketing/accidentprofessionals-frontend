@@ -27,7 +27,7 @@ const date = computed(() =>
 </script>
 
 <template>
-  <NuxtLink
+  <AppLink
     :to="link"
     class="group flex flex-col overflow-hidden rounded-3xl bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] ring-1 ring-black/[0.04] transition-all hover:-translate-y-1 hover:shadow-card"
     :class="featured ? 'sm:flex-row' : ''"
@@ -83,7 +83,7 @@ const date = computed(() =>
       <span
         class="mt-5 inline-flex items-center gap-1.5 font-primary text-sm font-semibold text-accent"
       >
-        Read article
+        {{ $t('blog.readArticle') }}
         <svg
           class="h-4 w-4 transition-transform group-hover:translate-x-1"
           viewBox="0 0 24 24"
@@ -98,5 +98,5 @@ const date = computed(() =>
         </svg>
       </span>
     </div>
-  </NuxtLink>
+  </AppLink>
 </template>

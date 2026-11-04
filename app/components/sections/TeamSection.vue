@@ -24,12 +24,12 @@
             <img :src="strapiMedia(attorney.photo ?? attorney.image, '/services-page/auto-accidents/image1.webp')" :alt="attorney.name" itemprop="image" loading="lazy" />
             <div class="team__photo-stats">
               <div v-if="attorney.yearsExperience" class="team__photo-stat">
-                <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
-                <span class="team__photo-stat-label">Experience</span>
+                <span class="team__photo-stat-value">{{ $t('attorney.yearsPlus', { n: attorney.yearsExperience }) }}</span>
+                <span class="team__photo-stat-label">{{ $t('attorney.experience') }}</span>
               </div>
               <div v-if="attorney.location" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.location }}</span>
-                <span class="team__photo-stat-label">Location</span>
+                <span class="team__photo-stat-label">{{ $t('attorney.location') }}</span>
               </div>
             </div>
           </div>
@@ -40,14 +40,14 @@
                 <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
                 <p v-if="attorney.title" class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
               </div>
-              <NuxtLink
+              <AppLink
                 v-if="attorney.slug"
                 :to="`/legal-network/attorneys/${attorney.slug}`"
                 class="team__profile"
               >
-                View Profile
+                {{ $t('attorney.viewProfile') }}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-              </NuxtLink>
+              </AppLink>
             </div>
           </div>
         </article>
@@ -66,12 +66,12 @@
             <img :src="strapiMedia(attorney.photo ?? attorney.image, '/services-page/auto-accidents/image1.webp')" :alt="attorney.name" itemprop="image" loading="lazy" />
             <div class="team__photo-stats">
               <div v-if="attorney.yearsExperience" class="team__photo-stat">
-                <span class="team__photo-stat-value">{{ attorney.yearsExperience }}+ Years</span>
-                <span class="team__photo-stat-label">Experience</span>
+                <span class="team__photo-stat-value">{{ $t('attorney.yearsPlus', { n: attorney.yearsExperience }) }}</span>
+                <span class="team__photo-stat-label">{{ $t('attorney.experience') }}</span>
               </div>
               <div v-if="attorney.location" class="team__photo-stat">
                 <span class="team__photo-stat-value">{{ attorney.location }}</span>
-                <span class="team__photo-stat-label">Location</span>
+                <span class="team__photo-stat-label">{{ $t('attorney.location') }}</span>
               </div>
             </div>
           </div>
@@ -82,14 +82,14 @@
                 <p class="team__firm" itemprop="worksFor">{{ attorney.firm }}</p>
                 <p v-if="attorney.title" class="team__title" itemprop="jobTitle">{{ attorney.title }}</p>
               </div>
-              <NuxtLink
+              <AppLink
                 v-if="attorney.slug"
                 :to="`/legal-network/attorneys/${attorney.slug}`"
                 class="team__profile"
               >
-                View Profile
+                {{ $t('attorney.viewProfile') }}
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-              </NuxtLink>
+              </AppLink>
             </div>
           </div>
         </article>
@@ -97,12 +97,12 @@
 
       <!-- Unified pagination — ClientOnly prevents SSR/client isMobile mismatch -->
       <ClientOnly>
-        <div v-if="dotCount > 1 && !fullGrid" class="team__pagination" role="navigation" aria-label="Attorney pages">
+        <div v-if="dotCount > 1 && !fullGrid" class="team__pagination" role="navigation" :aria-label="$t('aria.attorneyPages')">
           <button
             class="team__page-arrow"
             :disabled="activeDot === 0"
             @click="prev"
-            aria-label="Previous"
+            :aria-label="$t('aria.previous')"
           >←</button>
 
           <button
@@ -111,7 +111,7 @@
             class="team__page-dot"
             :class="{ 'is-active': activeDot === n - 1 }"
             @click="goTo(n - 1)"
-            :aria-label="`Go to ${n}`"
+            :aria-label="$t('aria.goTo', { n })"
             :aria-current="activeDot === n - 1 ? 'page' : undefined"
           />
 
@@ -119,7 +119,7 @@
             class="team__page-arrow"
             :disabled="activeDot === dotCount - 1"
             @click="next"
-            aria-label="Next"
+            :aria-label="$t('aria.next')"
           >→</button>
         </div>
       </ClientOnly>

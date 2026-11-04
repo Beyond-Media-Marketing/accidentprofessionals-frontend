@@ -1,0 +1,194 @@
+{
+  "lang": {
+    "label": "Idioma",
+    "switch": "Elegir idioma"
+  },
+  "header": {
+    "home": "Accident Professionals — Inicio",
+    "primaryNav": "Principal",
+    "mobileNav": "Móvil",
+    "toggleMenu": "Abrir o cerrar el menú",
+    "hero": "Portada"
+  },
+  "nav": {
+    "home": "Inicio",
+    "services": "Servicios",
+    "blog": "Blog",
+    "legalNetwork": "Red Legal",
+    "attorneys": "Abogados",
+    "georgia": "Georgia",
+    "contact": "Contacto",
+    "contactUs": "Contáctenos",
+    "privacy": "Política de privacidad"
+  },
+  "cta": {
+    "freeConsultation": "Consulta gratis",
+    "getFreeConsultation": "Obtenga una consulta gratis",
+    "callNow": "Llámenos ahora",
+    "readMore": "Leer más"
+  },
+  "hero": {
+    "clientsHelped": "Más de 1,200 clientes ayudados"
+  },
+  "team": {
+    "heading": "Nuestros abogados"
+  },
+  "faq": {
+    "heading": "Preguntas frecuentes"
+  },
+  "location": {
+    "nearbyHeading": "También atendemos estas ciudades cerca de **{city}**",
+    "getHelpIn": "Obtenga ayuda en {city}"
+  },
+  "attorney": {
+    "attorney": "Abogado",
+    "practiceAreas": "Áreas de práctica",
+    "experience": "Experiencia",
+    "languages": "Idiomas",
+    "location": "Ubicación",
+    "years": "{n} años",
+    "viewProfile": "Ver perfil",
+    "yearsPlus": "Más de {n} años"
+  },
+  "profile": {
+    "title": "{name} — Red Legal de AP",
+    "credentials": "Educación y credenciales",
+    "social": "Perfil",
+    "ctaHeading": "¡Obtenga una",
+    "ctaHeadingAccent": "consulta gratis!",
+    "ctaBody": "Lo guiaremos en cada paso, con el apoyo y la experiencia que necesita para obtener la justicia y la compensación que merece."
+  },
+  "directory": {
+    "eyebrow": "RED LEGAL",
+    "heading": "Conozca a los abogados de",
+    "headingAccent": "nuestra red",
+    "subhead": "Cada abogado de la red de AP fue evaluado antes de ser incluido: una lista creciente de abogados de lesiones personales verificados en todo Georgia.",
+    "metaTitle": "Nuestra red de abogados — Accident Professionals",
+    "metaDescription": "Conozca a los abogados de lesiones personales verificados de la red de Accident Professionals. Cada abogado es evaluado antes de ser incluido."
+  },
+  "blog": {
+    "heading": "El blog de",
+    "headingAccent": "Accident Professionals",
+    "intro": "Guías claras y directas sobre qué hacer después de un accidente, cómo funcionan realmente los reclamos y cómo proteger sus derechos en Georgia.",
+    "allPosts": "Todos los artículos",
+    "empty": "Todavía no hay artículos. Vuelva pronto.",
+    "emptyCategory": "Todavía no hay artículos en esta categoría.",
+    "readArticle": "Leer artículo",
+    "minRead": "{n} min de lectura",
+    "onThisPage": "En esta página",
+    "related": "Artículos relacionados",
+    "titleSuffix": "Blog de AP",
+    "metaTitle": "Blog — Accident Professionals",
+    "metaDescription": "Información, guías y recursos sobre accidentes de auto, accidentes de camión, responsabilidad de propietarios y reclamos por lesiones personales, de Accident Professionals."
+  },
+  "privacy": {
+    "eyebrow": "Legal"
+  },
+  "caseTypes": {
+    "car": "Accidentes de auto",
+    "truck": "Accidentes de camión",
+    "rideshare": "Accidentes de Uber o Lyft",
+    "slipFall": "Resbalones y caídas",
+    "workplace": "Lesiones en el trabajo",
+    "motorcycle": "Accidentes de motocicleta",
+    "other": "Otro / No estoy seguro"
+  },
+  "form": {
+    "name": "Nombre",
+    "fullName": "Nombre completo",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electrónico",
+    "emailAddress": "Correo electrónico",
+    "emailPlaceholder": "usted{'@'}ejemplo.com",
+    "optional": "(opcional)",
+    "phone": "Número de teléfono",
+    "phoneNumber": "Número de teléfono",
+    "countryCode": "Código de país",
+    "caseType": "Tipo de caso",
+    "select": "Seleccione",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Escriba aquí los detalles de su accidente…",
+    "briefPlaceholder": "Describa brevemente lo que pasó…",
+    "message": "Mensaje",
+    "messagePlaceholder": "Déjenos un mensaje…",
+    "submitConsultation": "Enviar solicitud de consulta",
+    "sending": "Enviando…",
+    "agreePrefix": "Acepta nuestra",
+    "privacyPolicy": "política de privacidad",
+    "agreeSuffix": ".",
+    "agreeRequired": "Acepte la política de privacidad para continuar.",
+    "nameRequired": "Escriba su nombre.",
+    "verifyFailed": "No se pudo verificar. Inténtelo de nuevo.",
+    "success": "¡Gracias! Nos comunicaremos con usted muy pronto.",
+    "errorCall": "Algo salió mal. Llámenos directamente.",
+    "errorSubmit": "No se pudo enviar. Llámenos directamente.",
+    "errorRetry": "Algo salió mal. Inténtelo de nuevo.",
+    "errorRetryCall": "Algo salió mal. Inténtelo de nuevo o llámenos directamente.",
+    "errorSubmitRetry": "No se pudo enviar. Inténtelo de nuevo o llámenos directamente.",
+    "fiveStars": "5 estrellas"
+  },
+  "apply": {
+    "firm": "Nombre del bufete",
+    "bar": "Número de colegiatura en Georgia (State Bar)",
+    "years": "Años de práctica",
+    "yearsPlaceholder": "p. ej. 10",
+    "cities": "Ciudades que atiende",
+    "selectAll": "(seleccione todas las que apliquen)",
+    "why": "¿Por qué unirse a AP?",
+    "whyPlaceholder": "Cuéntenos por qué quiere formar parte de la red de AP…",
+    "city": "Ciudad de Georgia",
+    "cityPlaceholder": "p. ej. Atlanta",
+    "description": "Descripción del accidente",
+    "agreeRequired": "Acepte las normas de comunicación para continuar.",
+    "attorneySuccess": "¡Gracias! Recibimos su solicitud y nos comunicaremos con usted en un plazo de 2 días hábiles.",
+    "clientSuccess": "¡Gracias! Muy pronto lo pondremos en contacto con un abogado de Georgia."
+  },
+  "popup": {
+    "eyebrow": "Revisión gratis de su caso",
+    "heading": "¿Sufrió un accidente?",
+    "subheading": "Cuéntenos qué pasó y un abogado verificado de Georgia revisará su caso sin costo.",
+    "submit": "Quiero mi revisión gratis",
+    "success": "¡Gracias! Nos comunicaremos con usted muy pronto.",
+    "details": "Detalles del accidente o lesión",
+    "close": "Cerrar"
+  },
+  "contact": {
+    "trust": "Disponibles 24/7 · Sin costos por adelantado · Atención en varios idiomas"
+  },
+  "footer": {
+    "builtBy": "Diseño y desarrollo de",
+    "viewMap": "Ver en Google Maps"
+  },
+  "error": {
+    "notFound": "Página no encontrada",
+    "notFoundBody": "Es posible que la página que busca se haya movido o ya no exista. Lo ayudamos a encontrar lo que necesita.",
+    "generic": "Algo salió mal",
+    "genericBody": "Ocurrió un error inesperado. Inténtelo de nuevo en un momento.",
+    "backHome": "Volver al inicio",
+    "jumpTo": "O vaya a"
+  },
+  "alt": {
+    "attorneyConsultation": "Consulta con un abogado de Accident Professionals",
+    "attorneyHandshake": "Abogado y cliente dándose la mano",
+    "attorneyNetwork": "Red de abogados de AP",
+    "cityNetwork": "Red de abogados de lesiones personales en {city}",
+    "consultation": "Consulta por lesiones personales",
+    "localAttorney": "Abogado local de lesiones personales en Georgia",
+    "officeMap": "Mapa de la oficina",
+    "serviceInGeorgia": "{service} en Georgia",
+    "teamMeeting": "El equipo de Accident Professionals reunido con un cliente",
+    "victimPhone": "Víctima de un accidente revisando su caso por teléfono"
+  },
+  "aria": {
+    "breadcrumb": "Ruta de navegación",
+    "contactCta": "Llamado a contactarnos",
+    "attorneyPages": "Páginas de abogados",
+    "previous": "Anterior",
+    "next": "Siguiente",
+    "goTo": "Ir a {n}",
+    "prevTestimonials": "Testimonios anteriores",
+    "nextTestimonials": "Testimonios siguientes",
+    "stars": "{n} estrellas"
+  }
+}

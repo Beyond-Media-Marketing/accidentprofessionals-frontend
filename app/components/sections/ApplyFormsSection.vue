@@ -40,6 +40,8 @@ const props = defineProps<{
 
 const route = useRoute()
 const config = useRuntimeConfig()
+const { t } = useI18n()
+const { language, subject } = useFormLanguage()
 const { push: gtmPush } = useDataLayer()
 
 /* ── Toggle + hash deep-linking (hero role cards / CTAs land here) ── */
@@ -78,11 +80,11 @@ const { token: aTurnstileToken, reset: aResetTurnstile, verify: aVerifyTurnstile
 const aCanSubmit = computed(() => !!aForm.name.trim() && !!aForm.email.trim() && !!aForm.bar.trim() && aForm.agreed && !aSubmitting.value && !!aTurnstileToken.value)
 
 async function submitAttorney() {
-  if (!aForm.agreed) { aError.value = 'Please agree to the communication standards to continue.'; return }
+  if (!aForm.agreed) { aError.value = t('apply.agreeRequired'); return }
   aSubmitting.value = true; aError.value = ''; aSuccess.value = ''
   try {
     if (!(await aVerifyTurnstile())) {
-      aError.value = 'Verification failed. Please try again.'; aResetTurnstile(); aSubmitting.value = false; return
+      aError.value = t('form.verifyFailed'); aResetTurnstile(); aSubmitting.value = false; return
     }
     const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
@@ -90,22 +92,22 @@ async function submitAttorney() {
       body: JSON.stringify({
         access_key: config.public.web3FormsKeyAttorneys || config.public.web3FormsKey,
         form_id: 'attorney_application',
-        subject: 'New attorney application — AP Legal Network',
+        subject: subject('New attorney application — AP Legal Network'),
         name: aForm.name, firm: aForm.firm, email: aForm.email,
         phone: `${aDial.value} ${aForm.phone}`,
         georgia_bar_number: aForm.bar, years_practicing: aForm.years,
         practice_areas: aForm.practiceAreas.join(', '), cities_served: aForm.cities.join(', '),
-        languages: aForm.languages.join(', '), why_join: aForm.why, page: document.title,
+        languages: aForm.languages.join(', '), why_join: aForm.why, page: document.title, language: language.value,
       }),
     })
     const result = await res.json()
     if (result.success) {
-      aSuccess.value = "Thank you! Your application has been received — we'll be in touch within 2 business days."
+      aSuccess.value = t('apply.attorneySuccess')
       gtmPush({ form_id: 'attorney_application', service_page: route.path })
       Object.assign(aForm, { name: '', firm: '', email: '', phone: '', bar: '', years: '', why: '', agreed: false, practiceAreas: [], cities: [], languages: [] })
       aResetTurnstile()
-    } else { aError.value = 'Something went wrong. Please try again or call us directly.'; aResetTurnstile() }
-  } catch { aError.value = 'Unable to submit. Please try again or call us directly.'; aResetTurnstile() }
+    } else { aError.value = t('form.errorRetryCall'); aResetTurnstile() }
+  } catch { aError.value = t('form.errorSubmitRetry'); aResetTurnstile() }
   finally { aSubmitting.value = false }
 }
 
@@ -122,7 +124,7 @@ async function submitClient() {
   cSubmitting.value = true; cError.value = ''; cSuccess.value = ''
   try {
     if (!(await cVerifyTurnstile())) {
-      cError.value = 'Verification failed. Please try again.'; cResetTurnstile(); cSubmitting.value = false; return
+      cError.value = t('form.verifyFailed'); cResetTurnstile(); cSubmitting.value = false; return
     }
     const res = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
@@ -130,20 +132,20 @@ async function submitClient() {
       body: JSON.stringify({
         access_key: config.public.web3FormsKeyLeads || config.public.web3FormsKey,
         form_id: 'client_match',
-        subject: 'New client match request — AP Legal Network',
+        subject: subject('New client match request — AP Legal Network'),
         name: cForm.name, email: cForm.email,
         phone: `${cDial.value} ${cForm.phone}`,
-        georgia_city: cForm.city, accident_description: cForm.description, page: document.title,
+        georgia_city: cForm.city, accident_description: cForm.description, page: document.title, language: language.value,
       }),
     })
     const result = await res.json()
     if (result.success) {
-      cSuccess.value = "Thank you! We'll match you with a Georgia attorney shortly."
+      cSuccess.value = t('apply.clientSuccess')
       gtmPush({ form_id: 'client_match', service_page: route.path })
       Object.assign(cForm, { name: '', email: '', phone: '', city: '', description: '' })
       cResetTurnstile()
-    } else { cError.value = 'Something went wrong. Please try again or call us directly.'; cResetTurnstile() }
-  } catch { cError.value = 'Unable to submit. Please try again or call us directly.'; cResetTurnstile() }
+    } else { cError.value = t('form.errorRetryCall'); cResetTurnstile() }
+  } catch { cError.value = t('form.errorSubmitRetry'); cResetTurnstile() }
   finally { cSubmitting.value = false }
 }
 
@@ -181,21 +183,21 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
 
           <form class="mt-7 flex flex-col gap-4" novalidate @submit.prevent="submitAttorney">
             <div class="grid gap-4 sm:grid-cols-2">
-              <div><label :class="labelClass">Full name *</label><input v-model="aForm.name" :class="fieldClass" placeholder="Full name" required /></div>
-              <div><label :class="labelClass">Firm name *</label><input v-model="aForm.firm" :class="fieldClass" placeholder="Firm name" /></div>
+              <div><label :class="labelClass">{{ $t('form.fullName') }} *</label><input v-model="aForm.name" :class="fieldClass" :placeholder="$t('form.fullName')" required /></div>
+              <div><label :class="labelClass">{{ $t('apply.firm') }} *</label><input v-model="aForm.firm" :class="fieldClass" :placeholder="$t('apply.firm')" /></div>
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
-              <div><label :class="labelClass">Email *</label><input v-model="aForm.email" type="email" :class="fieldClass" placeholder="you@company.com" required /></div>
-              <div><label :class="labelClass">Phone number</label><AppPhoneInput v-model:phone="aForm.phone" v-model:code="aForm.countryCode" variant="contact" input-id="a-phone" /></div>
+              <div><label :class="labelClass">{{ $t('form.email') }} *</label><input v-model="aForm.email" type="email" :class="fieldClass" :placeholder="$t('form.emailPlaceholder')" required /></div>
+              <div><label :class="labelClass">{{ $t('form.phone') }}</label><AppPhoneInput v-model:phone="aForm.phone" v-model:code="aForm.countryCode" variant="contact" input-id="a-phone" /></div>
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
-              <div><label :class="labelClass">Georgia bar number *</label><input v-model="aForm.bar" :class="fieldClass" placeholder="012345" required /></div>
-              <div><label :class="labelClass">Years Practicing</label><input v-model="aForm.years" type="number" min="0" :class="fieldClass" placeholder="e.g. 10" /></div>
+              <div><label :class="labelClass">{{ $t('apply.bar') }} *</label><input v-model="aForm.bar" :class="fieldClass" placeholder="012345" required /></div>
+              <div><label :class="labelClass">{{ $t('apply.years') }}</label><input v-model="aForm.years" type="number" min="0" :class="fieldClass" :placeholder="$t('apply.yearsPlaceholder')" /></div>
             </div>
             <!-- Multi-select chip groups (checkboxes styled as pills) — native
                  <select multiple> needs cmd/ctrl-click, which users don't discover. -->
             <div>
-              <label :class="labelClass">Practice Areas <span class="font-normal text-muted">(select all that apply)</span></label>
+              <label :class="labelClass">{{ $t('attorney.practiceAreas') }} <span class="font-normal text-muted">{{ $t('apply.selectAll') }}</span></label>
               <div class="flex flex-wrap gap-2">
                 <label
                   v-for="o in block.attorneyForm?.practiceAreaOptions ?? []"
@@ -210,7 +212,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
-                <label :class="labelClass">Cities Served <span class="font-normal text-muted">(select all that apply)</span></label>
+                <label :class="labelClass">{{ $t('apply.cities') }} <span class="font-normal text-muted">{{ $t('apply.selectAll') }}</span></label>
                 <div class="flex flex-wrap gap-2">
                   <label
                     v-for="o in block.attorneyForm?.cityOptions ?? []"
@@ -224,7 +226,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
                 </div>
               </div>
               <div>
-                <label :class="labelClass">Languages <span class="font-normal text-muted">(select all that apply)</span></label>
+                <label :class="labelClass">{{ $t('attorney.languages') }} <span class="font-normal text-muted">{{ $t('apply.selectAll') }}</span></label>
                 <div class="flex flex-wrap gap-2">
                   <label
                     v-for="o in block.attorneyForm?.languageOptions ?? []"
@@ -239,8 +241,8 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
               </div>
             </div>
             <div>
-              <label :class="labelClass">Why Join AP</label>
-              <textarea v-model="aForm.why" rows="3" :class="fieldClass" placeholder="Tell us why you want to be part of the AP network…" />
+              <label :class="labelClass">{{ $t('apply.why') }}</label>
+              <textarea v-model="aForm.why" rows="3" :class="fieldClass" :placeholder="$t('apply.whyPlaceholder')" />
             </div>
 
             <label class="flex items-start gap-2.5 font-primary text-[13px] leading-snug text-muted">
@@ -251,7 +253,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
             <div id="apply-attorney-turnstile" />
 
             <button type="submit" class="mt-1 flex w-full items-center justify-center gap-2 rounded-pill bg-accent px-6 py-4 font-primary text-[15px] font-semibold text-dark shadow-button transition-transform hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-60" :disabled="!aCanSubmit">
-              {{ aSubmitting ? 'Sending…' : block.attorneyForm?.submitLabel }}
+              {{ aSubmitting ? $t('form.sending') : block.attorneyForm?.submitLabel }}
               <img v-if="!aSubmitting" src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
             </button>
             <p v-if="aSuccess" class="text-center font-primary text-sm font-medium text-[#16a34a]">{{ aSuccess }}</p>
@@ -262,7 +264,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
         <!-- Right: image + what happens next -->
         <div class="flex flex-col gap-6">
           <div class="overflow-hidden rounded-3xl">
-            <img v-if="attorneyImage" :src="attorneyImage" alt="AP attorney network" class="block h-[380px] w-full origin-top scale-[1.03] object-cover lg:h-[560px]" loading="lazy" decoding="async" />
+            <img v-if="attorneyImage" :src="attorneyImage" :alt="$t('alt.attorneyNetwork')" class="block h-[380px] w-full origin-top scale-[1.03] object-cover lg:h-[560px]" loading="lazy" decoding="async" />
           </div>
           <div v-if="block.attorneyForm?.nextSteps?.length" class="rounded-3xl bg-dark p-7 text-on-dark 3xl:p-8">
             <h3 class="mb-5 font-secondary text-lg font-bold text-white">{{ block.attorneyForm.nextStepsTitle }}</h3>
@@ -289,7 +291,7 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
           <!-- Left: image + info rows -->
           <div class="flex flex-col gap-6">
             <div class="overflow-hidden rounded-3xl">
-              <img v-if="clientImage" :src="clientImage" alt="Personal injury consultation" class="block h-[260px] w-full origin-top scale-[1.03] object-cover sm:h-[300px]" loading="lazy" decoding="async" />
+              <img v-if="clientImage" :src="clientImage" :alt="$t('alt.consultation')" class="block h-[260px] w-full origin-top scale-[1.03] object-cover sm:h-[300px]" loading="lazy" decoding="async" />
             </div>
             <div v-if="block.clientForm?.infoRows?.length" class="flex flex-col gap-4">
               <div v-for="(row, i) in block.clientForm.infoRows" :key="i" class="flex items-center gap-3">
@@ -309,18 +311,18 @@ const labelClass = 'mb-1.5 block font-primary text-[13px] font-medium text-dark/
           <!-- Right: form -->
           <div>
             <form class="flex flex-col gap-4" novalidate @submit.prevent="submitClient">
-              <div><label :class="labelClass">Full name *</label><input v-model="cForm.name" :class="fieldClass" placeholder="Full name" required /></div>
+              <div><label :class="labelClass">{{ $t('form.fullName') }} *</label><input v-model="cForm.name" :class="fieldClass" :placeholder="$t('form.fullName')" required /></div>
               <div class="grid gap-4 sm:grid-cols-2">
-                <div><label :class="labelClass">Email *</label><input v-model="cForm.email" type="email" :class="fieldClass" placeholder="you@company.com" required /></div>
-                <div><label :class="labelClass">Phone number</label><AppPhoneInput v-model:phone="cForm.phone" v-model:code="cForm.countryCode" variant="contact" input-id="c-phone" /></div>
+                <div><label :class="labelClass">{{ $t('form.email') }} *</label><input v-model="cForm.email" type="email" :class="fieldClass" :placeholder="$t('form.emailPlaceholder')" required /></div>
+                <div><label :class="labelClass">{{ $t('form.phone') }}</label><AppPhoneInput v-model:phone="cForm.phone" v-model:code="cForm.countryCode" variant="contact" input-id="c-phone" /></div>
               </div>
-              <div><label :class="labelClass">Georgia city *</label><input v-model="cForm.city" :class="fieldClass" placeholder="e.g. Atlanta" required /></div>
-              <div><label :class="labelClass">Accident Description</label><textarea v-model="cForm.description" rows="4" :class="fieldClass" placeholder="Briefly describe what happened…" /></div>
+              <div><label :class="labelClass">{{ $t('apply.city') }} *</label><input v-model="cForm.city" :class="fieldClass" :placeholder="$t('apply.cityPlaceholder')" required /></div>
+              <div><label :class="labelClass">{{ $t('apply.description') }}</label><textarea v-model="cForm.description" rows="4" :class="fieldClass" :placeholder="$t('form.briefPlaceholder')" /></div>
 
               <div id="apply-client-turnstile" />
 
               <button type="submit" class="mt-1 flex w-full items-center justify-center gap-2 rounded-pill bg-accent px-6 py-4 font-primary text-[15px] font-semibold text-dark shadow-button transition-transform hover:-translate-y-px disabled:cursor-not-allowed disabled:opacity-60" :disabled="!cCanSubmit">
-                {{ cSubmitting ? 'Sending…' : block.clientForm?.submitLabel }}
+                {{ cSubmitting ? $t('form.sending') : block.clientForm?.submitLabel }}
                 <img v-if="!cSubmitting" src="/icons/arrow-next.svg" alt="" class="h-[18px] w-[18px]" />
               </button>
               <p v-if="cSuccess" class="text-center font-primary text-sm font-medium text-[#16a34a]">{{ cSuccess }}</p>

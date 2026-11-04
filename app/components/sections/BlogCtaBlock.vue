@@ -43,7 +43,7 @@ const isRich = computed(() => {
           v-if="block.text"
           class="cta-rich mt-2 font-primary text-sm leading-relaxed"
           :class="dark ? 'text-white/75' : 'text-dark/75'"
-          v-html="block.text"
+          v-html="localizeHtmlLinks(block.text, $i18n.locale)"
         />
       </div>
 

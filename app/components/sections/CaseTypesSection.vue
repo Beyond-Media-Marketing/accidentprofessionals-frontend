@@ -24,14 +24,14 @@
             <p class="text-base leading-[1.65] tracking-[-0.02em] text-muted">{{ c.description }}</p>
             <!-- Per-card CTA — only for sub-services with a built page. Its stretched
                  ::after makes the whole card clickable. -->
-            <NuxtLink
+            <AppLink
               v-if="c.hasPage"
               :to="c.linkAnchor ? `${c.link}#${c.linkAnchor}` : c.link"
               class="mt-2 inline-flex w-fit items-center gap-1.5 font-primary text-[15px] font-semibold text-accent transition-opacity hover:opacity-80 after:absolute after:inset-0 after:content-['']"
             >
-              Read More
+              {{ $t('cta.readMore') }}
               <svg class="h-[18px] w-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-            </NuxtLink>
+            </AppLink>
           </div>
         </div>
       </div>

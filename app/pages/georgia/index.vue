@@ -3,6 +3,9 @@ import { computed } from 'vue'
 
 definePageMeta({ layout: 'site' })
 
+const { t } = useI18n()
+const lh = useLocaleHref()
+const { siteUrl } = useRuntimeConfig().public
 const slug = 'georgia'
 const { loc, def } = await useLocationPage('state', slug)
 
@@ -13,7 +16,7 @@ if (!loc.value) {
 usePageSeo(() => loc.value?.seo, { ogImage: () => strapiMedia(loc.value?.hero?.bgImage) })
 useFaqJsonLd(() => (loc.value?.faq?.items ?? []).map((i: any) => ({ question: i.question, answer: i.answer })))
 
-const canonical = computed(() => loc.value?.seo?.canonicalUrl || `https://accidentprofessionals.com/${slug}`)
+const canonical = computed(() => `${siteUrl}${lh(`/${slug}`)}`)
 useHead({
   script: [
     {
@@ -23,7 +26,7 @@ useHead({
           '@context': 'https://schema.org',
           '@type': 'BreadcrumbList',
           itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://accidentprofessionals.com/' },
+            { '@type': 'ListItem', position: 1, name: t('nav.home'), item: `${siteUrl}${lh('/')}` },
             { '@type': 'ListItem', position: 2, name: loc.value?.title, item: canonical.value },
           ],
         }),

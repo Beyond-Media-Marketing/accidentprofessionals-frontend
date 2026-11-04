@@ -17,7 +17,7 @@ const year = new Date().getFullYear()
   <div class="flex min-h-screen flex-col bg-cream">
     <header class="border-b border-dark/10 bg-dark">
       <div class="mx-auto flex w-full max-w-[620px] items-center justify-between gap-4 px-5 py-4">
-        <NuxtLink to="/" aria-label="Accident Professionals">
+        <AppLink to="/" aria-label="Accident Professionals">
           <img
             :src="strapiMedia(settings.logo, '/brand/logo.png')"
             alt="Accident Professionals"
@@ -25,7 +25,7 @@ const year = new Date().getFullYear()
             height="37"
             class="h-[30px] w-auto"
           />
-        </NuxtLink>
+        </AppLink>
         <a
           :href="phoneHref"
           class="rounded-pill bg-accent px-4 py-2 font-primary text-[13.5px] font-semibold text-dark whitespace-nowrap"
@@ -44,7 +44,7 @@ const year = new Date().getFullYear()
         class="mx-auto flex w-full max-w-[620px] flex-col gap-2 px-5 py-6 text-center font-primary text-[12.5px] text-muted sm:flex-row sm:justify-between sm:text-left"
       >
         <p class="m-0">© {{ year }} Accident Professionals. All rights reserved.</p>
-        <NuxtLink to="/privacy-policy" class="m-0 underline underline-offset-2">Privacy Policy</NuxtLink>
+        <AppLink to="/privacy-policy" class="m-0 underline underline-offset-2">Privacy Policy</AppLink>
       </div>
     </footer>
   </div>

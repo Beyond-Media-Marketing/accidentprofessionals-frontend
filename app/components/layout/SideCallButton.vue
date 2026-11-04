@@ -16,7 +16,7 @@ const hasPhone = computed(() => !!(settings.value.phone || config.public.phone))
   <a
     v-if="hasPhone"
     :href="phoneHref"
-    aria-label="Call us now"
+    :aria-label="$t('cta.callNow')"
     class="group fixed bottom-5 right-5 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-accent font-primary text-dark shadow-[0_10px_28px_rgba(0,0,0,0.22)] transition-transform hover:-translate-y-0.5 lg:h-auto lg:w-auto lg:justify-start lg:gap-2.5 lg:rounded-pill lg:py-3 lg:pl-3 lg:pr-5 lg:text-[15px] lg:font-semibold lg:bottom-6 lg:right-6 3xl:bottom-8 3xl:right-8"
     @click="gtmPush({ event: 'phone_click', location: 'side_cta' })"
   >
@@ -26,6 +26,6 @@ const hasPhone = computed(() => !!(settings.value.phone || config.public.phone))
         <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.24 1.02l-2.2 2.2z" />
       </svg>
     </span>
-    <span class="hidden lg:inline">Call Us Now</span>
+    <span class="hidden lg:inline">{{ $t('cta.callNow') }}</span>
   </a>
 </template>

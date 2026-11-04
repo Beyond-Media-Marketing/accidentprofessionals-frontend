@@ -72,7 +72,7 @@ onMounted(async () => {
           type="button"
           class="flex h-12 w-12 items-center justify-center rounded-full border border-dark/15 text-dark transition-colors hover:bg-dark/5 disabled:cursor-not-allowed disabled:opacity-30"
           :disabled="atStart"
-          aria-label="Previous"
+          :aria-label="$t('aria.previous')"
           @click="scrollDir(-1)"
         >
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
@@ -81,7 +81,7 @@ onMounted(async () => {
           type="button"
           class="flex h-12 w-12 items-center justify-center rounded-full bg-accent text-dark shadow-button transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
           :disabled="atEnd"
-          aria-label="Next"
+          :aria-label="$t('aria.next')"
           @click="scrollDir(1)"
         >
           <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6" /></svg>

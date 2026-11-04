@@ -1,5 +1,5 @@
 <template>
-  <section class="hero" :class="{ 'hero--flat': flat }" aria-label="Hero">
+  <section class="hero" :class="{ 'hero--flat': flat }" :aria-label="$t('header.hero')">
     <!-- bg image already has all effects baked in -->
     <div
       class="hero__bg"
@@ -45,23 +45,23 @@
           <!-- Row 1: Name + Email -->
           <div class="hero__form-row">
             <div class="hero__field">
-              <label for="hero-name">Name</label>
+              <label for="hero-name">{{ $t("form.name") }}</label>
               <input
                 id="hero-name"
                 v-model="form.name"
                 type="text"
-                placeholder="Full Name"
+                :placeholder="$t('form.fullName')"
                 autocomplete="name"
                 required
               />
             </div>
             <div class="hero__field">
-              <label for="hero-email">Email <span class="hero__optional">(optional)</span></label>
+              <label for="hero-email">{{ $t("form.email") }} <span class="hero__optional">{{ $t("form.optional") }}</span></label>
               <input
                 id="hero-email"
                 v-model="form.email"
                 type="email"
-                placeholder="email@email.com"
+                :placeholder="$t('form.emailPlaceholder')"
                 autocomplete="email"
               />
             </div>
@@ -70,7 +70,7 @@
           <!-- Row 2: Phone -->
           <div class="hero__form-row">
             <div class="hero__field">
-              <label for="hero-phone">Phone number</label>
+              <label for="hero-phone">{{ $t("form.phone") }}</label>
               <AppPhoneInput
                 v-model:phone="form.phone"
                 v-model:code="form.countryCode"
@@ -82,11 +82,11 @@
 
           <!-- Row 3: Description -->
           <div class="hero__field">
-            <label for="hero-desc">Description</label>
+            <label for="hero-desc">{{ $t("form.description") }}</label>
             <textarea
               id="hero-desc"
               v-model="form.message"
-              placeholder="Write details about your accident here…."
+              :placeholder="$t('form.descriptionPlaceholder')"
               rows="3"
             />
           </div>
@@ -95,7 +95,7 @@
           <div id="hero-turnstile" />
 
           <button type="submit" class="hero__submit" :disabled="!canSubmit">
-            {{ submitting ? "Sending…" : "Get Free Consultation" }}
+            {{ submitting ? $t("form.sending") : $t("cta.freeConsultation") }}
             <img
               src="/services-page/auto-accidents/arrow-black.svg"
               alt=""
@@ -106,8 +106,8 @@
 
           <!-- Privacy checkbox -->
           <AppCheckbox v-model="form.agreed">
-            You agree to our friendly
-            <NuxtLink to="/privacy-policy">privacy policy</NuxtLink>.
+            {{ $t("form.agreePrefix") }}
+            <AppLink to="/privacy-policy">{{ $t("form.privacyPolicy") }}</AppLink>{{ $t("form.agreeSuffix") }}
           </AppCheckbox>
 
           <!-- Separator -->
@@ -160,7 +160,7 @@
             </div>
             <div class="hero__proof-text">
               <p class="hero__client-count">{{ data.clientCount }}</p>
-              <div class="hero__stars" aria-label="5 stars" role="img">
+              <div class="hero__stars" :aria-label="$t('form.fiveStars')" role="img">
                 <img
                   v-for="n in 5"
                   :key="n"
@@ -200,6 +200,8 @@ const props = defineProps({
 });
 const data = props.data as any;
 const config = useRuntimeConfig();
+const { t } = useI18n();
+const { language, subject } = useFormLanguage();
 const route = useRoute();
 
 const defaultCaseType =
@@ -233,18 +235,18 @@ const canSubmit = computed(() =>
 
 async function submitForm() {
   if (!form.agreed) {
-    errorMessage.value = "Please agree to the privacy policy to continue.";
+    errorMessage.value = t('form.agreeRequired');
     return;
   }
   if (!form.name) {
-    errorMessage.value = "Please enter your name.";
+    errorMessage.value = t('form.nameRequired');
     return;
   }
   submitting.value = true;
   errorMessage.value = "";
   try {
     if (!(await verifyTurnstile())) {
-      errorMessage.value = "Verification failed. Please try again.";
+      errorMessage.value = t('form.verifyFailed');
       resetTurnstile();
       submitting.value = false;
       return;
@@ -255,17 +257,18 @@ async function submitForm() {
       body: JSON.stringify({
         access_key: config.public.web3FormsKeyLeads || config.public.web3FormsKey,
         form_id: "hero_form",
-        subject: data.formSubject,
+        subject: subject(data.formSubject),
         name: form.name,
         email: form.email,
         phone: `${dialCode.value} ${form.phone}`,
         message: form.message,
         page: document.title,
+        language: language.value,
       }),
     });
     const result = await res.json();
     if (result.success) {
-      successMessage.value = "Thank you! We'll be in touch shortly.";
+      successMessage.value = t('form.success');
       gtmPush({
         form_id: "hero_form",
         service_page: route.path,
@@ -275,11 +278,11 @@ async function submitForm() {
       });
       resetTurnstile();
     } else {
-      errorMessage.value = "Something went wrong. Please call us directly.";
+      errorMessage.value = t('form.errorCall');
       resetTurnstile();
     }
   } catch {
-    errorMessage.value = "Unable to submit. Please call us directly.";
+    errorMessage.value = t('form.errorSubmit');
     resetTurnstile();
   } finally {
     submitting.value = false;

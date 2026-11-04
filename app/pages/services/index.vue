@@ -1,46 +1,32 @@
 <script setup lang="ts">
-import qs from 'qs'
-
 definePageMeta({ layout: 'site' })
 
-const { strapiUrl } = useRuntimeConfig().public
+const { locale, t } = useI18n()
 
-const populate = qs.stringify(
-  {
-    populate: {
-      hero: { populate: { bgImage: true } },
-      whyLocal: { populate: { cta: true, image: true } },
-      howConnect: { populate: { cta: true, steps: true } },
-      cityAreas: { populate: { regions: { populate: { cities: true } }, cta: true } },
-      caseTypes: { populate: { cta: true, features: { populate: { icon: true } } } },
-      gaLaw: { populate: { cards: true, images: true } },
-      faq: { populate: { items: true } },
-      closingCta: { populate: { cta: true } },
-      seo: { populate: '*' },
-    },
+const query = {
+  populate: {
+    hero: { populate: { bgImage: true } },
+    whyLocal: { populate: { cta: true, image: true } },
+    howConnect: { populate: { cta: true, steps: true } },
+    cityAreas: { populate: { regions: { populate: { cities: true } }, cta: true } },
+    caseTypes: { populate: { cta: true, features: { populate: { icon: true } } } },
+    gaLaw: { populate: { cards: true, images: true } },
+    faq: { populate: { items: true } },
+    closingCta: { populate: { cta: true } },
+    seo: { populate: '*' },
   },
-  { encodeValuesOnly: true },
-)
+}
 
-const { data: page } = await useFetch<any>(`${strapiUrl}/api/services-page?${populate}`, {
-  key: 'services-page',
-  transform: (r: any) => r?.data ?? null,
-})
+const { data: page } = await useAsyncData(`services-page-${locale.value}`, () =>
+  strapiGet('services-page', query, locale.value).then((r) => r?.data ?? null),
+)
 
 // Cities we serve — shared single source (see useCitiesSection).
 const { data: citiesSection } = await useCitiesSection()
 
 usePageSeo(() => page.value?.seo)
 
-const caseOptions = [
-  { value: 'car', label: 'Car Accidents' },
-  { value: 'truck', label: 'Truck Accidents' },
-  { value: 'rideshare', label: 'Rideshare Accidents' },
-  { value: 'slip-fall', label: 'Slip & Fall' },
-  { value: 'workplace', label: 'Workplace Injuries' },
-  { value: 'motorcycle', label: 'Motorcycle Accidents' },
-  { value: 'other', label: 'Other / Not sure' },
-]
+const caseOptions = computed(() => defaultCaseOptions(t))
 </script>
 
 <template>
@@ -57,7 +43,7 @@ const caseOptions = [
       <template #aside>
         <LeadForm
           :case-options="caseOptions"
-          client-count="1,200+ Clients Helped"
+          :client-count="$t('hero.clientsHelped')"
           form-subject="New consultation request — Service Areas"
         />
       </template>
@@ -66,7 +52,7 @@ const caseOptions = [
     <MediaTextSection
       :block="page.whyLocal"
       :image="strapiMedia(page.whyLocal?.image)"
-      image-alt="Local Georgia personal injury attorney"
+      :image-alt="$t('alt.localAttorney')"
     />
 
     <StepsRowSection :block="page.howConnect" />

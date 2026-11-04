@@ -27,9 +27,9 @@ const copyright = computed(() =>
       <div class="grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-[1.7fr_1fr_1fr_1.5fr] lg:gap-x-10">
         <!-- Brand -->
         <div class="col-span-2 flex flex-col gap-4 lg:col-span-1">
-          <NuxtLink to="/" aria-label="Accident Professionals" class="inline-block">
+          <AppLink to="/" aria-label="Accident Professionals" class="inline-block">
             <img :src="logo" alt="Accident Professionals" height="37" class="h-[37px] w-auto" />
-          </NuxtLink>
+          </AppLink>
           <p class="max-w-[340px] text-sm leading-relaxed text-muted">
             {{ footer.tagline || settings.tagline }}
           </p>
@@ -53,19 +53,19 @@ const copyright = computed(() =>
           <p class="text-base font-semibold text-cream">{{ col.heading }}</p>
           <ul class="space-y-2.5">
             <li v-for="(link, li) in col.links ?? []" :key="li">
-              <NuxtLink
+              <AppLink
                 :to="link.href || '#'"
                 class="text-sm text-muted transition-colors hover:text-accent"
               >
                 {{ link.label }}
-              </NuxtLink>
+              </AppLink>
             </li>
           </ul>
         </div>
 
         <!-- Contact & Support (merged) -->
         <div class="col-span-2 flex flex-col gap-4 lg:col-span-1">
-          <p class="text-base font-semibold text-cream">{{ footer.supportHeading || 'Contact Us' }}</p>
+          <p class="text-base font-semibold text-cream">{{ footer.supportHeading || $t('nav.contactUs') }}</p>
 
           <a
             v-if="phone"
@@ -87,7 +87,7 @@ const copyright = computed(() =>
             target="_blank"
             rel="noopener"
             class="mt-1 block max-w-[320px] overflow-hidden rounded-lg border border-white/10"
-            aria-label="View on Google Maps"
+            :aria-label="$t('footer.viewMap')"
           >
             <iframe
               :src="settings.mapEmbedUrl"
@@ -107,11 +107,11 @@ const copyright = computed(() =>
       <div class="mt-12 border-t border-white/10 pt-6 text-center">
         <ul v-if="legalLinks.length" class="mb-3 flex flex-wrap justify-center gap-x-6 gap-y-2">
           <li v-for="(l, i) in legalLinks" :key="i">
-            <NuxtLink
+            <AppLink
               v-if="!l.external"
               :to="l.href || '#'"
               class="text-sm text-muted transition-colors hover:text-accent"
-            >{{ l.label }}</NuxtLink>
+            >{{ l.label }}</AppLink>
             <a
               v-else
               :href="l.href || '#'"
@@ -123,7 +123,7 @@ const copyright = computed(() =>
         </ul>
         <p class="text-sm text-muted">{{ copyright }}</p>
         <p v-if="footer.builtByName" class="mt-1.5 text-xs text-muted/70">
-          {{ footer.builtByLabel || 'Designed & Built by' }}
+          {{ footer.builtByLabel || $t('footer.builtBy') }}
           <a
             :href="footer.builtByHref || '#'"
             target="_blank"

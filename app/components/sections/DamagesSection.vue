@@ -99,13 +99,13 @@ const fileIcon = (name?: string | null) => (name && FILE_ICONS.has(name) ? `/ico
       </p>
 
       <div v-if="block.cta?.label" class="mt-8 flex justify-center">
-        <NuxtLink
+        <AppLink
           :to="block.cta.href || '#'"
           class="inline-flex items-center gap-2 rounded-pill border border-white/25 px-7 py-3 font-primary text-sm font-semibold text-white transition-colors hover:border-accent hover:text-accent"
         >
           {{ block.cta.label }}
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
-        </NuxtLink>
+        </AppLink>
       </div>
     </div>
   </section>

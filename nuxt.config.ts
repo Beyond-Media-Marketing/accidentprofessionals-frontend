@@ -2,7 +2,23 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
-  modules: ['@nuxtjs/google-fonts', '@vueuse/nuxt', '@nuxtjs/tailwindcss', '@nuxtjs/sitemap', '@nuxt/image'],
+  modules: ['@nuxtjs/i18n', '@nuxtjs/google-fonts', '@vueuse/nuxt', '@nuxtjs/tailwindcss', '@nuxtjs/sitemap', '@nuxt/image'],
+
+  // English at the root, Spanish under /es/ with the same (English) slugs, so
+  // /services/x ⇄ /es/services/x. Content comes from the Strapi `es` locale
+  // (falling back to English for anything not translated yet); UI strings live
+  // in i18n/locales/*.json. No browser-language redirect — visitors (and
+  // Googlebot) always get the URL they asked for; the header toggle switches.
+  i18n: {
+    locales: [
+      { code: 'en', language: 'en-US', name: 'English', file: 'en.json' },
+      { code: 'es', language: 'es-US', name: 'Español', file: 'es.json' },
+    ],
+    defaultLocale: 'en',
+    strategy: 'prefix_except_default',
+    detectBrowserLanguage: false,
+    baseUrl: process.env.SITE_URL ?? 'http://localhost:3000',
+  },
 
   // Optimized responsive images (WebP/AVIF + lazy). Local /public assets work
   // out of the box; allow the Strapi host so CMS-uploaded media is optimized too.
@@ -48,7 +64,7 @@ export default defineNuxtConfig({
   // Dynamic (Strapi-driven) routes are added via the server source below.
   sitemap: {
     // /forms/* are private rep landing pages — noindex'd and never in the sitemap.
-    exclude: ['/home-legacy', '/forms/**'],
+    exclude: ['/home-legacy', '/forms/**', '/es/forms/**'],
     sources: ['/api/__sitemap__/urls'],
   },
 
@@ -74,7 +90,6 @@ export default defineNuxtConfig({
     head: {
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1',
-      htmlAttrs: { lang: 'en' },
       script: [
         // dataLayer initialized early so any pre-load pushes are queued
         { innerHTML: `window.dataLayer=window.dataLayer||[];` },

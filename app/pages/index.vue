@@ -1,31 +1,25 @@
 <script setup lang="ts">
-import qs from 'qs'
-
 definePageMeta({ layout: 'site' })
 
-const { strapiUrl } = useRuntimeConfig().public
+const { locale } = useI18n()
 
-const populate = qs.stringify(
-  {
-    populate: {
-      hero: { populate: { primaryCta: true, secondaryCta: true, bgImage: true } },
-      stats: true,
-      howWeHelp: { populate: { cta: true, image: true, highlightIcon: true, steps: true } },
-      whyChooseUs: { populate: { cta: true, bgImage: true, features: { populate: { icon: true } } } },
-      practiceAreas: { populate: { cta: true, features: { populate: { icon: true } } } },
-      ourProcess: { populate: { cards: { populate: { cta: true } } } },
-      faq: { populate: { items: true } },
-      closingCta: { populate: { cta: true } },
-      seo: { populate: '*' },
-    },
+const query = {
+  populate: {
+    hero: { populate: { primaryCta: true, secondaryCta: true, bgImage: true } },
+    stats: true,
+    howWeHelp: { populate: { cta: true, image: true, highlightIcon: true, steps: true } },
+    whyChooseUs: { populate: { cta: true, bgImage: true, features: { populate: { icon: true } } } },
+    practiceAreas: { populate: { cta: true, features: { populate: { icon: true } } } },
+    ourProcess: { populate: { cards: { populate: { cta: true } } } },
+    faq: { populate: { items: true } },
+    closingCta: { populate: { cta: true } },
+    seo: { populate: '*' },
   },
-  { encodeValuesOnly: true },
-)
+}
 
-const { data: page } = await useFetch<any>(`${strapiUrl}/api/home-page?${populate}`, {
-  key: 'home-page',
-  transform: (r: any) => r?.data ?? null,
-})
+const { data: page } = await useAsyncData(`home-page-${locale.value}`, () =>
+  strapiGet('home-page', query, locale.value).then((r) => r?.data ?? null),
+)
 
 // Cities we serve — shared single source (see useCitiesSection).
 const { data: citiesSection } = await useCitiesSection()
@@ -50,7 +44,7 @@ usePageSeo(() => page.value?.seo)
     <ProcessSection
       :block="page.howWeHelp"
       :image="strapiMedia(page.howWeHelp?.image)"
-      image-alt="Accident Professionals team meeting with a client"
+      :image-alt="$t('alt.teamMeeting')"
       :highlight-icon="strapiMedia(page.howWeHelp?.highlightIcon, '/icons/goal.svg')"
     />
 

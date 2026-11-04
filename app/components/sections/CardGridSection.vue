@@ -49,7 +49,7 @@ defineProps<{
           <div class="flex flex-1 flex-col">
             <h3 class="font-primary text-xl font-semibold leading-snug text-dark">{{ c.title }}</h3>
             <p class="mt-2 font-primary text-sm leading-relaxed text-muted">{{ c.description }}</p>
-            <NuxtLink
+            <AppLink
               v-if="c.linkLabel"
               :to="c.linkHref || '#'"
               class="mt-auto inline-flex items-center gap-2 pt-4 font-primary text-base font-semibold leading-6 tracking-[-0.3125px] text-[#AC8C66] transition-opacity hover:opacity-80 after:absolute after:inset-0 after:content-['']"
@@ -67,7 +67,7 @@ defineProps<{
               >
                 <path d="M3.75 9h10.5M9 3.75 14.25 9 9 14.25" />
               </svg>
-            </NuxtLink>
+            </AppLink>
           </div>
         </article>
       </div>
