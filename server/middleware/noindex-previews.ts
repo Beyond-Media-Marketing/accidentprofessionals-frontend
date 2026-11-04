@@ -1,5 +1,5 @@
 /**
- * Never let a Vercel preview/staging deployment be indexed.
+ * Never let a Vercel preview or the staging site (staging.accidentprofessionals.com) be indexed.
  *
  * Every deployment gets a *.vercel.app hostname that serves the full site. Without
  * this, those URLs are crawlable duplicates of production — and if SITE_URL is ever
@@ -10,8 +10,9 @@
  * SITE_URL can never accidentally noindex the real domain.
  */
 export default defineEventHandler((event) => {
-  const host = getRequestHost(event, { xForwardedHost: true }) || ''
-  if (host.endsWith('.vercel.app')) {
+  // Strip the port so staging.accidentprofessionals.com:443 still matches.
+  const host = (getRequestHost(event, { xForwardedHost: true }) || '').split(':')[0]
+  if (host.endsWith('.vercel.app') || host === 'staging.accidentprofessionals.com') {
     setResponseHeader(event, 'X-Robots-Tag', 'noindex, nofollow')
   }
 })

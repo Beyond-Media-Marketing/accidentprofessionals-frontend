@@ -1,12 +1,14 @@
 /**
  * Marker.io feedback widget — staging only.
  *
- * Gated on the *.vercel.app hostname (same rule as server/middleware/noindex-previews.ts)
+ * Gated on the staging hostnames — staging.accidentprofessionals.com and *.vercel.app
+ * (same rule as server/middleware/noindex-previews.ts)
  * rather than on a branch, so merging staging into master can never ship it to the
  * live domain. Never loads on accidentprofessionals.com or localhost.
  */
 export default defineNuxtPlugin(() => {
-  if (!window.location.hostname.endsWith('.vercel.app')) return
+  const host = window.location.hostname
+  if (!host.endsWith('.vercel.app') && host !== 'staging.accidentprofessionals.com') return
 
   const w = window as any
   w.markerConfig = {
