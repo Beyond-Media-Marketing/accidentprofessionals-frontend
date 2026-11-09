@@ -37,6 +37,25 @@ export interface CallbackCopy {
   errorConsent: string
   errorRequired: string
   optional: string
+  // Out-of-state fields (state ≠ Georgia)
+  hospitalLabel: string
+  injuriesLabel: string
+  policeReportLabel: string
+  policeReportPlaceholder: string
+  addressLabel: string
+  languageLabel: string
+  languagePlaceholder: string
+  languageOptions: { value: string; label: string }[]
+  attachmentsLabel: string
+  attachmentsDrop: string
+  attachmentsBrowse: string
+  attachmentsHint: string
+  attachmentsRemove: string
+  additionalInfoLabel: string
+  additionalInfoHelp: string
+  errorFile: string
+  errorTooManyFiles: string
+  attachmentsPartial: string
 }
 
 /** Stable option values — these are what get sent to ClickUp, independent of locale. */
@@ -45,6 +64,11 @@ export const BEST_TIME_VALUES = {
   endOfDay: 'end-of-day',
   specific: 'specific',
 } as const
+
+/** Stable Primary Language values — mapped to ClickUp option ids on the server. */
+export const LANGUAGE_VALUES = ['english', 'spanish', 'portuguese', 'russian', 'other'] as const
+
+export const MAX_ATTACHMENTS = 10
 
 export const CALLBACK_COPY: Record<Locale, CallbackCopy> = {
   en: {
@@ -84,6 +108,32 @@ export const CALLBACK_COPY: Record<Locale, CallbackCopy> = {
     errorConsent: 'Please agree to the contact consent to continue.',
     errorRequired: 'Please fill in all required fields.',
     optional: 'optional',
+    hospitalLabel: 'Hospital',
+    injuriesLabel: 'Injuries',
+    policeReportLabel: 'Police Report (Yes/No)',
+    policeReportPlaceholder: 'Yes / No',
+    addressLabel: 'Address',
+    languageLabel: 'Language',
+    languagePlaceholder: 'Select a language...',
+    languageOptions: [
+      { value: 'english', label: 'English' },
+      { value: 'spanish', label: 'Spanish' },
+      { value: 'portuguese', label: 'Portuguese' },
+      { value: 'russian', label: 'Russian' },
+      { value: 'other', label: 'Other' },
+    ],
+    attachmentsLabel: 'Attachments',
+    attachmentsDrop: 'Drag & drop files here, or',
+    attachmentsBrowse: 'browse',
+    attachmentsHint: 'Photos, PDF or Word documents, up to 10 files.',
+    attachmentsRemove: 'Remove',
+    additionalInfoLabel: 'Additional Info',
+    additionalInfoHelp:
+      'At-Fault Party Information, PIP (Personal Injury Protection), Commercial Case / Rideshare / Amazon, Uber/Lyft Driver',
+    errorFile: 'Some files were skipped: only photos, PDF or Word documents under 4 MB are accepted.',
+    errorTooManyFiles: 'You can attach up to 10 files.',
+    attachmentsPartial:
+      "We received your request, but some files didn't upload. Our team may ask you to send them again.",
   },
   es: {
     langLabel: 'ES',
@@ -122,5 +172,31 @@ export const CALLBACK_COPY: Record<Locale, CallbackCopy> = {
     errorConsent: 'Por favor acepte el consentimiento de contacto para continuar.',
     errorRequired: 'Por favor complete todos los campos obligatorios.',
     optional: 'opcional',
+    hospitalLabel: 'Hospital',
+    injuriesLabel: 'Lesiones',
+    policeReportLabel: 'Reporte policial (Sí/No)',
+    policeReportPlaceholder: 'Sí / No',
+    addressLabel: 'Dirección',
+    languageLabel: 'Idioma',
+    languagePlaceholder: 'Seleccione un idioma...',
+    languageOptions: [
+      { value: 'english', label: 'Inglés' },
+      { value: 'spanish', label: 'Español' },
+      { value: 'portuguese', label: 'Portugués' },
+      { value: 'russian', label: 'Ruso' },
+      { value: 'other', label: 'Otro' },
+    ],
+    attachmentsLabel: 'Archivos adjuntos',
+    attachmentsDrop: 'Arrastre y suelte archivos aquí, o',
+    attachmentsBrowse: 'búsquelos en su dispositivo',
+    attachmentsHint: 'Fotos, documentos PDF o Word, hasta 10 archivos.',
+    attachmentsRemove: 'Quitar',
+    additionalInfoLabel: 'Información adicional',
+    additionalInfoHelp:
+      'Información de la parte culpable, PIP (Protección por Lesiones Personales), caso comercial / Rideshare / Amazon, conductor de Uber/Lyft',
+    errorFile: 'Algunos archivos no se agregaron: solo se aceptan fotos, documentos PDF o Word de menos de 4 MB.',
+    errorTooManyFiles: 'Puede adjuntar hasta 10 archivos.',
+    attachmentsPartial:
+      'Recibimos su solicitud, pero algunos archivos no se pudieron subir. Es posible que nuestro equipo le pida enviarlos de nuevo.',
   },
 }

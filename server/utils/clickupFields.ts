@@ -25,7 +25,25 @@ export const CF = {
   phone: 'cafd9a97-7e48-40eb-80d3-00cbd1958f5b',          // phone
   originator: 'cc4b9fce-8e3e-4431-9679-2b161aa63902',     // labels (array of ids)
   accidentState: 'f4ae277d-4b86-4dbe-9c30-6752cc8c8e37',  // drop_down (single id)
+
+  // Out-of-state fields (shown only when the accident state is not Georgia). Same
+  // fields the ClickUp "Out of State Lead Form" fills.
+  hospital: 'b64139ac-09a7-4879-8f9a-d9346c522c42',       // short_text  "Hospital Visit?"
+  injuries: '439d2d28-736f-4149-88d7-f38e6527cc40',       // text        "Description of Injuries"
+  policeReport: '7dd9fef4-f94d-4562-b1c4-f02987e36cc0',   // short_text  "Police Report / Case #"
+  address: '14f5ae45-4f03-49c4-954d-5445735b0eb8',        // text        "Residential or Mailing Address"
+  primaryLanguage: '62013ab6-0a4b-41c0-b694-294bdbb91121',// drop_down   "Primary Language"
+  additionalInfo: '95649bf0-5f45-4ecd-b90f-ff082a6437d0', // text        "Additional Info"
 } as const
+
+/** Primary Language drop_down — our stable form value → ClickUp option id. */
+export const LANGUAGE_OPTION_IDS: Record<string, string> = {
+  english: '1f68c7cf-668a-444f-a4fa-75825319567d',
+  spanish: '3bd27703-cc79-48d3-b127-e0b1ba6b42c7',
+  portuguese: 'da820f28-b630-48f7-a876-8a176287f736',
+  russian: 'b16214b1-cd83-4f18-8018-375cf3c1105f',
+  other: '506772e0-6559-4223-9a1f-70ead6514e81',
+}
 
 /** Accident State drop_down — option label → option id. 50 states + Puerto Rico. */
 export const STATE_OPTION_IDS: Record<string, string> = {
