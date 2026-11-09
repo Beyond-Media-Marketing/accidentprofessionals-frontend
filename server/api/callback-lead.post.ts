@@ -40,6 +40,8 @@ function toEpochMs(value: string): number | null {
   return Number.isFinite(ms) ? ms : null
 }
 
+const isEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+
 interface LeadBody {
   token?: string
   rep?: string
@@ -58,6 +60,22 @@ interface LeadBody {
   consent?: boolean
   pageTitle?: string
   utm?: Record<string, string>
+  // Out-of-state fields — only honoured when `state` is not Georgia.
+  hospital?: string
+  injuries?: string
+  policeReport?: string
+  address?: string
+  language?: string
+  additionalInfo?: string
+  attachmentCount?: number
+}
+
+const LANGUAGE_LABELS: Record<string, string> = {
+  english: 'English',
+  spanish: 'Spanish',
+  portuguese: 'Portuguese',
+  russian: 'Russian',
+  other: 'Other',
 }
 
 async function verifyTurnstile(secret: string, token: string, ip: string): Promise<boolean> {
@@ -93,6 +111,28 @@ export default defineEventHandler(async (event) => {
     return { ok: false, error: 'missing-required-fields' }
   }
 
+  // Out-of-state leads carry the extra intake fields. For Georgia (or no state) they
+  // are ignored outright, so values typed before switching back to Georgia can never
+  // reach ClickUp even if a client sends them.
+  const state = String(body.state || '').trim()
+  const outOfState = !!state && state !== 'Georgia'
+  const oos = {
+    hospital: outOfState ? String(body.hospital || '').trim() : '',
+    injuries: outOfState ? String(body.injuries || '').trim() : '',
+    policeReport: outOfState ? String(body.policeReport || '').trim() : '',
+    address: outOfState ? String(body.address || '').trim() : '',
+    language: outOfState && LANGUAGE_LABELS[String(body.language || '')] ? String(body.language) : '',
+    additionalInfo: outOfState ? String(body.additionalInfo || '').trim() : '',
+  }
+  if (
+    outOfState &&
+    (!oos.hospital || !oos.injuries || !oos.policeReport || !oos.address || !oos.language)
+  ) {
+    setResponseStatus(event, 422)
+    return { ok: false, error: 'missing-required-fields' }
+  }
+  const attachmentCount = outOfState ? Math.max(0, Math.floor(Number(body.attachmentCount) || 0)) : 0
+
   if (!clickupToken || !clickupListId) {
     // Not configured — the email leg still delivers the lead, so this is not fatal.
     setResponseStatus(event, 503)
@@ -124,7 +164,7 @@ export default defineEventHandler(async (event) => {
     `**What happened:**`,
     details,
     '',
-    `**State:** ${body.state || '—'}`,
+    `**State:** ${state || '—'}`,
     `**Date of accident:** ${body.accidentDate || '—'}`,
     `**Best time to call:** ${body.bestTimeLabel || body.bestTime || '—'}${
       body.bestTimeLabelLocal && body.bestTimeLabelLocal !== body.bestTimeLabel
@@ -132,6 +172,19 @@ export default defineEventHandler(async (event) => {
         : ''
     }`,
     ...(body.specificTime ? [`**Requested time:** ${body.specificTime}`] : []),
+    ...(outOfState
+      ? [
+          '',
+          '**Out-of-state details**',
+          `**Hospital:** ${oos.hospital}`,
+          `**Injuries:** ${oos.injuries}`,
+          `**Police report:** ${oos.policeReport}`,
+          `**Address:** ${oos.address}`,
+          `**Primary language:** ${LANGUAGE_LABELS[oos.language]}`,
+          `**Attachments:** ${attachmentCount} file(s), see task attachments`,
+          ...(oos.additionalInfo ? ['**Additional info:**', oos.additionalInfo] : []),
+        ]
+      : []),
     '',
     `**Referred by:** ${
       rep
@@ -165,10 +218,15 @@ export default defineEventHandler(async (event) => {
     if (value !== null && value !== undefined && value !== '') customFields.push({ id, value })
   }
 
+  // ClickUp's `phone` type expects a full international number (E.164).
+  const phoneE164 = `${body.dialCode || '+1'}${phone}`.replace(/[^\d+]/g, '')
+
   put(CF.firstName, first)
   put(CF.lastName, last)
   put(CF.description, details)
-  put(CF.email, email)
+  // ClickUp rejects the WHOLE task over a malformed email value, so only send
+  // well-formed addresses; the raw text is in the description either way.
+  put(CF.email, isEmail(email) ? email : '')
   put(CF.phone, phoneE164)
   put(CF.bestTimeToCall, body.bestTimeLabel || body.bestTime || '')
   put(CF.bestDateTime, body.specificTime || '')
@@ -177,14 +235,11 @@ export default defineEventHandler(async (event) => {
   customFields.push({ id: CF.consentCheckbox, value: true })
   customFields.push({ id: CF.consentGivenOn, value: Date.now() })
 
-  // ClickUp's `phone` type expects a full international number (E.164).
-  const phoneE164 = `${body.dialCode || '+1'}${phone}`.replace(/[^\d+]/g, '')
-
   const accidentMs = toEpochMs(String(body.accidentDate || ''))
   if (accidentMs !== null) customFields.push({ id: CF.dateOfAccident, value: accidentMs })
 
   // drop_down → the option's uuid, never its label.
-  const stateId = STATE_OPTION_IDS[String(body.state || '')]
+  const stateId = STATE_OPTION_IDS[state]
   if (stateId) put(CF.accidentState, stateId)
 
   // labels → an ARRAY of option uuids. Reps without a confirmed option are left
@@ -192,29 +247,57 @@ export default defineEventHandler(async (event) => {
   const originatorId = rep ? ORIGINATOR_OPTION_IDS[rep] : undefined
   if (originatorId) customFields.push({ id: CF.originator, value: [originatorId] })
 
-  const task = await $fetch<{ id?: string; url?: string }>(
-    `${CLICKUP_API}/list/${clickupListId}/task`,
-    {
+  // Out-of-state intake fields — the same ones the ClickUp "Out of State Lead Form"
+  // fills. Every one of them is also written into the task description above.
+  if (outOfState) {
+    put(CF.hospital, oos.hospital.replace(/\s*\n+\s*/g, ', ')) // short_text: single line
+    put(CF.injuries, oos.injuries)
+    put(CF.policeReport, oos.policeReport)
+    put(CF.address, oos.address)
+    put(CF.primaryLanguage, LANGUAGE_OPTION_IDS[oos.language])
+    put(CF.additionalInfo, oos.additionalInfo)
+  }
+
+  const createTask = (fields: typeof customFields) =>
+    $fetch<{ id?: string; url?: string }>(`${CLICKUP_API}/list/${clickupListId}/task`, {
       method: 'POST',
       headers: { Authorization: clickupToken, 'Content-Type': 'application/json' },
       body: {
         // Task title is just the lead's name — phone, rep and everything else
         // are in the description and the tags.
         name,
+        // The description is written in markdown. Sent as plain `description`, ClickUp
+        // showed the ** literally; `markdown_content` renders it (and takes precedence).
         description,
+        markdown_content: description,
         tags,
-        custom_fields: customFields,
+        custom_fields: fields,
       },
-    },
-  ).catch((err: any) => {
-    console.error('[callback-lead] ClickUp task creation failed:', err?.data ?? err?.message ?? err)
-    return null
-  })
+    }).catch((err: any) => {
+      console.error('[callback-lead] ClickUp task creation failed:', err?.data ?? err?.message ?? err)
+      return null
+    })
+
+  // ClickUp validates phone/email values and rejects the WHOLE task over one it
+  // doesn't like (e.g. a mistyped number). Never lose the lead to that: retry once
+  // without those fields — the raw values are still in the description.
+  const STRICT = new Set<string>([CF.phone, CF.email])
+  let task = await createTask(customFields)
+  if (!task?.id && customFields.some((f) => STRICT.has(f.id))) {
+    task = await createTask(customFields.filter((f) => !STRICT.has(f.id)))
+  }
 
   if (!task?.id) {
     setResponseStatus(event, 502)
     return { ok: false, error: 'clickup-failed' }
   }
 
-  return { ok: true, taskId: task.id, url: task.url, tags }
+  return {
+    ok: true,
+    taskId: task.id,
+    url: task.url,
+    tags,
+    // Lets the browser upload the out-of-state attachments to THIS task only.
+    ...(outOfState ? { attachmentToken: issueAttachmentToken(clickupToken, task.id) } : {}),
+  }
 })

@@ -11,10 +11,15 @@
  *   2. POST api.web3forms.com   → email copy to sales@
  * They run in parallel and neither blocks the other, so a ClickUp outage still
  * produces the email. Success is shown if EITHER leg lands the lead.
+ *
+ * Out-of-state leads (any state other than Georgia) get the extra intake fields of
+ * the ClickUp "Out of State Lead Form". Their values stay in memory if the visitor
+ * flips back to Georgia but are never submitted in Georgia mode. Attachments are
+ * uploaded one per request to /api/callback-attachment once the task exists.
  */
 import { ref, reactive, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { CALLBACK_COPY, BEST_TIME_VALUES, type Locale } from '../data/callbackFormCopy'
+import { CALLBACK_COPY, BEST_TIME_VALUES, MAX_ATTACHMENTS, type Locale } from '../data/callbackFormCopy'
 import { US_STATES } from '../data/usStates'
 import { countries } from '../data/countries'
 import { useTurnstile } from '../composables/useTurnstile'
@@ -53,7 +58,103 @@ const form = reactive({
   phone: '',
   countryCode: 'US',
   consent: false,
+  // Out-of-state only
+  hospital: '',
+  injuries: '',
+  policeReport: '',
+  address: '',
+  language: '',
+  additionalInfo: '',
 })
+
+/** Any chosen state except Georgia. No state yet = the normal (Georgia) form. */
+const isOutOfState = computed(() => !!form.state && form.state !== 'Georgia')
+
+// ── Attachments (out-of-state only) ─────────────────────────────────────────
+// Each file goes up in its own request and Vercel caps a request at ~4.5 MB, so
+// files must stay under 4 MB; large photos are shrunk in the browser first.
+const MAX_FILE_BYTES = 4 * 1024 * 1024
+const ACCEPTED_TYPE = /^(image\/|application\/pdf$|application\/msword$|application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document$|text\/plain$)/
+const ACCEPT_ATTR = 'image/*,.pdf,.doc,.docx,.txt'
+
+const files = ref<File[]>([])
+const fileError = ref('')
+const dragging = ref(false)
+const attachmentsFailed = ref(false)
+
+/** Re-encode a photo as JPEG at a smaller size. Rejects if the browser can't decode it. */
+async function shrinkImage(file: File): Promise<File> {
+  const bitmap = await createImageBitmap(file)
+  for (const [maxSide, quality] of [[2400, 0.82], [1600, 0.72]] as const) {
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height))
+    const canvas = document.createElement('canvas')
+    canvas.width = Math.round(bitmap.width * scale)
+    canvas.height = Math.round(bitmap.height * scale)
+    canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, 'image/jpeg', quality))
+    if (blob && blob.size <= MAX_FILE_BYTES) {
+      return new File([blob], file.name.replace(/\.[^.]+$/, '') + '.jpg', { type: 'image/jpeg' })
+    }
+  }
+  throw new Error('too-large')
+}
+
+async function addFiles(list: FileList | File[] | null | undefined) {
+  fileError.value = ''
+  let rejected = false
+  for (const original of Array.from(list || [])) {
+    if (files.value.length >= MAX_ATTACHMENTS) {
+      fileError.value = t.value.errorTooManyFiles
+      return
+    }
+    if (!ACCEPTED_TYPE.test(original.type)) {
+      rejected = true
+      continue
+    }
+    let file: File | null = original
+    if (file.size > MAX_FILE_BYTES) {
+      file = file.type.startsWith('image/') ? await shrinkImage(file).catch(() => null) : null
+    }
+    if (file) files.value.push(file)
+    else rejected = true
+  }
+  if (rejected) fileError.value = t.value.errorFile
+}
+
+function onFileInput(e: Event) {
+  const input = e.target as HTMLInputElement
+  addFiles(input.files)
+  input.value = '' // allow re-picking the same file after removing it
+}
+
+function onDrop(e: DragEvent) {
+  dragging.value = false
+  addFiles(e.dataTransfer?.files)
+}
+
+function removeFile(i: number) {
+  files.value.splice(i, 1)
+  fileError.value = ''
+}
+
+function formatSize(bytes: number) {
+  return bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`
+}
+
+async function uploadAttachments(taskId: string, token: string): Promise<boolean> {
+  let allOk = true
+  for (const file of files.value) {
+    const body = new FormData()
+    body.append('taskId', taskId)
+    body.append('token', token)
+    body.append('file', file, file.name)
+    const ok = await $fetch<{ ok?: boolean }>('/api/callback-attachment', { method: 'POST', body })
+      .then((r) => r?.ok === true)
+      .catch(() => false)
+    if (!ok) allOk = false
+  }
+  return allOk
+}
 
 const submitting = ref(false)
 const done = ref(false)
@@ -84,7 +185,14 @@ const filledRequired = computed(
     !!form.state &&
     !!form.bestTime &&
     !!form.phone.trim() &&
-    (!needsSpecificTime.value || !!form.specificTime.trim()),
+    (!needsSpecificTime.value || !!form.specificTime.trim()) &&
+    (!isOutOfState.value ||
+      (!!form.hospital.trim() &&
+        !!form.injuries.trim() &&
+        !!form.policeReport.trim() &&
+        !!form.address.trim() &&
+        !!form.language &&
+        files.value.length > 0)),
 )
 const canSubmit = computed(
   () => filledRequired.value && form.consent && !submitting.value && !!turnstileToken.value,
@@ -116,12 +224,29 @@ async function submitForm() {
     return
   }
   submitting.value = true
+  attachmentsFailed.value = false
+
+  // Snapshot the out-of-state values ONLY in out-of-state mode — anything typed
+  // before switching back to Georgia is left out of both submissions.
+  const outOfState = isOutOfState.value
+  const languageLabelEn = CALLBACK_COPY.en.languageOptions.find((o) => o.value === form.language)?.label ?? ''
+  const oos = outOfState
+    ? {
+        hospital: form.hospital.trim(),
+        injuries: form.injuries.trim(),
+        policeReport: form.policeReport.trim(),
+        address: form.address.trim(),
+        language: form.language,
+        additionalInfo: form.additionalInfo.trim(),
+        attachmentCount: files.value.length,
+      }
+    : null
 
   const rep = props.rep || ''
   const pageTitle = typeof document !== 'undefined' ? document.title : ''
 
   // 1) ClickUp (Turnstile is verified inside this endpoint).
-  const toClickUp = $fetch<{ ok?: boolean }>('/api/callback-lead', {
+  const toClickUp = $fetch<{ ok?: boolean; taskId?: string; attachmentToken?: string }>('/api/callback-lead', {
     method: 'POST',
     body: {
       token: turnstileToken.value,
@@ -141,8 +266,17 @@ async function submitForm() {
       consent: form.consent,
       pageTitle,
       utm: utm.value,
+      ...(oos || {}),
     },
-  }).then((r) => r?.ok === true)
+  }).then(async (r) => {
+    if (r?.ok !== true) return false
+    // Attachments need the task to exist; a failed upload doesn't lose the lead.
+    if (oos && files.value.length) {
+      const uploaded = r.taskId && r.attachmentToken ? await uploadAttachments(r.taskId, r.attachmentToken) : false
+      if (!uploaded) attachmentsFailed.value = true
+    }
+    return true
+  })
 
   // 2) Email copy. Independent of ClickUp — this is the redundancy leg, and it
   //    carries the attribution so a failed API call still yields an attributed lead.
@@ -155,7 +289,7 @@ async function submitForm() {
         config.public.web3FormsKeyLeads ||
         config.public.web3FormsKey,
       form_id: 'callback_form',
-      subject: `New call-back lead — ${rep || 'direct'}`,
+      subject: `New call-back lead — ${rep || 'direct'}${outOfState ? ` — out of state (${form.state})` : ''}`,
       name: form.name,
       ...(form.email.trim() ? { email: form.email.trim() } : {}),
       phone: `${dialCode.value} ${form.phone}`,
@@ -166,6 +300,17 @@ async function submitForm() {
       language: locale.value === 'es' ? 'Spanish' : 'English',
       best_time_to_call: bestTimeLabel.value,
       ...(form.specificTime ? { requested_time: form.specificTime } : {}),
+      ...(oos
+        ? {
+            hospital: oos.hospital,
+            injuries: oos.injuries,
+            police_report: oos.policeReport,
+            address: oos.address,
+            primary_language: languageLabelEn,
+            ...(oos.additionalInfo ? { additional_info: oos.additionalInfo } : {}),
+            attachments: `${files.value.map((f) => f.name).join(', ')} (uploaded to the ClickUp task)`,
+          }
+        : {}),
       consent_given: 'yes',
       page: pageTitle,
       ...utm.value,
@@ -181,12 +326,14 @@ async function submitForm() {
   submitting.value = false
 
   if (clickupOk || emailOk) {
+    if (outOfState && files.value.length && !clickupOk) attachmentsFailed.value = true
     done.value = true
     gtmPush({
       event: 'generate_lead',
       form_id: 'callback_form',
       referred_by: rep || 'direct',
       language: locale.value,
+      out_of_state: outOfState,
       clickup_ok: clickupOk,
       email_ok: emailOk,
     })
@@ -219,7 +366,10 @@ async function submitForm() {
     <p class="cb__intro">{{ t.intro }}</p>
 
     <!-- Success replaces the form entirely: nothing left to do on this page. -->
-    <p v-if="done" class="cb__success" role="status">{{ t.success }}</p>
+    <template v-if="done">
+      <p class="cb__success" role="status">{{ t.success }}</p>
+      <p v-if="attachmentsFailed" class="cb__notice" role="status">{{ t.attachmentsPartial }}</p>
+    </template>
 
     <form v-else class="cb__form" novalidate @submit.prevent="submitForm">
       <div class="cb__field">
@@ -284,6 +434,76 @@ async function submitForm() {
           :placeholder="t.phonePlaceholder"
         />
       </div>
+
+      <!-- Out-of-state intake: only for states other than Georgia. -->
+      <template v-if="isOutOfState">
+        <div class="cb__field">
+          <label for="cb-hospital">{{ t.hospitalLabel }}<span class="cb__req" aria-hidden="true">*</span></label>
+          <textarea id="cb-hospital" v-model="form.hospital" rows="2" :placeholder="t.namePlaceholder" required />
+        </div>
+
+        <div class="cb__field">
+          <label for="cb-injuries">{{ t.injuriesLabel }}<span class="cb__req" aria-hidden="true">*</span></label>
+          <textarea id="cb-injuries" v-model="form.injuries" rows="3" :placeholder="t.namePlaceholder" required />
+        </div>
+
+        <div class="cb__field">
+          <label for="cb-police">{{ t.policeReportLabel }}<span class="cb__req" aria-hidden="true">*</span></label>
+          <input id="cb-police" v-model="form.policeReport" type="text" :placeholder="t.policeReportPlaceholder" required />
+        </div>
+
+        <div class="cb__field">
+          <label for="cb-address">{{ t.addressLabel }}<span class="cb__req" aria-hidden="true">*</span></label>
+          <textarea id="cb-address" v-model="form.address" rows="2" :placeholder="t.namePlaceholder" autocomplete="street-address" required />
+        </div>
+
+        <div class="cb__field">
+          <label for="cb-language">{{ t.languageLabel }}<span class="cb__req" aria-hidden="true">*</span></label>
+          <div class="cb__select-wrap">
+            <select id="cb-language" v-model="form.language" required>
+              <option value="" disabled>{{ t.languagePlaceholder }}</option>
+              <option v-for="o in t.languageOptions" :key="o.value" :value="o.value">{{ o.label }}</option>
+            </select>
+            <svg class="cb__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="cb__field">
+          <span id="cb-attachments-label" class="cb__label">{{ t.attachmentsLabel }}<span class="cb__req" aria-hidden="true">*</span></span>
+          <label
+            class="cb__drop"
+            :class="{ 'is-dragging': dragging }"
+            aria-labelledby="cb-attachments-label"
+            @dragenter.prevent="dragging = true"
+            @dragover.prevent="dragging = true"
+            @dragleave.prevent="dragging = false"
+            @drop.prevent="onDrop"
+          >
+            <input type="file" class="cb__drop-input" multiple :accept="ACCEPT_ATTR" @change="onFileInput" />
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+            <span>{{ t.attachmentsDrop }} <u>{{ t.attachmentsBrowse }}</u></span>
+            <small>{{ t.attachmentsHint }}</small>
+          </label>
+          <ul v-if="files.length" class="cb__files">
+            <li v-for="(f, i) in files" :key="`${f.name}-${i}`">
+              <span class="cb__file-name">{{ f.name }}</span>
+              <span class="cb__file-size">{{ formatSize(f.size) }}</span>
+              <button type="button" class="cb__file-remove" :aria-label="`${t.attachmentsRemove} ${f.name}`" @click="removeFile(i)">×</button>
+            </li>
+          </ul>
+          <p v-if="fileError" class="cb__field-error" role="alert">{{ fileError }}</p>
+        </div>
+
+        <div class="cb__field">
+          <label for="cb-additional">{{ t.additionalInfoLabel }} <span class="cb__optional">({{ t.optional }})</span></label>
+          <p id="cb-additional-help" class="cb__help">{{ t.additionalInfoHelp }}</p>
+          <textarea id="cb-additional" v-model="form.additionalInfo" rows="3" :placeholder="t.namePlaceholder" aria-describedby="cb-additional-help" />
+        </div>
+      </template>
 
       <div class="cb__consent">
         <AppCheckbox v-model="form.consent">
@@ -352,7 +572,8 @@ async function submitForm() {
 .cb__form { display: flex; flex-direction: column; gap: 18px; }
 
 .cb__field { display: flex; flex-direction: column; gap: 7px; }
-.cb__field label {
+.cb__field label,
+.cb__label {
   font-family: var(--font-primary);
   font-size: 14.5px;
   font-weight: 600;
@@ -409,6 +630,89 @@ async function submitForm() {
   transform: translateY(-50%);
   color: #525252;
   pointer-events: none;
+}
+
+/* ── Out-of-state extras ── */
+.cb__help {
+  font-family: var(--font-primary);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-muted);
+  margin: -2px 0 2px;
+}
+.cb__field .cb__drop {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 22px 16px;
+  text-align: center;
+  font-family: var(--font-primary);
+  font-size: 14.5px;
+  font-weight: 400;
+  color: var(--color-dark);
+  background: #fff;
+  border: 1.5px dashed rgba(0, 0, 0, 0.22);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+.cb__drop svg { color: #525252; }
+.cb__drop small { font-size: 12.5px; color: var(--color-muted); }
+.cb__drop.is-dragging,
+.cb__drop:hover { border-color: var(--color-accent); background: rgba(243, 175, 0, 0.06); }
+.cb__drop:focus-within { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(243, 175, 0, 0.18); }
+.cb__field .cb__drop-input {
+  /* Beats `.cb__field input` above, which would otherwise stretch this hidden input. */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+}
+.cb__files { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.cb__files li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 12px;
+  font-family: var(--font-primary);
+  font-size: 13.5px;
+  background: #fafafa;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+}
+.cb__file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--color-dark); }
+.cb__file-size { flex-shrink: 0; color: var(--color-muted); font-size: 12.5px; }
+.cb__file-remove {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  font-size: 18px;
+  line-height: 1;
+  color: #525252;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.cb__file-remove:hover { background: rgba(0, 0, 0, 0.07); }
+.cb__field-error { font-family: var(--font-primary); font-size: 13px; color: #dc2626; margin: 0; }
+.cb__notice {
+  font-family: var(--font-primary);
+  font-size: 14px;
+  line-height: 1.55;
+  color: #92400e;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  margin: 12px 0 0;
 }
 
 .cb__consent { display: flex; flex-direction: column; gap: 8px; }
