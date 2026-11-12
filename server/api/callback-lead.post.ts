@@ -181,7 +181,7 @@ export default defineEventHandler(async (event) => {
           `**Police report:** ${oos.policeReport}`,
           `**Address:** ${oos.address}`,
           `**Primary language:** ${LANGUAGE_LABELS[oos.language]}`,
-          `**Attachments:** ${attachmentCount} file(s), see task attachments`,
+          `**Attachments:** ${attachmentCount ? `${attachmentCount} file(s), see task attachments` : 'none'}`,
           ...(oos.additionalInfo ? ['**Additional info:**', oos.additionalInfo] : []),
         ]
       : []),
