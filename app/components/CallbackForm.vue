@@ -191,8 +191,7 @@ const filledRequired = computed(
         !!form.injuries.trim() &&
         !!form.policeReport.trim() &&
         !!form.address.trim() &&
-        !!form.language &&
-        files.value.length > 0)),
+        !!form.language)),
 )
 const canSubmit = computed(
   () => filledRequired.value && form.consent && !submitting.value && !!turnstileToken.value,
@@ -308,7 +307,9 @@ async function submitForm() {
             address: oos.address,
             primary_language: languageLabelEn,
             ...(oos.additionalInfo ? { additional_info: oos.additionalInfo } : {}),
-            attachments: `${files.value.map((f) => f.name).join(', ')} (uploaded to the ClickUp task)`,
+            attachments: files.value.length
+              ? `${files.value.map((f) => f.name).join(', ')} (uploaded to the ClickUp task)`
+              : 'none',
           }
         : {}),
       consent_given: 'yes',
@@ -471,7 +472,7 @@ async function submitForm() {
         </div>
 
         <div class="cb__field">
-          <span id="cb-attachments-label" class="cb__label">{{ t.attachmentsLabel }}<span class="cb__req" aria-hidden="true">*</span></span>
+          <span id="cb-attachments-label" class="cb__label">{{ t.attachmentsLabel }} <span class="cb__optional">({{ t.optional }})</span></span>
           <label
             class="cb__drop"
             :class="{ 'is-dragging': dragging }"
