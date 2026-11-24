@@ -14,7 +14,9 @@
  *
  * Out-of-state leads (any state other than Georgia) get the extra intake fields of
  * the ClickUp "Out of State Lead Form". Their values stay in memory if the visitor
- * flips back to Georgia but are never submitted in Georgia mode. Attachments are
+ * flips back to Georgia but are never submitted in Georgia mode.
+ *
+ * Attachments (optional) are offered on EVERY lead, Georgia included, and are
  * uploaded one per request to /api/callback-attachment once the task exists.
  */
 import { ref, reactive, computed, watch } from 'vue'
@@ -70,7 +72,7 @@ const form = reactive({
 /** Any chosen state except Georgia. No state yet = the normal (Georgia) form. */
 const isOutOfState = computed(() => !!form.state && form.state !== 'Georgia')
 
-// ── Attachments (out-of-state only) ─────────────────────────────────────────
+// ── Attachments (all leads, optional) ─────────────────────────────────────────
 // Each file goes up in its own request and Vercel caps a request at ~4.5 MB, so
 // files must stay under 4 MB; large photos are shrunk in the browser first.
 const MAX_FILE_BYTES = 4 * 1024 * 1024
@@ -237,9 +239,9 @@ async function submitForm() {
         address: form.address.trim(),
         language: form.language,
         additionalInfo: form.additionalInfo.trim(),
-        attachmentCount: files.value.length,
       }
     : null
+  const attachmentCount = files.value.length
 
   const rep = props.rep || ''
   const pageTitle = typeof document !== 'undefined' ? document.title : ''
@@ -265,12 +267,13 @@ async function submitForm() {
       consent: form.consent,
       pageTitle,
       utm: utm.value,
+      attachmentCount,
       ...(oos || {}),
     },
   }).then(async (r) => {
     if (r?.ok !== true) return false
     // Attachments need the task to exist; a failed upload doesn't lose the lead.
-    if (oos && files.value.length) {
+    if (attachmentCount) {
       const uploaded = r.taskId && r.attachmentToken ? await uploadAttachments(r.taskId, r.attachmentToken) : false
       if (!uploaded) attachmentsFailed.value = true
     }
@@ -307,7 +310,12 @@ async function submitForm() {
             address: oos.address,
             primary_language: languageLabelEn,
             ...(oos.additionalInfo ? { additional_info: oos.additionalInfo } : {}),
-            attachments: files.value.length
+          }
+        : {}),
+      // Out-of-state emails always listed this line; Georgia ones only when files exist.
+      ...(attachmentCount || oos
+        ? {
+            attachments: attachmentCount
               ? `${files.value.map((f) => f.name).join(', ')} (uploaded to the ClickUp task)`
               : 'none',
           }
@@ -327,7 +335,7 @@ async function submitForm() {
   submitting.value = false
 
   if (clickupOk || emailOk) {
-    if (outOfState && files.value.length && !clickupOk) attachmentsFailed.value = true
+    if (attachmentCount && !clickupOk) attachmentsFailed.value = true
     done.value = true
     gtmPush({
       event: 'generate_lead',
@@ -472,39 +480,40 @@ async function submitForm() {
         </div>
 
         <div class="cb__field">
-          <span id="cb-attachments-label" class="cb__label">{{ t.attachmentsLabel }} <span class="cb__optional">({{ t.optional }})</span></span>
-          <label
-            class="cb__drop"
-            :class="{ 'is-dragging': dragging }"
-            aria-labelledby="cb-attachments-label"
-            @dragenter.prevent="dragging = true"
-            @dragover.prevent="dragging = true"
-            @dragleave.prevent="dragging = false"
-            @drop.prevent="onDrop"
-          >
-            <input type="file" class="cb__drop-input" multiple :accept="ACCEPT_ATTR" @change="onFileInput" />
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
-            <span>{{ t.attachmentsDrop }} <u>{{ t.attachmentsBrowse }}</u></span>
-            <small>{{ t.attachmentsHint }}</small>
-          </label>
-          <ul v-if="files.length" class="cb__files">
-            <li v-for="(f, i) in files" :key="`${f.name}-${i}`">
-              <span class="cb__file-name">{{ f.name }}</span>
-              <span class="cb__file-size">{{ formatSize(f.size) }}</span>
-              <button type="button" class="cb__file-remove" :aria-label="`${t.attachmentsRemove} ${f.name}`" @click="removeFile(i)">×</button>
-            </li>
-          </ul>
-          <p v-if="fileError" class="cb__field-error" role="alert">{{ fileError }}</p>
-        </div>
-
-        <div class="cb__field">
           <label for="cb-additional">{{ t.additionalInfoLabel }} <span class="cb__optional">({{ t.optional }})</span></label>
           <p id="cb-additional-help" class="cb__help">{{ t.additionalInfoHelp }}</p>
           <textarea id="cb-additional" v-model="form.additionalInfo" rows="3" :placeholder="t.namePlaceholder" aria-describedby="cb-additional-help" />
         </div>
       </template>
+
+      <!-- Attachments: every lead, Georgia included, always optional. -->
+      <div class="cb__field">
+        <span id="cb-attachments-label" class="cb__label">{{ t.attachmentsLabel }} <span class="cb__optional">({{ t.optional }})</span></span>
+        <label
+          class="cb__drop"
+          :class="{ 'is-dragging': dragging }"
+          aria-labelledby="cb-attachments-label"
+          @dragenter.prevent="dragging = true"
+          @dragover.prevent="dragging = true"
+          @dragleave.prevent="dragging = false"
+          @drop.prevent="onDrop"
+        >
+          <input type="file" class="cb__drop-input" multiple :accept="ACCEPT_ATTR" @change="onFileInput" />
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>{{ t.attachmentsDrop }} <u>{{ t.attachmentsBrowse }}</u></span>
+          <small>{{ t.attachmentsHint }}</small>
+        </label>
+        <ul v-if="files.length" class="cb__files">
+          <li v-for="(f, i) in files" :key="`${f.name}-${i}`">
+            <span class="cb__file-name">{{ f.name }}</span>
+            <span class="cb__file-size">{{ formatSize(f.size) }}</span>
+            <button type="button" class="cb__file-remove" :aria-label="`${t.attachmentsRemove} ${f.name}`" @click="removeFile(i)">×</button>
+          </li>
+        </ul>
+        <p v-if="fileError" class="cb__field-error" role="alert">{{ fileError }}</p>
+      </div>
 
       <div class="cb__consent">
         <AppCheckbox v-model="form.consent">
