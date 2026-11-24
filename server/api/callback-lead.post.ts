@@ -131,7 +131,8 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 422)
     return { ok: false, error: 'missing-required-fields' }
   }
-  const attachmentCount = outOfState ? Math.max(0, Math.floor(Number(body.attachmentCount) || 0)) : 0
+  // Attachments are optional on every lead, Georgia included.
+  const attachmentCount = Math.max(0, Math.floor(Number(body.attachmentCount) || 0))
 
   if (!clickupToken || !clickupListId) {
     // Not configured — the email leg still delivers the lead, so this is not fatal.
@@ -181,9 +182,12 @@ export default defineEventHandler(async (event) => {
           `**Police report:** ${oos.policeReport}`,
           `**Address:** ${oos.address}`,
           `**Primary language:** ${LANGUAGE_LABELS[oos.language]}`,
-          `**Attachments:** ${attachmentCount ? `${attachmentCount} file(s), see task attachments` : 'none'}`,
           ...(oos.additionalInfo ? ['**Additional info:**', oos.additionalInfo] : []),
         ]
+      : []),
+    // Out-of-state descriptions always listed this; Georgia ones only when files exist.
+    ...(attachmentCount || outOfState
+      ? [`**Attachments:** ${attachmentCount ? `${attachmentCount} file(s), see task attachments` : 'none'}`]
       : []),
     '',
     `**Referred by:** ${
@@ -297,7 +301,7 @@ export default defineEventHandler(async (event) => {
     taskId: task.id,
     url: task.url,
     tags,
-    // Lets the browser upload the out-of-state attachments to THIS task only.
-    ...(outOfState ? { attachmentToken: issueAttachmentToken(clickupToken, task.id) } : {}),
+    // Lets the browser upload this lead's attachments to THIS task only.
+    ...(attachmentCount ? { attachmentToken: issueAttachmentToken(clickupToken, task.id) } : {}),
   }
 })
